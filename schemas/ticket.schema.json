@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://skiljo.ai/schemas/ticket.schema.json",
+  "title": "Ticket",
+  "type": "object",
+  "required": ["ticket_id", "refund_amount", "purchase_days_ago", "ground_truth_decision"],
+  "properties": {
+    "ticket_id": { "type": "string", "format": "uuid" },
+    "refund_amount": { "type": "number" },
+    "purchase_days_ago": { "type": "integer" },
+    "customer_segment": { "type": "string" },
+    "fraud_flags": { "type": "array", "items": { "type": "string" } },
+    "refund_reason": { "type": "string" },
+    "ground_truth_decision": { "type": "string" }
+  }
+}

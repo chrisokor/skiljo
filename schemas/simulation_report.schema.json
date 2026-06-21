@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://skiljo.ai/schemas/simulation_report.schema.json",
+  "title": "SimulationReport",
+  "type": "object",
+  "required": ["skill_version_id", "match_rate", "escalation_accuracy", "results"],
+  "properties": {
+    "skill_version_id": { "type": "string", "format": "uuid" },
+    "match_rate": { "type": "number", "minimum": 0, "maximum": 1 },
+    "escalation_accuracy": { "type": "number", "minimum": 0, "maximum": 1 },
+    "contradiction_count": { "type": "integer", "minimum": 0 },
+    "automation_candidate_count": { "type": "integer", "minimum": 0 },
+    "results": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["ticket_id", "decision", "zone"],
+        "properties": {
+          "ticket_id": { "type": "string", "format": "uuid" },
+          "decision": { "type": "string" },
+          "zone": { "type": "string", "enum": ["deterministic", "llm_assisted", "human_only"] },
+          "matched_human_decision": { "type": "boolean" },
+          "reasoning": { "type": "string" }
+        }
+      }
+    }
+  }
+}
