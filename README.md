@@ -1,4 +1,4 @@
-# Skilljo
+# Skiljo
 
 Governed workflow skills for AI agents, starting with finance-sensitive refunds and credits. See `docs/DESIGN_DOCUMENT.md` for the full design and build plan.
 
