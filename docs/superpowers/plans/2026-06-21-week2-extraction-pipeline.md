@@ -620,17 +620,17 @@ git commit -m "feat(core): LLM call logging to Postgres"
 ### Task 4: Extraction pass 1 — policy segmentation
 
 **Files:**
-- Create: `packages/core/tests/fakes.py`
+- Create: `packages/core/src/skiljo_core/testing.py`
 - Create: `packages/core/src/skiljo_core/extraction/__init__.py`
 - Create: `packages/core/src/skiljo_core/extraction/segmentation.py`
 - Test: `packages/core/tests/test_segmentation.py`
 
 **Interfaces:**
 - Consumes: `skiljo_core.llm.base.LLMClient`, `skiljo_core.config.DEFAULT_MODEL`.
-- Produces: `skiljo_core.tests.fakes` is not importable that way — `FakeLLMClient` lives in `packages/core/tests/fakes.py` and is imported by sibling test files as `from fakes import FakeLLMClient` (flat `tests/` directory, no `__init__.py`, matching the existing `test_models.py` layout — pytest prepends `packages/core/tests/` to `sys.path` for every file directly in it).
+- Produces: `skiljo_core.testing.FakeLLMClient` — shipped from `skiljo_core` itself (not a test-only file) specifically so both `packages/core/tests/` and `packages/api/tests/` can `from skiljo_core.testing import FakeLLMClient` via the normal installed-package import path, with no duplication and no dependence on which directory pytest happens to put on `sys.path`.
 - Produces: `skiljo_core.extraction.segmentation.Segment` (`segment_type: str`, `text: str`), `SegmentationResult` (`segments: list[Segment]`), `segment_policy(llm_client: LLMClient, policy_text: str, model: str = config.DEFAULT_MODEL) -> list[Segment]`.
 
-- [ ] **Step 1: Create `packages/core/tests/fakes.py`**
+- [ ] **Step 1: Create `packages/core/src/skiljo_core/testing.py`**
 
 ```python
 from typing import Any, TypeVar
@@ -670,7 +670,7 @@ class FakeLLMClient:
 - [ ] **Step 3: Write the failing test — `packages/core/tests/test_segmentation.py`**
 
 ```python
-from fakes import FakeLLMClient
+from skiljo_core.testing import FakeLLMClient
 
 from skiljo_core.extraction.segmentation import Segment, SegmentationResult, segment_policy
 
@@ -758,7 +758,7 @@ Expected: PASS (1 test).
 - [ ] **Step 7: Commit**
 
 ```bash
-git add packages/core/tests/fakes.py packages/core/src/skiljo_core/extraction packages/core/tests/test_segmentation.py
+git add packages/core/src/skiljo_core/testing.py packages/core/src/skiljo_core/extraction packages/core/tests/test_segmentation.py
 git commit -m "feat(core): extraction pass 1 — policy segmentation"
 ```
 
@@ -779,7 +779,7 @@ Candidate rules reuse `DeterministicRule`'s shape (`condition` + `action`) as a 
 - [ ] **Step 1: Write the failing test — `packages/core/tests/test_rules.py`**
 
 ```python
-from fakes import FakeLLMClient
+from skiljo_core.testing import FakeLLMClient
 
 from skiljo_core.extraction.rules import CandidateRuleList, extract_rules
 from skiljo_core.extraction.segmentation import Segment
@@ -900,7 +900,7 @@ git commit -m "feat(core): extraction pass 2 — rule extraction per segment"
 - [ ] **Step 1: Write the failing test — `packages/core/tests/test_zones.py`**
 
 ```python
-from fakes import FakeLLMClient
+from skiljo_core.testing import FakeLLMClient
 
 from skiljo_core.extraction.zones import ZoneClassification, classify_rules, classify_zone
 from skiljo_core.schemas.rule_schema import Condition, DeterministicRule, Operator, Predicate
@@ -1048,7 +1048,7 @@ git commit -m "feat(core): extraction pass 3 — decision zone classification"
 - [ ] **Step 1: Write the failing test — `packages/core/tests/test_assembly.py`**
 
 ```python
-from fakes import FakeLLMClient
+from skiljo_core.testing import FakeLLMClient
 
 from skiljo_core.extraction.assembly import assemble_skill
 from skiljo_core.schemas.rule_schema import Condition, DeterministicRule, Operator, Predicate
@@ -1207,7 +1207,7 @@ Expected: PASS (2 tests).
 - [ ] **Step 5: Write the failing test — `packages/core/tests/test_pipeline.py`**
 
 ```python
-from fakes import FakeLLMClient
+from skiljo_core.testing import FakeLLMClient
 
 from skiljo_core.extraction.pipeline import run_extraction_pipeline
 from skiljo_core.extraction.rules import CandidateRuleList
@@ -1348,7 +1348,7 @@ import uuid
 
 from fastapi.testclient import TestClient
 
-from fakes import FakeLLMClient
+from skiljo_core.testing import FakeLLMClient
 
 from skiljo_api.dependencies import get_llm_client
 from skiljo_api.main import app
@@ -1421,25 +1421,9 @@ def test_extract_endpoint_creates_draft_skill_version() -> None:
 uv run pytest packages/api/tests/test_skills_extract.py -v
 ```
 
-Expected: FAIL — `ModuleNotFoundError: No module named 'skiljo_api.routers.skills'` (or a 404, since the route doesn't exist yet). The `fakes` import resolves from `packages/core/tests/fakes.py` only if that directory is on `sys.path` — since `packages/api/tests/` is a **different** directory, this import will actually fail with `ModuleNotFoundError: No module named 'fakes'` first. Fix this before continuing: copy the fixture.
+Expected: FAIL — `ModuleNotFoundError: No module named 'skiljo_api.routers.skills'`. (`from skiljo_core.testing import FakeLLMClient` resolves fine here — `skiljo_core` is installed in the shared venv regardless of pytest rootdir, unlike a plain test-directory fixture file would be.)
 
-- [ ] **Step 4b: Make `FakeLLMClient` available to `packages/api/tests/`**
-
-`packages/api/tests/` is a separate pytest rootdir from `packages/core/tests/`, so it needs its own copy of the fixture (matching the project's existing flat, no-`__init__.py` test layout — duplicating one small fixture file is simpler than introducing cross-package test imports).
-
-```bash
-cp packages/core/tests/fakes.py packages/api/tests/fakes.py
-```
-
-- [ ] **Step 5: Re-run test to verify it now fails for the right reason**
-
-```bash
-uv run pytest packages/api/tests/test_skills_extract.py -v
-```
-
-Expected: FAIL — `ModuleNotFoundError: No module named 'skiljo_api.routers.skills'`.
-
-- [ ] **Step 6: Create `packages/api/src/skiljo_api/routers/skills.py`**
+- [ ] **Step 5: Create `packages/api/src/skiljo_api/routers/skills.py`**
 
 ```python
 import uuid
@@ -1536,7 +1520,7 @@ def extract_skill(
     return ExtractResponse(job_id=job_id, status="pending")
 ```
 
-- [ ] **Step 7: Mount the router in `packages/api/src/skiljo_api/main.py`**
+- [ ] **Step 6: Mount the router in `packages/api/src/skiljo_api/main.py`**
 
 Replace the full file contents:
 
@@ -1554,7 +1538,7 @@ def health() -> dict[str, str]:
     return {"status": "ok"}
 ```
 
-- [ ] **Step 8: Run test to verify it passes**
+- [ ] **Step 7: Run test to verify it passes**
 
 ```bash
 uv run pytest packages/api/tests/test_skills_extract.py packages/api/tests/test_health.py -v
@@ -1562,10 +1546,10 @@ uv run pytest packages/api/tests/test_skills_extract.py packages/api/tests/test_
 
 Expected: PASS (2 tests) — confirms the existing `/health` test still works alongside the new router.
 
-- [ ] **Step 9: Commit**
+- [ ] **Step 8: Commit**
 
 ```bash
-git add packages/api/src/skiljo_api packages/api/tests/test_skills_extract.py packages/api/tests/fakes.py
+git add packages/api/src/skiljo_api packages/api/tests/test_skills_extract.py
 git commit -m "feat(api): POST /skills/extract endpoint with background job"
 ```
 
