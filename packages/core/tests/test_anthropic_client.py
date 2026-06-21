@@ -36,3 +36,44 @@ def test_generate_structured_returns_validated_output() -> None:
     _, kwargs = fake_sdk_client.messages.create.call_args
     assert kwargs["model"] == "claude-sonnet-4-6"
     assert kwargs["tool_choice"] == {"type": "tool", "name": "extract"}
+
+
+def test_retries_once_on_invalid_output_then_succeeds() -> None:
+    fake_sdk_client = Mock()
+    fake_sdk_client.messages.create.side_effect = [
+        tool_use_response({"wrong_field": "x"}),  # missing required "message" -> ValidationError
+        tool_use_response({"message": "hello"}),  # valid
+    ]
+    client = AnthropicClient(client=fake_sdk_client)
+
+    result = client.generate_structured(
+        prompt="Say hello",
+        schema=Greeting,
+        model="claude-sonnet-4-6",
+        prompt_version="v1",
+    )
+
+    assert result.data == Greeting(message="hello")
+    assert result.attempts == 2
+    assert fake_sdk_client.messages.create.call_count == 2
+
+
+def test_raises_after_three_failed_attempts() -> None:
+    from pydantic import ValidationError
+
+    fake_sdk_client = Mock()
+    fake_sdk_client.messages.create.return_value = tool_use_response({"wrong_field": "x"})
+    client = AnthropicClient(client=fake_sdk_client)
+
+    try:
+        client.generate_structured(
+            prompt="Say hello",
+            schema=Greeting,
+            model="claude-sonnet-4-6",
+            prompt_version="v1",
+        )
+        raise AssertionError("expected ValidationError to be raised")
+    except ValidationError:
+        pass
+
+    assert fake_sdk_client.messages.create.call_count == 3
