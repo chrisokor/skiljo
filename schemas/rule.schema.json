@@ -1,0 +1,60 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://skiljo.ai/schemas/rule.schema.json",
+  "title": "Rule",
+  "$defs": {
+    "Operator": {
+      "type": "string",
+      "enum": ["eq", "neq", "lt", "lte", "gt", "gte", "in", "not_in", "contains", "empty", "not_empty"]
+    },
+    "Predicate": {
+      "type": "object",
+      "required": ["field", "op"],
+      "properties": {
+        "field": { "type": "string" },
+        "op": { "$ref": "#/$defs/Operator" },
+        "value": {}
+      }
+    },
+    "ConditionOrPredicate": {
+      "anyOf": [
+        { "$ref": "#/$defs/Predicate" },
+        { "$ref": "#/$defs/Condition" }
+      ]
+    },
+    "Condition": {
+      "type": "object",
+      "minProperties": 1,
+      "maxProperties": 1,
+      "properties": {
+        "all": { "type": "array", "items": { "$ref": "#/$defs/ConditionOrPredicate" } },
+        "any": { "type": "array", "items": { "$ref": "#/$defs/ConditionOrPredicate" } }
+      }
+    },
+    "DeterministicRule": {
+      "type": "object",
+      "required": ["condition", "action"],
+      "properties": {
+        "condition": { "$ref": "#/$defs/Condition" },
+        "action": { "type": "string" }
+      }
+    },
+    "LLMAssistedRule": {
+      "type": "object",
+      "required": ["condition", "action", "requires_human_approval"],
+      "properties": {
+        "condition": { "$ref": "#/$defs/Condition" },
+        "action": { "type": "string" },
+        "requires_human_approval": { "type": "boolean", "const": true }
+      }
+    },
+    "HumanOnlyRule": {
+      "type": "object",
+      "required": ["condition", "action"],
+      "properties": {
+        "condition": { "$ref": "#/$defs/Condition" },
+        "action": { "type": "string" }
+      }
+    }
+  }
+}

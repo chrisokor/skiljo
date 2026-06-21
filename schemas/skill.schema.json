@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://skiljo.ai/schemas/skill.schema.json",
+  "title": "Skill",
+  "type": "object",
+  "required": ["skill_name", "version", "trigger", "inputs", "decision_zones"],
+  "properties": {
+    "skill_name": { "type": "string", "pattern": "^[a-z_][a-z0-9_]*$" },
+    "owner": { "type": "string" },
+    "co_owners": { "type": "array", "items": { "type": "string" } },
+    "version": { "type": "integer", "minimum": 1 },
+    "trigger": { "type": "string" },
+    "inputs": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name", "type"],
+        "properties": {
+          "name": { "type": "string" },
+          "type": { "enum": ["string", "number", "integer", "boolean", "array"] },
+          "description": { "type": "string" }
+        }
+      }
+    },
+    "decision_zones": {
+      "type": "object",
+      "required": ["deterministic", "llm_assisted", "human_only"],
+      "properties": {
+        "deterministic": { "type": "array", "items": { "$ref": "rule.schema.json#/$defs/DeterministicRule" } },
+        "llm_assisted": { "type": "array", "items": { "$ref": "rule.schema.json#/$defs/LLMAssistedRule" } },
+        "human_only": { "type": "array", "items": { "$ref": "rule.schema.json#/$defs/HumanOnlyRule" } }
+      }
+    },
+    "audit_requirements": { "type": "array", "items": { "type": "string" } }
+  }
+}
