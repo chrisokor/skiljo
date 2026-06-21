@@ -883,6 +883,8 @@ git add packages/core/src/skiljo_core/extraction/rules.py packages/core/tests/te
 git commit -m "feat(core): extraction pass 2 — rule extraction per segment"
 ```
 
+- [ ] **Orchestrator: write learning debrief** to `docs/learning/week2-task5-rule-extraction.md` after this task's review passes, before dispatching the next task — not an implementer-subagent step (see `CLAUDE.md`'s "Learning debriefs" section).
+
 ---
 
 ### Task 6: Extraction pass 3 — decision zone classification
@@ -1027,6 +1029,8 @@ Expected: PASS (2 tests).
 git add packages/core/src/skiljo_core/extraction/zones.py packages/core/tests/test_zones.py
 git commit -m "feat(core): extraction pass 3 — decision zone classification"
 ```
+
+- [ ] **Orchestrator: write learning debrief** to `docs/learning/week2-task6-zone-classification.md` after this task's review passes, before dispatching the next task — not an implementer-subagent step (see `CLAUDE.md`'s "Learning debriefs" section).
 
 ---
 
@@ -1305,6 +1309,8 @@ git add packages/core/src/skiljo_core/extraction/assembly.py packages/core/src/s
 git commit -m "feat(core): extraction pass 4 — assembly and schema validation"
 ```
 
+- [ ] **Orchestrator: write learning debrief** to `docs/learning/week2-task7-assembly-pipeline.md` after this task's review passes, before dispatching the next task — not an implementer-subagent step (see `CLAUDE.md`'s "Learning debriefs" section).
+
 ---
 
 ### Task 8: POST /skills/extract endpoint with background job
@@ -1553,6 +1559,8 @@ git add packages/api/src/skiljo_api packages/api/tests/test_skills_extract.py
 git commit -m "feat(api): POST /skills/extract endpoint with background job"
 ```
 
+- [ ] **Orchestrator: write learning debrief** to `docs/learning/week2-task8-extract-endpoint.md` after this task's review passes, before dispatching the next task — not an implementer-subagent step (see `CLAUDE.md`'s "Learning debriefs" section).
+
 ---
 
 ### Task 9: GET /jobs/{id} polling endpoint
@@ -1679,6 +1687,8 @@ Expected: PASS (2 tests).
 git add packages/api/src/skiljo_api/routers/jobs.py packages/api/src/skiljo_api/main.py packages/api/tests/test_jobs.py
 git commit -m "feat(api): GET /jobs/{id} polling endpoint"
 ```
+
+- [ ] **Orchestrator: write learning debrief** to `docs/learning/week2-task9-jobs-endpoint.md` after this task's review passes, before dispatching the next task — not an implementer-subagent step (see `CLAUDE.md`'s "Learning debriefs" section).
 
 ---
 
@@ -1851,6 +1861,8 @@ Expected: PASS (4 tests).
 git add packages/api/src/skiljo_api/routers/skills.py packages/api/tests/test_skills_read.py
 git commit -m "feat(api): GET /skills, /skills/{id}, /skills/{id}/versions endpoints"
 ```
+
+- [ ] **Orchestrator: write learning debrief** to `docs/learning/week2-task10-skills-read-endpoints.md` after this task's review passes, before dispatching the next task — not an implementer-subagent step (see `CLAUDE.md`'s "Learning debriefs" section).
 
 ---
 
@@ -2031,6 +2043,8 @@ git add data/eval packages/core/tests/test_eval_data.py pyproject.toml uv.lock
 git commit -m "data: 20 hand-labeled policy-to-skill examples"
 ```
 
+- [ ] **Orchestrator: write learning debrief** to `docs/learning/week2-task11-eval-data.md` after this task's review passes, before dispatching the next task — not an implementer-subagent step (see `CLAUDE.md`'s "Learning debriefs" section).
+
 ---
 
 ### Task 12: Unit tests for extraction pipeline — close coverage gaps
@@ -2173,6 +2187,8 @@ Expected: all tests pass (Week 1's `test_health.py`/`test_models.py` plus all We
 git add pyproject.toml uv.lock packages/core/tests/test_assembly.py packages/core/tests/test_pipeline.py
 git commit -m "test(core): unit tests for extraction pipeline"
 ```
+
+- [ ] **Orchestrator: write learning debrief** to `docs/learning/week2-task12-coverage.md` after this task's review passes, before dispatching the final whole-branch review — not an implementer-subagent step (see `CLAUDE.md`'s "Learning debriefs" section).
 
 ---
 

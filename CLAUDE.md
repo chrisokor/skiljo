@@ -72,3 +72,7 @@ A single test: `uv run pytest packages/api/tests/test_health.py -v` (Python) or 
 - Commit format: `<type>(<scope>): <summary>` — types: `feat, chore, docs, test, fix, refactor, data`. Keep the message to that single line — no `Co-Authored-By` trailer, no body.
 - `schemas/` (JSON Schema) is the single source of truth for types — run `make codegen` after any schema edit and commit the generated Pydantic/Zod output alongside it
 - Follow the commit-by-commit build order in `docs/DESIGN_DOCUMENT.md` Section 12 (scoped week-by-week in `docs/superpowers/plans/`) rather than improvising project structure — it's designed so every commit leaves the repo in a working, CI-passing state
+
+## Learning debriefs
+
+After every implementation task's commit lands (the same checkpoint where `.superpowers/sdd/progress.md` gets updated, or immediately after the commit when not using subagent-driven-development), write a debrief to `docs/learning/week<N>-task<M>-<slug>.md` covering what was built, the non-obvious concepts involved, why that approach was chosen, and where to look in the code. Add new concepts to `docs/learning/GLOSSARY.md` (alphabetical, link back to the debrief) the first time they appear; later debriefs link to existing entries instead of re-explaining. Update `docs/learning/README.md`'s index. This is the orchestrator's responsibility, not a subagent's. See `docs/superpowers/specs/2026-06-21-learning-debrief-process-design.md` for the full design. New weekly plans (via `writing-plans`) should include a "write learning debrief" step per task by default.
