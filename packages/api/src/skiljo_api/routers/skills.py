@@ -1,0 +1,94 @@
+import uuid
+from datetime import UTC, datetime
+
+from fastapi import APIRouter, BackgroundTasks, Depends
+from pydantic import BaseModel
+
+from skiljo_api.dependencies import get_llm_client
+from skiljo_core.db.models import Job, Policy, Skill, SkillVersion
+from skiljo_core.db.session import SessionLocal
+from skiljo_core.extraction.pipeline import run_extraction_pipeline
+from skiljo_core.llm.base import LLMClient
+
+router = APIRouter()
+
+
+class ExtractRequest(BaseModel):
+    policy_text: str
+    skill_name: str
+    trigger: str
+
+
+class ExtractResponse(BaseModel):
+    job_id: uuid.UUID
+    status: str
+
+
+def _run_extraction_job(
+    job_id: uuid.UUID, policy_id: uuid.UUID, skill_name: str, trigger: str, llm_client: LLMClient
+) -> None:
+    with SessionLocal() as session:
+        job = session.get(Job, job_id)
+        assert job is not None, f"Job {job_id} not found"
+        job.status = "running"
+        job.started_at = datetime.now(UTC)
+        session.commit()
+
+        try:
+            policy = session.get(Policy, policy_id)
+            assert policy is not None, f"Policy {policy_id} not found"
+            skill_spec = run_extraction_pipeline(
+                llm_client, policy_text=policy.raw_text, skill_name=skill_name, trigger=trigger
+            )
+            skill_row = Skill(name=skill_name)
+            session.add(skill_row)
+            session.flush()
+            version_row = SkillVersion(
+                skill_id=skill_row.id,
+                version_number=1,
+                spec=skill_spec.model_dump(mode="json"),
+                source_policy_id=policy_id,
+                status="draft",
+            )
+            session.add(version_row)
+            session.flush()
+
+            job.status = "completed"
+            job.result_ref = version_row.id
+            job.completed_at = datetime.now(UTC)
+            session.commit()
+        except Exception as exc:
+            job.status = "failed"
+            job.error = str(exc)
+            job.completed_at = datetime.now(UTC)
+            session.commit()
+
+
+@router.post("/skills/extract", status_code=202)
+def extract_skill(
+    request: ExtractRequest,
+    background_tasks: BackgroundTasks,
+    llm_client: LLMClient = Depends(get_llm_client),
+) -> ExtractResponse:
+    with SessionLocal() as session:
+        policy = Policy(raw_text=request.policy_text)
+        session.add(policy)
+        session.flush()
+
+        job = Job(
+            kind="extraction",
+            status="pending",
+            payload={
+                "policy_id": str(policy.id),
+                "skill_name": request.skill_name,
+                "trigger": request.trigger,
+            },
+        )
+        session.add(job)
+        session.commit()
+
+        job_id = job.id
+        policy_id = policy.id
+
+    background_tasks.add_task(_run_extraction_job, job_id, policy_id, request.skill_name, request.trigger, llm_client)
+    return ExtractResponse(job_id=job_id, status="pending")
