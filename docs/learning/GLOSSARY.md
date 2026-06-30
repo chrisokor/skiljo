@@ -6,6 +6,10 @@ Running list of concepts introduced across learning debriefs, alphabetical by te
 
 `typing.cast(T, x)` tells mypy to treat `x` as type `T` without any runtime check — it's a static-analysis directive only and compiles away to just `x`. Useful for narrowing union types in tests where the test's own structure guarantees the type is correct. For cases where you want a useful failure message if the assumption is wrong at runtime, prefer `assert x is not None` instead. See [Task 5](week2-task5-rule-extraction.md).
 
+## Decision zones (deterministic / llm_assisted / human_only)
+
+Three categories that classify how much autonomy the system can safely exercise on a policy rule at runtime. `deterministic` = mechanical execution from structured data; `llm_assisted` = LLM judgment needed but low-stakes enough to not require a human; `human_only` = too high-stakes or legally sensitive to automate. Zone assignment is extraction pass 3. See [Task 6](week2-task6-zone-classification.md).
+
 ## `ConditionOrPredicate` / `RootModel`
 
 A Pydantic v2 `RootModel[T]` is a model whose entire value *is* the root value `T` (no named fields). `ConditionOrPredicate = RootModel[Predicate | Condition]` lets `Condition.all` hold either predicates or nested conditions in one list. Construction: `ConditionOrPredicate(root=Predicate(...))`. Access: `.root` returns the inner value. See [Task 5](week2-task5-rule-extraction.md).
