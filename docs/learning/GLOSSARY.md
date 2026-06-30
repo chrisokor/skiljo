@@ -2,6 +2,14 @@
 
 Running list of concepts introduced across learning debriefs, alphabetical by term. Each entry links to the debrief where it's explained in full.
 
+## `cast()` (mypy type narrowing, runtime no-op)
+
+`typing.cast(T, x)` tells mypy to treat `x` as type `T` without any runtime check — it's a static-analysis directive only and compiles away to just `x`. Useful for narrowing union types in tests where the test's own structure guarantees the type is correct. For cases where you want a useful failure message if the assumption is wrong at runtime, prefer `assert x is not None` instead. See [Task 5](week2-task5-rule-extraction.md).
+
+## `ConditionOrPredicate` / `RootModel`
+
+A Pydantic v2 `RootModel[T]` is a model whose entire value *is* the root value `T` (no named fields). `ConditionOrPredicate = RootModel[Predicate | Condition]` lets `Condition.all` hold either predicates or nested conditions in one list. Construction: `ConditionOrPredicate(root=Predicate(...))`. Access: `.root` returns the inner value. See [Task 5](week2-task5-rule-extraction.md).
+
 ## Dependency injection (constructor-based)
 
 Passing a collaborator object (e.g. an SDK client) into a class's constructor instead of having the class construct it internally. Lets tests substitute a fake/mock without touching the class's code. See [Task 1](week2-task1-llm-client-protocol.md).
