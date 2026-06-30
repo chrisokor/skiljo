@@ -1,0 +1,25 @@
+Square Payment Terms — Refund, Chargeback, and Reserve Sections
+
+Refunds (Section 32)
+
+You must disclose your return and cancellation policy to customers at the point of purchase. You can process a refund through your Square Account up to one hundred and twenty (120) days from the day you accepted the payment. Refunds cannot exceed the amount shown as the total on the original sales data, except by the exact amount required to reimburse the customer for postage that you can verify was paid. Refunds must include applicable taxes. If your Square Account balance is insufficient to cover a refund, Square may recover the difference from your linked bank accounts or reserves.
+
+Chargeback Liability (Section 17)
+
+You are responsible for all chargebacks on transactions processed through your Square Account. A chargeback occurs when a transaction amount is disputed, reversed, or charged back for any reason by the applicable payment network, our processor, or a customer or its financial institution, including where transactions are unauthorized or unlawful.
+
+Chargeback Collections (Section 18)
+
+If a chargeback is filed against a transaction processed through your Square Account, Square may: (a) withhold the disputed amount from your payouts; (b) draw the amount from your Reserve; or (c) debit your linked bank account. If you lose a chargeback dispute, you must pay the full chargeback amount immediately upon demand, including any associated network fees and collection costs.
+
+Reserve Withholding (Section 13)
+
+Square may require you to maintain a reserve balance in your Square Account based on your business risk profile. The reserve amount is determined by Square to cover potential losses, including chargebacks. You grant Square a security interest in and lien on any and all funds held in any Reserve, and authorize Square to make withdrawals or debits from the Reserve without prior notice to you.
+
+Recovery Authorizations (Section 2)
+
+You authorize Square to debit your linked bank accounts and freeze or offset balances across all connected Square accounts to recover amounts you owe, including fees, fines, penalties, or chargeback amounts, without prior notice.
+
+Policy Disclosure Meta-Rule
+
+Network Rules require that you disclose your own return and cancellation policy to customers at the time of purchase. Failure to disclose an applicable return policy may subject you to liability for chargebacks.

@@ -1,0 +1,67 @@
+skill_name: process_vercel_pro_monthly_bill
+version: 1
+trigger: monthly_billing_cycle_ends
+inputs:
+  - name: deploying_seats
+    type: integer
+    description: "Total number of Owner/Member seats (including the 1 included)"
+  - name: fast_data_transfer_tb
+    type: number
+    description: "Fast Data Transfer consumed in TB this month"
+  - name: edge_requests_millions
+    type: number
+    description: "Edge Requests consumed in millions this month"
+  - name: monthly_credit_consumed_usd
+    type: number
+    description: "Dollar amount of the $20 monthly credit consumed so far"
+  - name: on_demand_spend_usd
+    type: number
+    description: "Dollar amount of on-demand usage charges this billing cycle"
+  - name: add_ons_enabled
+    type: array
+    description: "List of enabled add-on feature names"
+decision_zones:
+  deterministic:
+    - condition:
+        all:
+          - field: deploying_seats
+            op: gt
+            value: 1
+      action: charge_additional_seats_at_20_per_seat
+    - condition:
+        all:
+          - field: fast_data_transfer_tb
+            op: lte
+            value: 1.0
+          - field: edge_requests_millions
+            op: lte
+            value: 10.0
+      action: no_overage_charge_within_included_allocation
+    - condition:
+        any:
+          - field: fast_data_transfer_tb
+            op: gt
+            value: 1.0
+          - field: edge_requests_millions
+            op: gt
+            value: 10.0
+      action: deduct_overage_from_monthly_credit_then_charge_on_demand
+    - condition:
+        all:
+          - field: monthly_credit_consumed_usd
+            op: gte
+            value: 15.0
+      action: send_75_percent_credit_usage_notification
+    - condition:
+        all:
+          - field: on_demand_spend_usd
+            op: gte
+            value: 200.0
+      action: trigger_spend_management_notification
+    - condition:
+        all:
+          - field: add_ons_enabled
+            op: not_empty
+      action: charge_enabled_add_ons_at_published_rates
+  llm_assisted: []
+  human_only: []

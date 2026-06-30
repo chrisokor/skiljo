@@ -1,0 +1,51 @@
+skill_name: process_notion_refund_request
+version: 1
+trigger: customer_requests_refund
+inputs:
+  - name: billing_cadence
+    type: string
+    description: "monthly or annual"
+  - name: days_since_payment
+    type: integer
+  - name: customer_region
+    type: string
+    description: "ISO region code; EU/UK get a mandatory override window"
+  - name: is_accidental_member_addition
+    type: boolean
+decision_zones:
+  deterministic:
+    - condition:
+        any:
+          - all:
+              - field: customer_region
+                op: in
+                value: ["EU", "UK"]
+              - field: days_since_payment
+                op: lte
+                value: 14
+          - all:
+              - field: billing_cadence
+                op: eq
+                value: monthly
+              - field: days_since_payment
+                op: lte
+                value: 3
+          - all:
+              - field: billing_cadence
+                op: eq
+                value: annual
+              - field: days_since_payment
+                op: lte
+                value: 30
+      action: approve_refund
+    - condition:
+        all:
+          - field: is_accidental_member_addition
+            op: eq
+            value: true
+          - field: days_since_payment
+            op: lte
+            value: 3
+      action: approve_seat_refund
+  llm_assisted: []
+  human_only: []

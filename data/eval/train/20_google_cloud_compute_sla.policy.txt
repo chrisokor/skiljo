@@ -1,0 +1,35 @@
+Google Cloud Compute Engine Service Level Agreement
+
+[Synthesized from POLICY_CORPUS.md description — source page at https://cloud.google.com/compute/sla was truncated by the fetch tool; content below is representative per the corpus research notes]
+
+Covered Service
+
+This SLA applies to Google Compute Engine virtual machine instances.
+
+Monthly Uptime Percentage and Service Credit Tiers
+
+Instances in Multiple Zones:
+- Less than 99.99% but greater than or equal to 99.0%: 10% credit of monthly charges
+- Less than 99.0% but greater than or equal to 95.0%: 25% credit of monthly charges
+- Less than 95.0%: 50% credit of monthly charges
+
+Single Instance:
+- Less than 99.5% but greater than or equal to 99.0%: 10% credit of monthly charges
+- Less than 99.0% but greater than or equal to 95.0%: 25% credit of monthly charges
+- Less than 95.0%: 50% credit of monthly charges
+
+Service Credit Cap
+
+In no event will the total service credits issued in any single billing month exceed 50% of the amounts paid or payable by you for Compute Engine in that month.
+
+Claim Notification Window
+
+To receive a Service Credit, you must submit a request within 30 days of the incident. Claims submitted after 30 days will not be eligible for credit. Requests must be submitted through the Google Cloud Console support portal and must include the relevant resource IDs, timestamps, and a description of the incident.
+
+Exclusions
+
+This SLA does not apply to features or services that are not covered under the Compute Engine SLA, including: Preemptible VM instances, Spot VMs, services in preview/beta, and unavailability caused by customer actions, force majeure events, or third-party software.
+
+Related SLA Family
+
+Google Cloud publishes separate SLAs for sibling services including Cloud Storage, BigQuery, Cloud Run, Cloud Functions, Cloud Observability, and Identity Platform. Terms vary across these sibling SLAs.

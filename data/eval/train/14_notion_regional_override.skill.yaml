@@ -1,0 +1,69 @@
+skill_name: process_notion_refund_with_regional_override
+version: 1
+trigger: customer_requests_refund
+inputs:
+  - name: billing_cadence
+    type: string
+    description: "monthly or annual"
+  - name: days_since_payment
+    type: integer
+  - name: customer_region
+    type: string
+    description: "ISO region code; EU and UK have a mandatory 14-day statutory window"
+  - name: is_accidental_member_addition
+    type: boolean
+  - name: credits_unused
+    type: boolean
+    description: "True if the purchased Notion credits have not been used at all"
+decision_zones:
+  deterministic:
+    - condition:
+        all:
+          - field: customer_region
+            op: in
+            value: ["EU", "UK"]
+          - field: days_since_payment
+            op: lte
+            value: 14
+      action: approve_statutory_14_day_refund
+    - condition:
+        all:
+          - field: customer_region
+            op: not_in
+            value: ["EU", "UK"]
+          - field: billing_cadence
+            op: eq
+            value: monthly
+          - field: days_since_payment
+            op: lte
+            value: 3
+      action: approve_refund
+    - condition:
+        all:
+          - field: customer_region
+            op: not_in
+            value: ["EU", "UK"]
+          - field: billing_cadence
+            op: eq
+            value: annual
+          - field: days_since_payment
+            op: lte
+            value: 30
+      action: approve_refund
+    - condition:
+        all:
+          - field: is_accidental_member_addition
+            op: eq
+            value: true
+          - field: days_since_payment
+            op: lte
+            value: 3
+      action: approve_prorated_seat_refund
+    - condition:
+        all:
+          - field: credits_unused
+            op: eq
+            value: true
+      action: approve_credits_refund
+  llm_assisted: []
+  human_only: []

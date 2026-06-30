@@ -1,0 +1,68 @@
+skill_name: process_atlassian_refund_request
+version: 1
+trigger: customer_requests_refund
+inputs:
+  - name: subscription_type
+    type: string
+    description: "monthly_cloud, annual_cloud, data_center, marketplace_app, enterprise"
+  - name: is_initial_purchase
+    type: boolean
+    description: "True if this is the first purchase of the product (not a renewal or upgrade)"
+  - name: is_renewal_or_upgrade
+    type: boolean
+    description: "True if this charge is for a renewal or upgrade"
+  - name: days_since_purchase
+    type: integer
+    description: "Days since the initial purchase date"
+  - name: in_first_paid_month_after_trial
+    type: boolean
+    description: "True if the customer is still within their first paid month after the trial (monthly only)"
+decision_zones:
+  deterministic:
+    - condition:
+        all:
+          - field: is_renewal_or_upgrade
+            op: eq
+            value: true
+      action: deny_refund_renewals_and_upgrades_nonrefundable
+    - condition:
+        all:
+          - field: subscription_type
+            op: eq
+            value: monthly_cloud
+          - field: is_initial_purchase
+            op: eq
+            value: true
+          - field: in_first_paid_month_after_trial
+            op: eq
+            value: true
+      action: approve_refund
+    - condition:
+        all:
+          - field: subscription_type
+            op: in
+            value: ["annual_cloud", "data_center", "marketplace_app"]
+          - field: is_initial_purchase
+            op: eq
+            value: true
+          - field: days_since_purchase
+            op: lte
+            value: 30
+      action: approve_refund
+    - condition:
+        all:
+          - field: subscription_type
+            op: in
+            value: ["annual_cloud", "data_center", "marketplace_app"]
+          - field: days_since_purchase
+            op: gt
+            value: 30
+      action: deny_refund_outside_window
+    - condition:
+        all:
+          - field: subscription_type
+            op: eq
+            value: enterprise
+      action: deny_refund_enterprise_governed_by_separate_agreement
+  llm_assisted: []
+  human_only: []

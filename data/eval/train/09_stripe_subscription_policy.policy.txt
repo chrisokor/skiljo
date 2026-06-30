@@ -1,0 +1,29 @@
+Stripe Subscription Pricing and Cancellation Policy
+
+Entitlements and Usage
+
+Usage entitlement is the amount of usage included in your Subscription Plan. You can monitor your entitlements and usage via the Dashboard. Subscription fees cover usage up to the specified limit during the current term.
+
+Overage Fees
+
+When your usage exceeds the entitlement limit, overage Fees will apply for this excess usage. Additional fees may be disclosed in the specific plan details. Stripe reserves discretion to waive overages.
+
+Non-Refundable Policy
+
+Fees are non-refundable, and we do not offer prorated refunds if you cancel before the end of your Subscription Plan term. You remain responsible for all subscription fees for the full commitment period, including any applicable overage fees incurred during that term.
+
+Plan Changes
+
+You can upgrade or downgrade your Subscription Plan, though timing varies by service. For most services, plan changes take effect at the start of your next billing period. Some services restrict downgrades below your initial plan level during the commitment term.
+
+Payment Failures and Suspension
+
+Stripe reserves the right to temporarily suspend your access to Subscription Services if payment fails or charges are disputed. Stripe may also redirect charges to your account balance.
+
+Automatic Renewal
+
+Subscription plans automatically renew for one month or one year (depending on your selected term) unless you schedule a cancellation before the renewal date. Cancellations take effect at the end of your current term, after which your account transitions to pay-as-you-go pricing.
+
+Exceptions
+
+These terms do not limit any rights you may have under applicable law, including rights related to statutory refunds or consumer protection where required by applicable jurisdiction.

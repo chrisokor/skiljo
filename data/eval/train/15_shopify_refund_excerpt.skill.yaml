@@ -1,0 +1,62 @@
+skill_name: process_shopify_subscription_refund_excerpt
+version: 1
+trigger: customer_requests_refund
+inputs:
+  - name: subscription_type
+    type: string
+    description: "monthly, annual, first_invoice_after_trial, sepa_direct_debit, brazil_merchant"
+  - name: days_since_invoice
+    type: integer
+  - name: is_billing_error
+    type: boolean
+    description: "True if customer claims they were charged in error"
+decision_zones:
+  deterministic:
+    - condition:
+        all:
+          - field: is_billing_error
+            op: eq
+            value: false
+          - field: subscription_type
+            op: not_in
+            value: ["first_invoice_after_trial", "annual", "sepa_direct_debit", "brazil_merchant"]
+          - field: days_since_invoice
+            op: gt
+            value: 7
+      action: deny_refund_plans_nonrefundable_per_tos
+  llm_assisted: []
+  human_only:
+    - condition:
+        any:
+          - all:
+              - field: subscription_type
+                op: eq
+                value: monthly
+              - field: days_since_invoice
+                op: lte
+                value: 7
+          - all:
+              - field: subscription_type
+                op: in
+                value: ["first_invoice_after_trial", "annual"]
+              - field: days_since_invoice
+                op: lte
+                value: 30
+          - all:
+              - field: subscription_type
+                op: eq
+                value: sepa_direct_debit
+              - field: days_since_invoice
+                op: lte
+                value: 14
+          - all:
+              - field: subscription_type
+                op: eq
+                value: brazil_merchant
+              - field: days_since_invoice
+                op: lte
+                value: 90
+          - field: is_billing_error
+            op: eq
+            value: true
+      action: escalate_to_shopify_support_for_case_by_case_review

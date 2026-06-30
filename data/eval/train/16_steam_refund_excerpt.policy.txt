@@ -1,0 +1,11 @@
+Steam Refund Policy — Excerpt
+
+[This file contains an excerpt only: the base 14-day/2-hour rule and the DLC exception clause. Full document reserved for data/eval/test/.]
+
+Base Refund Rule
+
+Steam offers refunds for purchases within two weeks of purchase and with less than two hours of playtime. This refund offer applies to games and software applications on the Steam store.
+
+DLC Exception
+
+DLC purchased from the Steam store is refundable within fourteen days of purchase, and if the underlying title has been played for less than two hours since the DLC was purchased, so long as the DLC has not been consumed, modified, or transferred.

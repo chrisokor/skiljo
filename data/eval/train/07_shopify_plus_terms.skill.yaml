@@ -1,0 +1,29 @@
+skill_name: process_shopify_plus_refund_request
+version: 1
+trigger: customer_requests_refund
+inputs:
+  - name: days_since_invoice
+    type: integer
+    description: "Days elapsed since the disputed invoice date"
+  - name: contract_term_ended
+    type: boolean
+    description: "True if the customer's contracted Shopify Plus term has ended"
+decision_zones:
+  deterministic:
+    - condition:
+        all:
+          - field: contract_term_ended
+            op: eq
+            value: false
+      action: deny_refund_prepaid_fees_nonrefundable
+  llm_assisted: []
+  human_only:
+    - condition:
+        all:
+          - field: days_since_invoice
+            op: lte
+            value: 30
+          - field: contract_term_ended
+            op: eq
+            value: false
+      action: escalate_billing_dispute_to_shopify_plus_support

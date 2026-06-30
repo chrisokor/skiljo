@@ -1,0 +1,34 @@
+skill_name: process_stripe_bundled_plan_refund
+version: 1
+trigger: customer_requests_refund_or_cancellation
+inputs:
+  - name: subscription_active
+    type: boolean
+  - name: days_until_renewal
+    type: integer
+    description: "Days remaining before the next auto-renewal date"
+  - name: cancellation_notice_given_business_days
+    type: integer
+    description: "Business days of advance notice given before renewal date"
+  - name: subscription_term_ended
+    type: boolean
+    description: "True if the current subscription term has already ended"
+decision_zones:
+  deterministic:
+    - condition:
+        all:
+          - field: subscription_term_ended
+            op: eq
+            value: false
+      action: deny_refund_no_prorated_refunds
+    - condition:
+        all:
+          - field: cancellation_notice_given_business_days
+            op: gte
+            value: 2
+          - field: subscription_term_ended
+            op: eq
+            value: false
+      action: schedule_cancellation_at_term_end
+  llm_assisted: []
+  human_only: []

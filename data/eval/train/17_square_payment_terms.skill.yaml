@@ -1,0 +1,71 @@
+skill_name: process_square_merchant_refund_or_chargeback
+version: 1
+trigger: refund_or_chargeback_event
+inputs:
+  - name: event_type
+    type: string
+    description: "refund_request, chargeback_filed, chargeback_lost, reserve_draw"
+  - name: days_since_original_payment
+    type: integer
+    description: "Days elapsed since the original payment was accepted"
+  - name: refund_amount_usd
+    type: number
+    description: "Requested refund amount in USD"
+  - name: original_payment_amount_usd
+    type: number
+    description: "Original payment total in USD"
+  - name: account_balance_sufficient
+    type: boolean
+    description: "True if the Square account balance covers the refund amount"
+  - name: return_policy_disclosed_at_purchase
+    type: boolean
+    description: "True if the merchant disclosed their return/cancellation policy to the customer at purchase"
+decision_zones:
+  deterministic:
+    - condition:
+        all:
+          - field: event_type
+            op: eq
+            value: refund_request
+          - field: days_since_original_payment
+            op: lte
+            value: 120
+      action: process_refund
+    - condition:
+        all:
+          - field: event_type
+            op: eq
+            value: refund_request
+          - field: days_since_original_payment
+            op: gt
+            value: 120
+      action: deny_refund_outside_120_day_window
+    - condition:
+        all:
+          - field: event_type
+            op: eq
+            value: refund_request
+          - field: account_balance_sufficient
+            op: eq
+            value: false
+      action: recover_refund_shortfall_from_linked_account_or_reserve
+    - condition:
+        all:
+          - field: event_type
+            op: eq
+            value: chargeback_lost
+      action: debit_chargeback_amount_from_account_or_reserve
+    - condition:
+        all:
+          - field: return_policy_disclosed_at_purchase
+            op: eq
+            value: false
+      action: flag_policy_disclosure_violation
+  llm_assisted: []
+  human_only:
+    - condition:
+        all:
+          - field: event_type
+            op: eq
+            value: chargeback_filed
+      action: escalate_chargeback_dispute_for_review

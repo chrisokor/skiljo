@@ -1,0 +1,52 @@
+skill_name: process_twilio_billing_dispute_or_late_payment
+version: 1
+trigger: billing_dispute_or_late_payment_event
+inputs:
+  - name: event_type
+    type: string
+    description: "dispute or late_payment"
+  - name: days_since_invoice
+    type: integer
+    description: "Days elapsed since the invoice date"
+  - name: days_since_written_notice
+    type: integer
+    description: "Days elapsed since Twilio's written notice of non-payment (for late_payment events)"
+  - name: monthly_fees_usd
+    type: number
+    description: "Total monthly fees billed"
+  - name: dispute_submitted_in_writing
+    type: boolean
+decision_zones:
+  deterministic:
+    - condition:
+        all:
+          - field: event_type
+            op: eq
+            value: dispute
+          - field: days_since_invoice
+            op: lte
+            value: 60
+          - field: dispute_submitted_in_writing
+            op: eq
+            value: true
+      action: accept_dispute_for_review
+    - condition:
+        all:
+          - field: event_type
+            op: eq
+            value: dispute
+          - field: days_since_invoice
+            op: gt
+            value: 60
+      action: reject_dispute_outside_window
+    - condition:
+        all:
+          - field: event_type
+            op: eq
+            value: late_payment
+          - field: days_since_written_notice
+            op: gt
+            value: 15
+      action: assess_late_fee_and_suspend
+  llm_assisted: []
+  human_only: []

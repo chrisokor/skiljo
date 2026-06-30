@@ -1,0 +1,23 @@
+Twilio Terms of Service — Billing, Payment, and Dispute Sections
+
+Payment Methods
+
+Customers must maintain sufficient funds to cover fees. Twilio may suspend services if the account lacks funds or the payment method declines.
+
+Credit card payments: available for accounts with monthly fees below $8,000. Once monthly fees exceed $8,000, credit card payments are prohibited and bank transfers (ACH or wire transfer in US dollars) become mandatory.
+
+Invoicing: approved customers receive monthly invoices via email and must pay within 30 days.
+
+Non-Refundable Fees
+
+Payment obligations are non-cancelable and fees, once paid, are non-refundable, except in cases of service non-conformity.
+
+Billing Dispute Window
+
+You will notify Twilio in writing within sixty (60) days of the date Twilio bills you for any Fees that you wish to dispute. Disputes submitted after sixty (60) days will not be eligible for review. During a pending dispute, you may withhold the disputed amount provided you act reasonably and cooperate diligently to resolve the disagreement.
+
+Late Payment and Suspension
+
+If you fail to pay the Fees and remedy such failure within fifteen (15) days of the date Twilio provides you with written notice of the same, then Twilio may:
+(i) assess, and you will pay, a late fee of the lesser of 1.5% per month or the maximum amount allowable by law; and
+(ii) suspend the provision of the Services to all of your accounts until the Fees due are paid in full.

@@ -1,0 +1,81 @@
+skill_name: process_aws_audit_manager_sla_credit
+version: 1
+trigger: sla_credit_claim_submitted
+inputs:
+  - name: monthly_uptime_percentage
+    type: number
+    description: "Observed monthly uptime percentage (0-100)"
+  - name: days_since_incident_billing_cycle_end
+    type: integer
+    description: "Number of billing cycles since the incident occurred (must be <= 2)"
+  - name: claim_includes_sla_credit_request_subject
+    type: boolean
+  - name: claim_includes_billing_cycle_region_logs
+    type: boolean
+decision_zones:
+  deterministic:
+    - condition:
+        all:
+          - field: claim_includes_sla_credit_request_subject
+            op: eq
+            value: true
+          - field: claim_includes_billing_cycle_region_logs
+            op: eq
+            value: true
+          - field: days_since_incident_billing_cycle_end
+            op: lte
+            value: 2
+          - field: monthly_uptime_percentage
+            op: lt
+            value: 99.9
+          - field: monthly_uptime_percentage
+            op: gte
+            value: 99.0
+      action: issue_credit_10_percent
+    - condition:
+        all:
+          - field: claim_includes_sla_credit_request_subject
+            op: eq
+            value: true
+          - field: claim_includes_billing_cycle_region_logs
+            op: eq
+            value: true
+          - field: days_since_incident_billing_cycle_end
+            op: lte
+            value: 2
+          - field: monthly_uptime_percentage
+            op: lt
+            value: 99.0
+          - field: monthly_uptime_percentage
+            op: gte
+            value: 95.0
+      action: issue_credit_25_percent
+    - condition:
+        all:
+          - field: claim_includes_sla_credit_request_subject
+            op: eq
+            value: true
+          - field: claim_includes_billing_cycle_region_logs
+            op: eq
+            value: true
+          - field: days_since_incident_billing_cycle_end
+            op: lte
+            value: 2
+          - field: monthly_uptime_percentage
+            op: lt
+            value: 95.0
+      action: issue_credit_100_percent
+  llm_assisted: []
+  human_only:
+    - condition:
+        any:
+          - field: claim_includes_sla_credit_request_subject
+            op: eq
+            value: false
+          - field: claim_includes_billing_cycle_region_logs
+            op: eq
+            value: false
+          - field: days_since_incident_billing_cycle_end
+            op: gt
+            value: 2
+      action: reject_claim_missing_requirements

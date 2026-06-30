@@ -1,0 +1,27 @@
+OpenAI Services Agreement — Billing and Refund Sections
+
+[Synthesized from POLICY_CORPUS.md description — source URL https://openai.com/policies/services-agreement/ returned HTTP 403 at fetch time]
+
+Fees and Payment
+
+Customer agrees to pay all fees specified in the applicable Order Form or as displayed in the OpenAI usage console. All fees are due within thirty (30) days of invoice unless otherwise specified. Amounts payable are non-refundable except as expressly stated in this Agreement.
+
+Late Fees
+
+If Customer fails to pay any amounts due within the applicable payment period, OpenAI may assess a late fee of 1.5% per month (or the maximum rate permitted by law, if lower) on the outstanding balance.
+
+Minimum Commitments
+
+If Customer has agreed to a minimum spend commitment in an Order Form, Customer remains obligated for that minimum amount regardless of actual usage. Customer may not cancel or terminate the commitment period without liability for the full contracted minimum.
+
+IP Infringement Refund Trigger
+
+If OpenAI reasonably believes the Services are likely to become the subject of an intellectual property infringement claim, OpenAI may, at its option: (a) procure the right to continue providing the Services; (b) modify the Services to make them non-infringing; or (c) if neither (a) nor (b) is commercially reasonable, terminate the affected Services and refund any prepaid, unused fees for the terminated Services pro-rated to the date of termination.
+
+Termination Refund Condition
+
+If OpenAI terminates the Services for convenience, OpenAI will refund any prepaid fees covering the remainder of the then-current term on a pro-rated basis. If Customer terminates for cause due to a material breach by OpenAI that OpenAI fails to cure within thirty (30) days of written notice, Customer is entitled to a pro-rated refund of prepaid fees for the unused portion of the term.
+
+Termination for Cause by OpenAI
+
+If OpenAI terminates the Agreement for Customer's material breach, no refund is owed and all outstanding fees become immediately due and payable.

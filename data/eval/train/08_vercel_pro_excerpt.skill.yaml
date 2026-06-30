@@ -1,0 +1,53 @@
+skill_name: process_vercel_pro_billing_overage
+version: 1
+trigger: monthly_billing_cycle_ends
+inputs:
+  - name: fast_data_transfer_tb
+    type: number
+    description: "Fast Data Transfer consumed in TB this month"
+  - name: edge_requests_millions
+    type: number
+    description: "Edge Requests consumed in millions this month"
+  - name: additional_seats
+    type: integer
+    description: "Number of additional deploying seats (Owner/Member) beyond the 1 included"
+  - name: monthly_credit_consumed_usd
+    type: number
+    description: "Amount of the $20 monthly credit already consumed"
+decision_zones:
+  deterministic:
+    - condition:
+        all:
+          - field: fast_data_transfer_tb
+            op: lte
+            value: 1.0
+          - field: edge_requests_millions
+            op: lte
+            value: 10.0
+          - field: additional_seats
+            op: eq
+            value: 0
+      action: charge_platform_fee_only
+    - condition:
+        all:
+          - field: monthly_credit_consumed_usd
+            op: gte
+            value: 15.0
+      action: send_75_percent_credit_notification
+    - condition:
+        any:
+          - field: fast_data_transfer_tb
+            op: gt
+            value: 1.0
+          - field: edge_requests_millions
+            op: gt
+            value: 10.0
+      action: apply_monthly_credit_then_charge_on_demand
+    - condition:
+        all:
+          - field: additional_seats
+            op: gt
+            value: 0
+      action: charge_additional_seats_at_20_per_seat
+  llm_assisted: []
+  human_only: []

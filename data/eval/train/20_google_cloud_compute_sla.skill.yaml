@@ -1,0 +1,162 @@
+skill_name: process_google_cloud_compute_sla_credit
+version: 1
+trigger: sla_credit_claim_submitted
+inputs:
+  - name: instance_configuration
+    type: string
+    description: "multiple_zones or single_instance"
+  - name: monthly_uptime_percentage
+    type: number
+    description: "Observed monthly uptime percentage (0-100)"
+  - name: days_since_incident
+    type: integer
+    description: "Days elapsed since the SLA incident"
+  - name: claim_submitted_via_support_portal
+    type: boolean
+  - name: claim_includes_resource_ids_and_timestamps
+    type: boolean
+  - name: monthly_compute_charges_usd
+    type: number
+    description: "Total Compute Engine charges for the billing month"
+decision_zones:
+  deterministic:
+    - condition:
+        all:
+          - field: days_since_incident
+            op: gt
+            value: 30
+      action: reject_claim_outside_30_day_window
+    - condition:
+        all:
+          - field: claim_submitted_via_support_portal
+            op: eq
+            value: false
+      action: reject_claim_wrong_submission_channel
+    - condition:
+        all:
+          - field: claim_includes_resource_ids_and_timestamps
+            op: eq
+            value: false
+      action: reject_claim_missing_details
+    - condition:
+        all:
+          - field: claim_submitted_via_support_portal
+            op: eq
+            value: true
+          - field: claim_includes_resource_ids_and_timestamps
+            op: eq
+            value: true
+          - field: days_since_incident
+            op: lte
+            value: 30
+          - field: instance_configuration
+            op: eq
+            value: multiple_zones
+          - field: monthly_uptime_percentage
+            op: lt
+            value: 99.99
+          - field: monthly_uptime_percentage
+            op: gte
+            value: 99.0
+      action: issue_credit_10_percent_capped_at_50_percent_monthly_bill
+    - condition:
+        all:
+          - field: claim_submitted_via_support_portal
+            op: eq
+            value: true
+          - field: claim_includes_resource_ids_and_timestamps
+            op: eq
+            value: true
+          - field: days_since_incident
+            op: lte
+            value: 30
+          - field: instance_configuration
+            op: eq
+            value: multiple_zones
+          - field: monthly_uptime_percentage
+            op: lt
+            value: 99.0
+          - field: monthly_uptime_percentage
+            op: gte
+            value: 95.0
+      action: issue_credit_25_percent_capped_at_50_percent_monthly_bill
+    - condition:
+        all:
+          - field: claim_submitted_via_support_portal
+            op: eq
+            value: true
+          - field: claim_includes_resource_ids_and_timestamps
+            op: eq
+            value: true
+          - field: days_since_incident
+            op: lte
+            value: 30
+          - field: instance_configuration
+            op: eq
+            value: multiple_zones
+          - field: monthly_uptime_percentage
+            op: lt
+            value: 95.0
+      action: issue_credit_50_percent_capped_at_50_percent_monthly_bill
+    - condition:
+        all:
+          - field: claim_submitted_via_support_portal
+            op: eq
+            value: true
+          - field: claim_includes_resource_ids_and_timestamps
+            op: eq
+            value: true
+          - field: days_since_incident
+            op: lte
+            value: 30
+          - field: instance_configuration
+            op: eq
+            value: single_instance
+          - field: monthly_uptime_percentage
+            op: lt
+            value: 99.5
+          - field: monthly_uptime_percentage
+            op: gte
+            value: 99.0
+      action: issue_credit_10_percent_capped_at_50_percent_monthly_bill
+    - condition:
+        all:
+          - field: claim_submitted_via_support_portal
+            op: eq
+            value: true
+          - field: claim_includes_resource_ids_and_timestamps
+            op: eq
+            value: true
+          - field: days_since_incident
+            op: lte
+            value: 30
+          - field: instance_configuration
+            op: eq
+            value: single_instance
+          - field: monthly_uptime_percentage
+            op: lt
+            value: 99.0
+          - field: monthly_uptime_percentage
+            op: gte
+            value: 95.0
+      action: issue_credit_25_percent_capped_at_50_percent_monthly_bill
+    - condition:
+        all:
+          - field: claim_submitted_via_support_portal
+            op: eq
+            value: true
+          - field: claim_includes_resource_ids_and_timestamps
+            op: eq
+            value: true
+          - field: days_since_incident
+            op: lte
+            value: 30
+          - field: instance_configuration
+            op: eq
+            value: single_instance
+          - field: monthly_uptime_percentage
+            op: lt
+            value: 95.0
+      action: issue_credit_50_percent_capped_at_50_percent_monthly_bill
+  llm_assisted: []
+  human_only: []

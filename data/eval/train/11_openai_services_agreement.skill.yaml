@@ -1,0 +1,54 @@
+skill_name: process_openai_services_agreement_refund
+version: 1
+trigger: refund_or_termination_event
+inputs:
+  - name: event_type
+    type: string
+    description: "termination_by_openai_convenience, termination_by_customer_for_cause, termination_by_openai_for_breach, ip_infringement_trigger"
+  - name: openai_cure_period_expired
+    type: boolean
+    description: "True if customer gave written notice and OpenAI failed to cure within 30 days"
+  - name: days_overdue
+    type: integer
+    description: "Days past the payment due date"
+  - name: prepaid_unused_fees_usd
+    type: number
+    description: "Value of prepaid but unused fees remaining in the current term"
+decision_zones:
+  deterministic:
+    - condition:
+        all:
+          - field: event_type
+            op: eq
+            value: termination_by_openai_convenience
+      action: issue_prorated_refund_of_prepaid_unused_fees
+    - condition:
+        all:
+          - field: event_type
+            op: eq
+            value: termination_by_customer_for_cause
+          - field: openai_cure_period_expired
+            op: eq
+            value: true
+      action: issue_prorated_refund_of_prepaid_unused_fees
+    - condition:
+        all:
+          - field: event_type
+            op: eq
+            value: termination_by_openai_for_breach
+      action: deny_refund_and_collect_outstanding_fees
+    - condition:
+        all:
+          - field: days_overdue
+            op: gt
+            value: 30
+      action: assess_late_fee_1_5_percent_per_month
+  llm_assisted:
+    - condition:
+        all:
+          - field: event_type
+            op: eq
+            value: ip_infringement_trigger
+      action: evaluate_and_choose_remedy_procure_modify_or_terminate_with_refund
+      requires_human_approval: true
+  human_only: []

@@ -1,0 +1,23 @@
+Shopify Plus Terms of Service — Payment and Refund Sections
+
+[Synthesized from POLICY_CORPUS.md description — source URL https://www.shopify.com/plus/legal/terms redirected to an authenticated admin endpoint at fetch time]
+
+Fees and Payment
+
+You agree to pay all fees specified in the Shopify Plus Order Form. All fees are due in advance and are non-refundable. Shopify will charge the payment method on file on the billing date specified in your Order Form.
+
+Non-Refundable Prepaid Fees
+
+Prepaid subscription fees for Shopify Plus are non-refundable. This applies to all plan tiers and contract lengths. If you terminate your Shopify Plus agreement before the end of your committed term, you remain responsible for the full contracted amount, and no refunds or credits will be issued for the unused portion of the term.
+
+No Prorated Refunds
+
+Shopify Plus does not provide prorated refunds for any partial months or unused portions of a subscription period. All payments made under a Shopify Plus agreement are earned in full upon payment.
+
+Disputes and Adjustments
+
+Any billing disputes must be submitted in writing to Shopify within thirty (30) days of the relevant invoice date. Disputes submitted after this period will not be eligible for review.
+
+Automatic Renewal
+
+Your Shopify Plus subscription will automatically renew for successive terms equal in length to the original term unless you provide written notice of non-renewal at least sixty (60) days before the end of the then-current term.

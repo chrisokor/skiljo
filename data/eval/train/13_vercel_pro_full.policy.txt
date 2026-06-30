@@ -1,0 +1,60 @@
+Vercel Pro Plan — Full Billing Documentation
+
+Plan Overview
+
+The Vercel Pro plan is designed for professional developers, freelancers, and businesses who need enhanced features and team collaboration.
+
+Platform Fee
+
+- $20/month Pro platform fee
+  - 1 deploying team seat included
+  - $20/month in monthly usage credit
+
+Team Seats
+
+On the Pro plan, your team starts with 1 included paid seat.
+
+- Additional deploying seats (Owner or Member roles): $20/month each
+- Viewer seats (read-only): Free (unlimited)
+
+Monthly Credit
+
+Every Pro plan includes $20 in monthly credit that can be used flexibly across all usage dimensions (managed infrastructure billable resources). The credit applies after the included free allocations are exhausted.
+
+Included Infrastructure Allocations (per month):
+- 1 TB Fast Data Transfer
+- 10,000,000 Edge Requests
+
+Credit and Allocation Cascade Logic:
+1. Included allocations are consumed first (no charge).
+2. After included allocations are exhausted, usage is charged against the $20 monthly credit.
+3. After the monthly credit is exhausted, usage is billed on-demand at per-unit rates.
+
+Credit Expiration
+
+The monthly credit and included allocations expire at the end of each billing month if unused. They reset at the beginning of the following month. Unused credit does not roll over.
+
+Spend Notifications
+
+You will receive automatic notifications when your usage has reached 75% of your monthly credit. Once you exceed the monthly credit, Vercel switches your team to on-demand usage and you will receive daily and weekly summary emails of your usage.
+
+Spend Management
+
+You can configure alerts and automatic actions when your account reaches a certain spend threshold. By default, Vercel enables spend management notifications for new customers at a spend amount of $200 per billing cycle.
+
+Paid Add-Ons
+
+The following features are available as add-ons:
+- SAML Single Sign-On: $300/month
+- HIPAA BAA: $350/month
+- Advanced Deployment Protection: $150/month
+- Flags Explorer: $250/month
+- Observability Plus: $1.20 per 1 million events
+- Preview Deployment Suffix: $100/month
+- Static IPs: $100/month per project, plus Private Data Transfer
+- Web Analytics Plus: $10/month
+- Speed Insights: $10/month per project
+
+Downgrading
+
+When you downgrade from a Pro to Hobby plan, all active members except for the original owner are removed. Each account is limited to one team on the Hobby plan.

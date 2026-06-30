@@ -1,0 +1,26 @@
+skill_name: process_github_payment_refund_request
+version: 1
+trigger: customer_requests_refund
+inputs:
+  - name: request_type
+    type: string
+    description: "partial_month, downgrade, unused_months, other"
+  - name: legal_refund_required
+    type: boolean
+    description: "True if applicable law mandates a refund regardless of policy"
+decision_zones:
+  deterministic:
+    - condition:
+        all:
+          - field: legal_refund_required
+            op: eq
+            value: true
+      action: approve_statutory_refund
+    - condition:
+        all:
+          - field: legal_refund_required
+            op: eq
+            value: false
+      action: deny_refund_no_exceptions
+  llm_assisted: []
+  human_only: []

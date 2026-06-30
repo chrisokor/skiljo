@@ -1,0 +1,48 @@
+skill_name: process_vercel_tos_billing_event
+version: 1
+trigger: billing_or_usage_event
+inputs:
+  - name: event_type
+    type: string
+    description: "subscription_renewal, on_demand_usage, anomalous_use_detected, refund_request"
+  - name: non_vercel_service_discontinued
+    type: boolean
+    description: "True if a non-core Vercel service the customer paid for has been discontinued by Vercel"
+decision_zones:
+  deterministic:
+    - condition:
+        all:
+          - field: event_type
+            op: eq
+            value: subscription_renewal
+      action: charge_payment_method_in_advance
+    - condition:
+        all:
+          - field: event_type
+            op: eq
+            value: on_demand_usage
+      action: charge_payment_method_in_arrears
+    - condition:
+        all:
+          - field: event_type
+            op: eq
+            value: refund_request
+          - field: non_vercel_service_discontinued
+            op: eq
+            value: false
+      action: deny_refund_all_fees_nonrefundable
+    - condition:
+        all:
+          - field: non_vercel_service_discontinued
+            op: eq
+            value: true
+      action: issue_prorated_refund_for_discontinued_service
+  llm_assisted:
+    - condition:
+        all:
+          - field: event_type
+            op: eq
+            value: anomalous_use_detected
+      action: charge_accrued_fees_for_anomalous_use
+      requires_human_approval: true
+  human_only: []

@@ -1,0 +1,33 @@
+Atlassian Refund Policy
+
+Eligibility
+
+Refunds are available only for initial purchases of Atlassian products. The following conditions apply:
+
+Monthly Cloud Subscriptions
+
+Refunds for monthly cloud subscriptions are only available within the first paid month after the trial period. After the first paid month, monthly subscriptions are non-refundable.
+
+Annual Cloud Subscriptions
+
+New annual cloud subscriptions can only be refunded within 30 days of the first purchase. After 30 days, annual subscriptions are non-refundable.
+
+Data Center Licenses
+
+Data Center licenses can only be refunded within 30 days of the first purchase.
+
+Excluded Categories
+
+Cloud renewals and upgrades cannot be refunded. This exclusion applies regardless of the time elapsed since the renewal or upgrade was processed.
+
+Marketplace Apps
+
+Marketplace apps follow the same 30-day refund window as annual subscriptions, though individual Marketplace vendors may consider exceptions outside this period at their discretion.
+
+Enterprise Subscriptions
+
+This refund policy does not apply to Enterprise subscriptions. Enterprise refund terms are governed by the applicable enterprise agreement.
+
+How to Request a Refund
+
+Contact Atlassian Support to initiate a refund request. You must provide your account information, the product and subscription details, and the reason for the refund request.

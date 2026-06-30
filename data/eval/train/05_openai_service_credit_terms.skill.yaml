@@ -1,0 +1,65 @@
+skill_name: process_openai_service_credit_refund
+version: 1
+trigger: customer_requests_credit_refund_or_transfer
+inputs:
+  - name: request_type
+    type: string
+    description: "refund, transfer, or sale"
+  - name: credits_used
+    type: boolean
+    description: "True if any portion of the credits have been used"
+  - name: days_since_purchase
+    type: integer
+    description: "Days since the credits were purchased"
+  - name: legal_refund_required
+    type: boolean
+    description: "True if applicable law requires a refund regardless of policy"
+decision_zones:
+  deterministic:
+    - condition:
+        all:
+          - field: legal_refund_required
+            op: eq
+            value: true
+      action: approve_statutory_refund
+    - condition:
+        all:
+          - field: request_type
+            op: in
+            value: ["transfer", "sale"]
+      action: deny_transfer_or_sale_prohibited
+    - condition:
+        all:
+          - field: days_since_purchase
+            op: gt
+            value: 365
+      action: deny_credits_expired
+    - condition:
+        all:
+          - field: credits_used
+            op: eq
+            value: true
+          - field: request_type
+            op: eq
+            value: refund
+          - field: legal_refund_required
+            op: eq
+            value: false
+      action: deny_refund_credits_already_used
+  llm_assisted: []
+  human_only:
+    - condition:
+        all:
+          - field: request_type
+            op: eq
+            value: refund
+          - field: credits_used
+            op: eq
+            value: false
+          - field: days_since_purchase
+            op: lte
+            value: 365
+          - field: legal_refund_required
+            op: eq
+            value: false
+      action: escalate_non_statutory_refund_for_review

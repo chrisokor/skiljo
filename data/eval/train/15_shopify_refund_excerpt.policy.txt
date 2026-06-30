@@ -1,0 +1,20 @@
+Shopify Refund Policy for Subscriptions — Excerpt
+
+[This file contains an excerpt only: the "no refunds" ToS clause and the "case-by-case review" help center clause. Full document reserved for data/eval/test/.]
+
+From Shopify Terms of Service, Section 5.10:
+
+Shopify plans are generally non-refundable as stated in Shopify's Terms of Service. Shopify does not provide refunds for subscription fees paid.
+
+From Shopify Help Center (help.shopify.com/en/manual/your-account/manage-billing/refund-policy-subscriptions):
+
+If you believe you have been charged in error or have a special situation, then you can contact Shopify Support to have your case reviewed. Refund requests are reviewed on a case-by-case basis by Shopify Support.
+
+Eligibility windows for case-by-case review:
+- Monthly subscriptions: within 7 days of invoice issue
+- First invoice after trial: within 30 days of invoice issue
+- Annual subscriptions: within 30 days of invoice issue
+- SEPA Direct Debit: within 14 days of invoice issue
+- Brazil merchants: within 90 days of invoice issue
+
+Meeting these time windows does not guarantee a refund. Refund requests are reviewed on a case-by-case basis by Shopify Support.

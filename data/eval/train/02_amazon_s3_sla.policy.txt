@@ -1,0 +1,24 @@
+Amazon S3 Service Level Agreement
+
+AWS commits to making Amazon S3 available with the following Monthly Uptime Percentages. If AWS does not meet this commitment, you are eligible to receive a Service Credit as described below.
+
+Service Credit Tiers (S3 Standard, S3 Express One Zone, S3 Glacier variants):
+- Less than 99.9% but greater than or equal to 99.0%: 10% credit of monthly charges
+- Less than 99.0% but greater than or equal to 95.0%: 25% credit of monthly charges
+- Less than 95.0%: 100% credit of monthly charges
+
+Service Credit Tiers (S3 Intelligent-Tiering, S3 Standard-IA, S3 One Zone-IA, S3 Glacier Instant Retrieval):
+- Less than 99.0% but greater than or equal to 98.0%: 10% credit of monthly charges
+- Less than 98.0% but greater than or equal to 95.0%: 25% credit of monthly charges
+- Less than 95.0%: 100% credit of monthly charges
+
+Claim Requirements:
+To receive a Service Credit, you must submit a request to AWS Support within two billing cycles of the incident. Your claim must include "SLA Credit Request" in the subject line, the affected AWS region, dates and times of the unavailability incidents, and request logs documenting the errors.
+
+Credit Limitations:
+- Credits apply only to future Amazon S3 charges and cannot be applied to other AWS services.
+- The minimum credit must exceed $1 USD to be applied.
+- Credits are non-transferable and cannot be moved between accounts.
+
+Exclusions:
+The SLA does not apply to unavailability caused by: factors outside AWS's reasonable control (force majeure, internet outages); customer actions or omissions; customer equipment or third-party software; or AWS's suspension of the customer's account per the AWS Service Terms.

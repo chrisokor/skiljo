@@ -1,0 +1,94 @@
+skill_name: process_amazon_ec2_sla_credit
+version: 1
+trigger: sla_credit_claim_submitted
+inputs:
+  - name: sla_type
+    type: string
+    description: "region_level or instance_level"
+  - name: monthly_uptime_percentage
+    type: number
+    description: "Observed monthly uptime percentage (0-100)"
+  - name: single_instance_unavailable_minutes_in_clockhour
+    type: integer
+    description: "Consecutive minutes a single instance was unavailable in a clock-hour (for automatic credit)"
+  - name: claim_subject_includes_compute_sla_credit_request
+    type: boolean
+  - name: claim_includes_incident_details
+    type: boolean
+    description: "True if claim includes dates, region, AZ, and resource IDs"
+  - name: billing_cycles_since_incident
+    type: integer
+    description: "Number of billing cycles elapsed since the incident"
+decision_zones:
+  deterministic:
+    - condition:
+        all:
+          - field: single_instance_unavailable_minutes_in_clockhour
+            op: gt
+            value: 6
+      action: issue_automatic_instance_credit_no_claim_required
+    - condition:
+        all:
+          - field: claim_subject_includes_compute_sla_credit_request
+            op: eq
+            value: true
+          - field: claim_includes_incident_details
+            op: eq
+            value: true
+          - field: billing_cycles_since_incident
+            op: lte
+            value: 2
+          - field: monthly_uptime_percentage
+            op: lt
+            value: 99.99
+          - field: monthly_uptime_percentage
+            op: gte
+            value: 99.0
+      action: issue_credit_10_percent
+    - condition:
+        all:
+          - field: claim_subject_includes_compute_sla_credit_request
+            op: eq
+            value: true
+          - field: claim_includes_incident_details
+            op: eq
+            value: true
+          - field: billing_cycles_since_incident
+            op: lte
+            value: 2
+          - field: monthly_uptime_percentage
+            op: lt
+            value: 99.0
+          - field: monthly_uptime_percentage
+            op: gte
+            value: 95.0
+      action: issue_credit_30_percent
+    - condition:
+        all:
+          - field: claim_subject_includes_compute_sla_credit_request
+            op: eq
+            value: true
+          - field: claim_includes_incident_details
+            op: eq
+            value: true
+          - field: billing_cycles_since_incident
+            op: lte
+            value: 2
+          - field: monthly_uptime_percentage
+            op: lt
+            value: 95.0
+      action: issue_credit_100_percent
+  llm_assisted: []
+  human_only:
+    - condition:
+        any:
+          - field: claim_subject_includes_compute_sla_credit_request
+            op: eq
+            value: false
+          - field: claim_includes_incident_details
+            op: eq
+            value: false
+          - field: billing_cycles_since_incident
+            op: gt
+            value: 2
+      action: reject_claim_missing_requirements

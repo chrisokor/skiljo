@@ -1,0 +1,21 @@
+GitHub Terms of Service — Payments Section (Section L)
+
+Pricing and Subscription
+
+Our pricing and payment terms are available at github.com/pricing. If you agree to a subscription price, that will remain your price for the duration of the payment term; however, prices are subject to change at the end of a payment term.
+
+Billing Schedule
+
+For monthly or yearly payment plans, the Service is billed in advance on a monthly or yearly basis respectively.
+
+No Refunds (Absolute Policy)
+
+The Service is non-refundable. There will be no refunds or credits for partial months of service, downgrade refunds, or refunds for months unused with an open Account. In order to treat everyone equally, no exceptions will be made.
+
+Invoiced Users
+
+User agrees to pay the fees in full, up front without deduction or setoff of any kind, in U.S. Dollars. User must pay the fees within thirty (30) days of the GitHub invoice date. Amounts payable under this Agreement are non-refundable, except as otherwise provided in this Agreement.
+
+Usage-Based Billing
+
+Some features and services are billed based on actual usage from the preceding month, charged periodically in arrears.

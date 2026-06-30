@@ -1,0 +1,25 @@
+AWS Audit Manager Service Level Agreement
+
+AWS commits to making AWS Audit Manager available with a Monthly Uptime Percentage of at least 99.9% in each supported AWS region.
+
+Service Credit Tiers:
+- Less than 99.9% but greater than or equal to 99.0%: 10% credit of monthly charges
+- Less than 99.0% but greater than or equal to 95.0%: 25% credit of monthly charges
+- Less than 95.0%: 100% credit of monthly charges
+
+Claim Requirements:
+To receive a Service Credit, customers must submit a request through AWS Support within two billing cycles of the incident. The claim must include "SLA Credit Request" in the subject line, along with the specific billing cycle, affected region, monthly uptime percentage documentation, and request logs showing error details from the outage period. Claims submitted after this deadline will not be eligible for Service Credits.
+
+Credit Limitations:
+- Service Credits apply only to future AWS Audit Manager charges.
+- Credits require a minimum value of $1 USD to be applied.
+- Credits are non-transferable between accounts.
+- Service Credits represent the sole and exclusive remedy for service failures under this SLA.
+
+Exclusions:
+The SLA does not cover unavailability caused by:
+- Factors outside AWS control, including force majeure events and internet issues
+- Customer actions, such as VPC configurations or key management errors
+- Non-compliance with AWS documentation guidelines
+- Customer equipment or software issues
+- Suspension or termination of services by AWS per the service agreement

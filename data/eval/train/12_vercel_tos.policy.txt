@@ -1,0 +1,28 @@
+Vercel Terms of Service — Payment and Billing Sections
+
+Section 17.1 — Automatic Charging
+
+Vercel will automatically charge your credit card or other payment method on record with Vercel ("payment method") in connection with the use of the Services:
+(i) in advance of each self-service subscription term, for the self-service subscription enabled and any additional Services added;
+(ii) in arrears, at any point during the self-service subscription term, for any Services used or added during the prior self-service subscription term;
+(iii) immediately for any Services that are not recurring in nature.
+
+Subscription Renewal
+
+The self-service subscription and any additional Services added to your self-service subscription will automatically renew for the same term as the initial term.
+
+Non-Refundable Fees
+
+All fees are non-refundable, except as expressly stated otherwise in this Agreement.
+
+Anomalous Use Clause
+
+If Vercel detects elevated, irregular, high or anomalous use of the Services, as determined in Vercel's sole discretion, Vercel may automatically charge your payment method for the then accrued fees in connection with the use of the Services.
+
+Plan Tiers
+
+Vercel offers three primary tiers: a free Hobby plan, self-service Pro subscription plans, and separately negotiated Enterprise plans. Plan pricing and features are listed at vercel.com/pricing.
+
+Cessation of Non-Vercel Services
+
+If Vercel ceases to offer a service that is not a core Vercel-branded service, Vercel may provide a pro-rated refund for any prepaid fees attributable to the discontinued service for the period following cessation.

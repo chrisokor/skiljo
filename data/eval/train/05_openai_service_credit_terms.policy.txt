@@ -1,0 +1,23 @@
+OpenAI Service Credit Terms
+
+[Synthesized from POLICY_CORPUS.md description — source URL https://openai.com/policies/service-credit-terms/ returned HTTP 403 at fetch time]
+
+Non-Refundable Credits
+
+All OpenAI API service credits are non-refundable except where required by applicable law. Once purchased, credits cannot be exchanged for cash or any other form of consideration.
+
+Expiration
+
+Service credits expire one year from the date of purchase. Unused credits are forfeited at expiration and will not be refunded or carried forward.
+
+Transfer Prohibition
+
+Credits are non-transferable. You may not sell, gift, sublicense, assign, or otherwise transfer credits to any other individual or entity. Any attempted transfer is void.
+
+Consequences of Violation
+
+If OpenAI determines that credits were used in violation of these terms — including any attempted unauthorized transfer, sale, or gifting — OpenAI may, in its sole discretion, revoke the applicable credits and terminate the associated account without refund.
+
+Exception Clause
+
+These terms do not limit any right to a refund that you may have under applicable consumer protection law.
