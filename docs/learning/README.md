@@ -13,3 +13,4 @@ See `GLOSSARY.md` for a running list of concepts introduced across debriefs.
 5. [Task 5: Extraction pass 2 — rule extraction per segment](week2-task5-rule-extraction.md)
 6. [Task 6: Extraction pass 3 — decision zone classification](week2-task6-zone-classification.md)
 7. [Task 7: Extraction pass 4 — assembly, schema validation, and pipeline orchestration](week2-task7-assembly-pipeline.md)
+8. [Task 8: POST /skills/extract endpoint with background job](week2-task8-extract-endpoint.md)

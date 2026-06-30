@@ -6,6 +6,14 @@ Running list of concepts introduced across learning debriefs, alphabetical by te
 
 `typing.cast(T, x)` tells mypy to treat `x` as type `T` without any runtime check — it's a static-analysis directive only and compiles away to just `x`. Useful for narrowing union types in tests where the test's own structure guarantees the type is correct. For cases where you want a useful failure message if the assumption is wrong at runtime, prefer `assert x is not None` instead. See [Task 5](week2-task5-rule-extraction.md).
 
+## FastAPI `BackgroundTasks`
+
+FastAPI's mechanism for running work after the HTTP response is sent. The endpoint registers a function via `background_tasks.add_task(fn, *args)` and returns immediately; the function runs afterward. Note: Starlette's `TestClient` runs background tasks *synchronously* before returning the simulated response, so tests can assert on DB state immediately without polling. See [Task 8](week2-task8-extract-endpoint.md).
+
+## FastAPI `dependency_overrides`
+
+A dict on the FastAPI `app` object that replaces dependency functions for tests. `app.dependency_overrides[get_llm_client] = lambda: fake_client` makes every request in that test use the fake instead of the real singleton. Must be cleared in `finally` to prevent leaking into other tests. See [Task 8](week2-task8-extract-endpoint.md).
+
 ## `model_dump(mode="json")`
 
 A Pydantic v2 method that serializes a model to a plain Python dict, converting all nested models and enums to JSON-compatible primitives. `mode="json"` is important when passing data to another `model_validate(dict)` call — passing live model instances can skip nested re-validation. See [Task 7](week2-task7-assembly-pipeline.md).
