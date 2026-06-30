@@ -1,7 +1,7 @@
 import uuid
 from datetime import UTC, datetime
 
-from fastapi import APIRouter, BackgroundTasks, Depends
+from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException
 from pydantic import BaseModel
 
 from skiljo_api.dependencies import get_llm_client
@@ -92,3 +92,42 @@ def extract_skill(
 
     background_tasks.add_task(_run_extraction_job, job_id, policy_id, request.skill_name, request.trigger, llm_client)
     return ExtractResponse(job_id=job_id, status="pending")
+
+
+class SkillSummary(BaseModel):
+    id: uuid.UUID
+    name: str
+    current_version_id: uuid.UUID | None
+
+
+class SkillVersionSummary(BaseModel):
+    id: uuid.UUID
+    version_number: int
+    status: str
+    spec: dict
+
+
+@router.get("/skills")
+def list_skills() -> list[SkillSummary]:
+    with SessionLocal() as session:
+        rows = session.query(Skill).all()
+        return [SkillSummary(id=r.id, name=r.name, current_version_id=r.current_version_id) for r in rows]
+
+
+@router.get("/skills/{skill_id}")
+def get_skill(skill_id: uuid.UUID) -> SkillSummary:
+    with SessionLocal() as session:
+        skill = session.get(Skill, skill_id)
+        if skill is None:
+            raise HTTPException(status_code=404, detail="skill not found")
+        return SkillSummary(id=skill.id, name=skill.name, current_version_id=skill.current_version_id)
+
+
+@router.get("/skills/{skill_id}/versions")
+def list_skill_versions(skill_id: uuid.UUID) -> list[SkillVersionSummary]:
+    with SessionLocal() as session:
+        rows = session.query(SkillVersion).filter(SkillVersion.skill_id == skill_id).all()
+        return [
+            SkillVersionSummary(id=r.id, version_number=r.version_number, status=r.status, spec=r.spec)
+            for r in rows
+        ]
