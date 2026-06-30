@@ -15,3 +15,4 @@ See `GLOSSARY.md` for a running list of concepts introduced across debriefs.
 7. [Task 7: Extraction pass 4 — assembly, schema validation, and pipeline orchestration](week2-task7-assembly-pipeline.md)
 8. [Task 8: POST /skills/extract endpoint with background job](week2-task8-extract-endpoint.md)
 9. [Task 9: GET /jobs/{id} polling endpoint](week2-task9-jobs-endpoint.md)
+10. [Task 10: GET /skills, /skills/{id}, /skills/{id}/versions endpoints](week2-task10-skills-read-endpoints.md)
