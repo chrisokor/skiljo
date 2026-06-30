@@ -11,7 +11,7 @@ from skiljo_core.schemas.rule_schema import (
 )
 from skiljo_core.schemas.skill_schema import DecisionZones
 
-ZONE_PROMPT_V1 = """Classify the following policy rule into exactly one decision zone:
+ZONE_CLASSIFICATION_PROMPT_V1 = """Classify the following policy rule into exactly one decision zone:
 
 - deterministic: mechanically evaluable from structured ticket data alone
   (numeric thresholds, exact matches, simple boolean conditions).
@@ -35,7 +35,7 @@ def classify_zone(
     rule: DeterministicRule,
     model: str = config.DEFAULT_MODEL,
 ) -> str:
-    prompt = ZONE_PROMPT_V1.format(
+    prompt = ZONE_CLASSIFICATION_PROMPT_V1.format(
         condition_json=rule.condition.model_dump_json(),
         action=rule.action,
     )
