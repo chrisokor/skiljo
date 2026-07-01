@@ -54,3 +54,28 @@ def test_assemble_skill_repairs_invalid_skill_name_via_llm() -> None:
     assert skill.skill_name == "process_refund_request"
     assert len(fake_client.calls) == 1
     assert fake_client.calls[0]["prompt_version"] == "assembly_repair_v1"
+
+
+def test_assemble_skill_handles_nested_conditions_and_array_fields() -> None:
+    rule = DeterministicRule(
+        condition=Condition(
+            any=[
+                ConditionOrPredicate(root=Predicate(field="fraud_flags", op=Operator.not_empty, value=None)),
+                ConditionOrPredicate(root=Condition(all=[ConditionOrPredicate(root=Predicate(field="refund_amount", op=Operator.gt, value=1000))])),
+            ]
+        ),
+        action="escalate_review",
+    )
+    decision_zones = DecisionZones(deterministic=[rule], llm_assisted=[], human_only=[])
+    fake_client = FakeLLMClient([])
+
+    skill = assemble_skill(
+        fake_client,
+        skill_name="process_refund_request",
+        trigger="customer_requests_refund",
+        decision_zones=decision_zones,
+    )
+
+    by_name = {i.name: i.type.value for i in skill.inputs}
+    assert by_name["fraud_flags"] == "array"
+    assert by_name["refund_amount"] == "number"
