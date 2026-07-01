@@ -17,3 +17,4 @@ See `GLOSSARY.md` for a running list of concepts introduced across debriefs.
 9. [Task 9: GET /jobs/{id} polling endpoint](week2-task9-jobs-endpoint.md)
 10. [Task 10: GET /skills, /skills/{id}, /skills/{id}/versions endpoints](week2-task10-skills-read-endpoints.md)
 11. [Task 11: 20 hand-labeled policy-to-skill examples](week2-task11-eval-data.md)
+12. [Task 12: Unit tests for extraction pipeline — close coverage gaps](week2-task12-coverage.md)
