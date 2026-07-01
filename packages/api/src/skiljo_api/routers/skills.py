@@ -29,7 +29,8 @@ def _run_extraction_job(
 ) -> None:
     with SessionLocal() as session:
         job = session.get(Job, job_id)
-        assert job is not None, f"Job {job_id} not found"
+        if job is None:
+            return  # job was deleted before background task ran; nothing to do
         job.status = "running"
         job.started_at = datetime.now(UTC)
         session.commit()
@@ -52,6 +53,8 @@ def _run_extraction_job(
             )
             session.add(version_row)
             session.flush()
+
+            skill_row.current_version_id = version_row.id
 
             job.status = "completed"
             job.result_ref = version_row.id

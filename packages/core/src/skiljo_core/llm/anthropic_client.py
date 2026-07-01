@@ -51,7 +51,12 @@ class AnthropicClient:
                 messages=[{"role": "user", "content": current_prompt}],
             )
             latency_ms = int((time.monotonic() - start) * 1000)
-            tool_use_block = next(block for block in response.content if block.type == "tool_use")
+            tool_use_block = next(
+                (block for block in response.content if block.type == "tool_use"),
+                None,
+            )
+            if tool_use_block is None:
+                raise ValueError(f"Model returned no tool_use block on attempt {attempt}")
             response_text = json.dumps(tool_use_block.input)
 
             llm_call_id = None

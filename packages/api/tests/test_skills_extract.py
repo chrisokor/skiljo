@@ -66,5 +66,8 @@ def test_extract_endpoint_creates_draft_skill_version() -> None:
             assert version.status == "draft"
             assert version.spec["skill_name"] == "process_refund_request"
             assert len(version.spec["decision_zones"]["deterministic"]) == 1
+            skill_obj = session.get(Skill, version.skill_id)
+            assert skill_obj is not None
+            assert skill_obj.current_version_id == version.id
     finally:
         app.dependency_overrides.clear()
