@@ -3,12 +3,14 @@ import uuid
 from fastapi.testclient import TestClient
 
 from skiljo_api.main import app
-from skiljo_core.db.models import Skill, SkillVersion
+from skiljo_core.db.models import Skill, SkillVersion, SimulationResult, SimulationRun
 from skiljo_core.db.session import SessionLocal
 
 
 def _clean_tables() -> None:
     with SessionLocal() as session:
+        session.query(SimulationResult).delete()
+        session.query(SimulationRun).delete()
         session.query(SkillVersion).delete()
         session.query(Skill).delete()
         session.commit()

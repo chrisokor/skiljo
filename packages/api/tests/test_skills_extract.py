@@ -6,7 +6,7 @@ from skiljo_core.testing import FakeLLMClient
 
 from skiljo_api.dependencies import get_llm_client
 from skiljo_api.main import app
-from skiljo_core.db.models import Job, Policy, Skill, SkillVersion
+from skiljo_core.db.models import Job, Policy, Skill, SkillVersion, SimulationResult, SimulationRun
 from skiljo_core.db.session import SessionLocal
 from skiljo_core.extraction.rules import CandidateRuleList
 from skiljo_core.extraction.segmentation import Segment, SegmentationResult
@@ -16,6 +16,8 @@ from skiljo_core.schemas.rule_schema import Condition, ConditionOrPredicate, Det
 
 def _clean_tables() -> None:
     with SessionLocal() as session:
+        session.query(SimulationResult).delete()
+        session.query(SimulationRun).delete()
         session.query(SkillVersion).delete()
         session.query(Skill).delete()
         session.query(Job).delete()
