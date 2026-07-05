@@ -2,6 +2,14 @@
 
 Running list of concepts introduced across learning debriefs, alphabetical by term. Each entry links to the debrief where it's explained in full.
 
+## Cache key (LLM response cache)
+
+A `sha256` hex digest over the string `"{provider}|{model}|{prompt_version}|{prompt_text}"`. Changing any of the four components produces a completely different key, so a prompt edit automatically busts the cache for that prompt while leaving all other cached entries intact. Temperature-0 calls only — non-deterministic calls are never keyed or stored. See [Week 3 Task 1](week3-task1-llm-cache.md).
+
+## `session.merge()` (SQLAlchemy upsert)
+
+`Session.merge(instance)` issues a SELECT on the primary key, then INSERT if absent or UPDATE if present. Unlike `session.add()`, it doesn't raise `IntegrityError` on a duplicate primary key, making it the right tool for idempotent writes where the primary key is a content-addressed hash. See [Week 3 Task 1](week3-task1-llm-cache.md).
+
 ## `cast()` (mypy type narrowing, runtime no-op)
 
 `typing.cast(T, x)` tells mypy to treat `x` as type `T` without any runtime check — it's a static-analysis directive only and compiles away to just `x`. Useful for narrowing union types in tests where the test's own structure guarantees the type is correct. For cases where you want a useful failure message if the assumption is wrong at runtime, prefer `assert x is not None` instead. See [Task 5](week2-task5-rule-extraction.md).

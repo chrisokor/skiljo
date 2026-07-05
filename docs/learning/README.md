@@ -4,6 +4,10 @@ An index of written explanations for each implementation task — what was built
 
 See `GLOSSARY.md` for a running list of concepts introduced across debriefs.
 
+## Week 3 — Simulation engine
+
+1. [Task 1: LLM response cache (scope addition A1)](week3-task1-llm-cache.md)
+
 ## Week 2 — Extraction pipeline
 
 1. [Task 1: LLM client protocol and Anthropic implementation](week2-task1-llm-client-protocol.md)
