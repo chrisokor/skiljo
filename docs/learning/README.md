@@ -7,6 +7,8 @@ See `GLOSSARY.md` for a running list of concepts introduced across debriefs.
 ## Week 3 — Simulation engine
 
 1. [Task 1: LLM response cache (scope addition A1)](week3-task1-llm-cache.md)
+2. [Task 3: Rule evaluator for deterministic zone](week3-task3-rule-evaluator.md)
+3. [Task 4: Shadow-policy ticket generator](week3-task4-shadow-policy-generator.md)
 
 ## Week 2 — Extraction pipeline
 

@@ -30,6 +30,10 @@ A dict on the FastAPI `app` object that replaces dependency functions for tests.
 
 A Pydantic v2 method that serializes a model to a plain Python dict, converting all nested models and enums to JSON-compatible primitives. `mode="json"` is important when passing data to another `model_validate(dict)` call — passing live model instances can skip nested re-validation. See [Task 7](week2-task7-assembly-pipeline.md).
 
+## Divergence spec (planted contradiction)
+
+A `DivergenceSpec` is an authored override that specifies how reality diverges from the written policy. It has a `condition` (predicates on ticket fields), a `shadow_decision` (what actually happens), and a `frequency` (0.0–1.0, how often). Used to generate synthetic tickets with planted contradictions: the base skill says one thing, but the ground truth (following the shadow policy) says another. This makes the contradiction detector's job measurable — it must recover the planted divergence pattern from simulation outcomes. See [Week 3 Task 4](week3-task4-shadow-policy-generator.md).
+
 ## Decision zones (deterministic / llm_assisted / human_only)
 
 Three categories that classify how much autonomy the system can safely exercise on a policy rule at runtime. `deterministic` = mechanical execution from structured data; `llm_assisted` = LLM judgment needed but low-stakes enough to not require a human; `human_only` = too high-stakes or legally sensitive to automate. Zone assignment is extraction pass 3. See [Task 6](week2-task6-zone-classification.md).
@@ -50,6 +54,14 @@ A way to write one dataclass or model that's parameterized by another type, the 
 
 The exception Pydantic raises when data doesn't match a model's schema (wrong type, missing required field, failed constraint). Catching it is how the retry loop detects a bad LLM response. See [Task 2](week2-task2-structured-output-retry.md).
 
+## Planted contradiction
+
+A deliberately introduced divergence between the written policy and reality, used to make contradiction detection measurable. During synthetic ticket generation, a `DivergenceSpec` is applied at a specified frequency (e.g. "VIP customers get approved 80% of the time even when over the $500 threshold"). The ground-truth labels on tickets reflect the planted divergence. When the extracted skill is simulated, it will report decisions that don't match the ground truth, surfacing the planted contradiction. A good contradiction detector should recover these planted patterns with high recall. See [Week 3 Task 4](week3-task4-shadow-policy-generator.md).
+
+## Predicate DSL (Domain-Specific Language for conditions)
+
+A constrained, table-driven language for expressing ticket-matching rules: `Predicate(field, op, value)` where `op` is one of 11 operators (`eq`, `neq`, `lt`, `lte`, `gt`, `gte`, `in`, `not_in`, `contains`, `empty`, `not_empty`). Predicates are composed into `Condition` objects with `all` (AND) and `any` (OR) operators, supporting arbitrary nesting. Evaluated deterministically by `evaluate_predicate()` and `evaluate_condition()` — no LLM, no `eval()`, safe to run on untrusted data. See [Week 3 Task 3](week3-task3-rule-evaluator.md).
+
 ## `Protocol` (structural typing)
 
 A `typing.Protocol` defines an interface by the methods/attributes a class must have, without that class needing to inherit from anything. Any class with a matching `generate_structured` method satisfies `LLMClient`, including a fake built purely for tests. See [Task 1](week2-task1-llm-client-protocol.md).
@@ -61,6 +73,10 @@ An `engine` represents a connection pool to a specific database URL; a `sessionm
 ## Test double (fake vs. mock)
 
 A "fake" is a lightweight, hand-written stand-in that implements the real interface with simplified behavior (e.g. `FakeLLMClient` returns pre-programmed responses). A "mock" (e.g. `unittest.mock.Mock`) is a generic stand-in that records calls and can assert on them, with no real implementation behind it. This project uses mocks for the Anthropic SDK boundary (Task 1) and a fake for the higher-level `LLMClient` Protocol (Task 4) — see [Task 4](week2-task4-policy-segmentation.md) for why the boundary matters.
+
+## Shadow policy
+
+The *actual* decision-making logic that the synthetic ticket generator follows, as opposed to the *written* policy (what the extracted skill represents). A shadow policy is the written policy plus authored divergences: "the written policy says deny all $500+ refunds, but in practice VIP customers get approved 80% of the time." During ticket generation, ground truth follows the shadow policy, not the written policy. This prevents circular simulation (where the skill always matches its own source) and makes contradiction detection measurable — the detector must infer the divergences by observing that extracted rules don't predict the ground-truth outcomes. See [Week 3 Task 4](week3-task4-shadow-policy-generator.md).
 
 ## Tool-use (Anthropic API)
 
