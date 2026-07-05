@@ -7,6 +7,7 @@ from pydantic import BaseModel, ValidationError
 
 from skiljo_core import config
 from skiljo_core.llm.base import StructuredResponse
+from skiljo_core.llm.cache import LLMCacheStore
 from skiljo_core.llm.logging import LLMCallLogger
 
 T = TypeVar("T", bound=BaseModel)
@@ -18,9 +19,11 @@ class AnthropicClient:
         api_key: str | None = None,
         client: anthropic.Anthropic | None = None,
         logger: LLMCallLogger | None = None,
+        cache_store: LLMCacheStore | None = None,
     ) -> None:
         self._client = client or anthropic.Anthropic(api_key=api_key or config.ANTHROPIC_API_KEY)
         self._logger = logger
+        self._cache_store = cache_store
 
     def generate_structured(
         self,
@@ -31,10 +34,31 @@ class AnthropicClient:
         temperature: float = 0.0,
         max_tokens: int = 4096,
     ) -> StructuredResponse[T]:
+        cache_key: str | None = None
+
+        # Check cache for deterministic (temperature=0) calls
+        if temperature == 0.0 and self._cache_store is not None:
+            cache_key = LLMCacheStore.compute_key("anthropic", model, prompt_version, prompt)
+            cached_text = self._cache_store.get(cache_key)
+            if cached_text is not None:
+                data = schema.model_validate_json(cached_text)
+                llm_call_id = None
+                if self._logger is not None:
+                    llm_call_id = self._logger.log(
+                        provider="anthropic",
+                        model=model,
+                        prompt_version=prompt_version,
+                        prompt_text=prompt,
+                        response_text=cached_text,
+                        latency_ms=0,
+                        cached=True,
+                    )
+                return StructuredResponse(data=data, attempts=0, llm_call_id=llm_call_id)
+
         current_prompt = prompt
         last_error: ValidationError | None = None
-        max_attempts = 3
-        for attempt in range(1, max_attempts + 1):
+        response_text: str = ""
+        for attempt in range(1, 4):
             start = time.monotonic()
             response = self._client.messages.create(
                 model=model,
@@ -81,6 +105,11 @@ class AnthropicClient:
                     f"Validation error: {exc}\nPlease correct it and try again."
                 )
                 continue
+
+            # Store in cache on successful temperature-0 call
+            if cache_key is not None and self._cache_store is not None:
+                self._cache_store.set(cache_key, response_text)
+
             return StructuredResponse(data=data, attempts=attempt, llm_call_id=llm_call_id)
         assert last_error is not None
         raise last_error

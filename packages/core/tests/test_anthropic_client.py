@@ -1,6 +1,7 @@
 from types import SimpleNamespace
 from unittest.mock import Mock
 
+import pytest
 from pydantic import BaseModel
 
 from skiljo_core.llm.anthropic_client import AnthropicClient
@@ -109,6 +110,65 @@ def test_logs_every_attempt_to_llm_calls_table() -> None:
         assert rows[0].prompt_version == "v1"
         assert rows[0].input_tokens == 7
         assert rows[0].output_tokens == 3
+
+
+def test_cache_hit_skips_api_call_and_logs_cached_true(
+    tmp_path: pytest.fixture,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Cache hit: no API call, logged with cached=True, same structured output returned."""
+    from pydantic import BaseModel
+    from skiljo_core.llm.anthropic_client import AnthropicClient
+
+    class Foo(BaseModel):
+        value: int
+
+    api_called = []
+
+    class FakeCache:
+        @staticmethod
+        def compute_key(provider: str, model: str, pv: str, pt: str) -> str:
+            return "the-key"
+
+        def get(self, key: str) -> str | None:
+            return '{"value": 99}'
+
+        def set(self, key: str, text: str) -> None:
+            pass
+
+    logged: list[dict] = []
+
+    class FakeLogger:
+        def log(self, **kwargs: object) -> None:
+            logged.append(dict(kwargs))
+            return None
+
+    client = AnthropicClient(
+        client=None,  # will error if called
+        logger=FakeLogger(),  # type: ignore[arg-type]
+        cache_store=FakeCache(),  # type: ignore[arg-type]
+    )
+
+    # Patch the underlying Anthropic client to track calls
+    class BoomClient:
+        def messages(self, *args: object, **kwargs: object) -> object:
+            api_called.append(True)
+            raise RuntimeError("API should not be called on cache hit")
+
+    client._client = BoomClient()  # type: ignore[assignment]
+
+    result = client.generate_structured(
+        prompt="test",
+        schema=Foo,
+        model="claude-haiku-4-5-20251001",
+        prompt_version="v1",
+        temperature=0.0,
+    )
+
+    assert result.data.value == 99
+    assert result.attempts == 0
+    assert not api_called
+    assert logged and logged[0].get("cached") is True
 
 
 def test_logs_one_row_per_attempt_on_retry() -> None:

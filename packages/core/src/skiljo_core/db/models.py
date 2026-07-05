@@ -83,6 +83,15 @@ class LLMCall(Base):
     latency_ms: Mapped[int | None] = mapped_column()
     cost_estimate_usd: Mapped[float | None] = mapped_column(Numeric(10, 6))
     called_at: Mapped[datetime] = mapped_column(server_default=func.now())
+    cached: Mapped[bool] = mapped_column(default=False, server_default="false")
+
+
+class LLMCache(Base):
+    __tablename__ = "llm_cache"
+
+    cache_key: Mapped[str] = mapped_column(Text, primary_key=True)
+    response_text: Mapped[str] = mapped_column(Text, nullable=False)
+    created_at: Mapped[datetime] = mapped_column(server_default=func.now())
 
 
 class Job(Base):

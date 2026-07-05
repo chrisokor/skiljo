@@ -20,6 +20,7 @@ class LLMCallLogger:
         latency_ms: int,
         input_tokens: int | None = None,
         output_tokens: int | None = None,
+        cached: bool = False,
     ) -> uuid.UUID:
         with self._session_factory() as session:
             # TODO(week3): compute cost_estimate_usd from usage.input_tokens + output_tokens × model rate
@@ -32,6 +33,7 @@ class LLMCallLogger:
                 input_tokens=input_tokens,
                 output_tokens=output_tokens,
                 latency_ms=latency_ms,
+                cached=cached,
             )
             session.add(call)
             session.commit()

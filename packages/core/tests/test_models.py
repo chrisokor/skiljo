@@ -9,6 +9,7 @@ def test_all_tables_registered() -> None:
         "simulation_runs",
         "simulation_results",
         "llm_calls",
+        "llm_cache",
         "jobs",
         "eval_runs",
     }
