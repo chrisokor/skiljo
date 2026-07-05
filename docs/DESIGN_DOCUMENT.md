@@ -114,7 +114,7 @@ The system is a multi-stage LLM pipeline with structured outputs, persistent sto
 
 ### System invariants
 
-Three invariants hold throughout the system. First, every LLM call is logged with model version, prompt version, inputs, outputs, latency, and token counts. There is no LLM call that does not write a row to the `llm_calls` table. Second, skill specifications are immutable once persisted. A new "version" is always a new row in `skill_versions`, never an update to an existing row. Third, the eval harness runs in CI on every pull request against a held-out test set, with regressions on primary metrics blocking merge.
+Four invariants hold throughout the system. First, every LLM call is logged with model version, prompt version, inputs, outputs, latency, and token counts. There is no LLM call that does not write a row to the `llm_calls` table. Second, skill specifications are immutable once persisted. A new "version" is always a new row in `skill_versions`, never an update to an existing row. Third, every extracted rule carries one or more resolvable citations into the source document — character-offset spans plus the quoted text. A rule with no valid citation is a probable hallucination and must be repaired or dropped; citation resolution rate is a CI-blocking metric. Fourth, the eval harness runs in CI on every pull request against a held-out test set, with regressions on primary metrics blocking merge.
 
 ## 4. Core abstractions and data model
 
@@ -168,9 +168,15 @@ The deterministic and LLM-assisted zones use a small predicate language for cond
 
 The choice to invent a constrained predicate language rather than embedding Python expressions or JSONLogic is deliberate. A constrained language is easier to validate, easier to display in a UI for human review, and easier for an LLM to generate correctly. JSONLogic was considered but rejected because it's verbose for the shape of conditions we need. Python `eval` was rejected because it's a security disaster and unauditable.
 
+### Source citations
+
+Every extracted rule carries one or more citations into the source policy: character-offset spans (`start`, `end`) plus the quoted text captured at extraction time. Citations are a schema-level requirement, not optional metadata — a rule without at least one citation fails validation.
+
+Citations serve three purposes. They are the anti-hallucination mechanism: a rule whose citation does not resolve to real text in the source document is a fabrication by definition, and the assembly pass rejects it. They are the evidence the review UI displays, so a human approving a threshold sees the sentence it came from. And they create a mechanically checkable eval metric — citation resolution rate — that catches extraction drift without additional human labeling.
+
 ### The Ticket primitive
 
-A Ticket represents one historical (or synthetic) refund/credit/billing case. It has a fixed schema with fields for amount, days since purchase, customer segment, fraud indicators, refund reason, and a "ground truth" human decision (for synthetic tickets generated with a known correct decision, or for hand-labeled real tickets).
+A Ticket represents one historical (or synthetic) refund/credit/billing case. It has a fixed schema with fields for amount, days since purchase, customer segment, fraud indicators, refund reason, and a ground-truth human decision. For synthetic tickets, the ground truth is produced by the shadow policy described in Section 5.4 — the decision a real team following its informal rules would have made, which may deliberately diverge from the written policy.
 
 ### The SimulationReport primitive
 
@@ -250,6 +256,13 @@ CREATE TABLE llm_calls (
   called_at TIMESTAMPTZ DEFAULT NOW()
 );
 
+-- LLM response cache (temperature-0 calls)
+CREATE TABLE llm_cache (
+  cache_key TEXT PRIMARY KEY,  -- sha256(provider|model|prompt_version|prompt)
+  response_text TEXT NOT NULL,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
 -- Background job tracking
 CREATE TABLE jobs (
   id UUID PRIMARY KEY,
@@ -317,17 +330,19 @@ The provider abstraction is implemented but only Anthropic is implemented for no
 
 Every call writes a row to `llm_calls`. The `llm_call_id` is returned in `StructuredResponse.metadata` so downstream code (simulation results, extraction outputs) can foreign-key to the originating call for full traceability.
 
+The client also maintains a response cache in Postgres keyed on `(provider, model, prompt_version, sha256(prompt))`. Cache hits skip the API call and are logged with `cached=true`. Temperature-0 calls are cacheable by default, with per-call bypass for sampling experiments. This makes eval re-runs nearly free, makes CI reproducible for unchanged prompts, and cuts iteration cost during prompt development substantially.
+
 ### 5.3 Extraction pipeline
 
 Extraction is a multi-pass pipeline:
 
 **Pass 1 — segmentation.** The raw policy text is segmented into logical sections (eligibility, thresholds, approvals, exceptions, refund methods, audit requirements). A small Claude call with structured output produces the segments. This pass keeps the heavy extraction passes focused on the right text and improves quality on long policies.
 
-**Pass 2 — rule extraction.** For each segment, an extraction prompt produces candidate rules in the constrained predicate language. Different segments use different prompts (eligibility rules vs. threshold rules vs. exception rules) because the structures differ enough that a single uber-prompt degrades quality.
+**Pass 2 — rule extraction.** For each segment, an extraction prompt produces candidate rules in the constrained predicate language. Different segments use different prompts (eligibility rules vs. threshold rules vs. exception rules) because the structures differ enough that a single uber-prompt degrades quality. Each rule must include citations: character-offset spans into the segment plus the quoted text, identifying exactly which sentences the rule was derived from.
 
 **Pass 3 — decision zone assignment.** A classifier prompt takes each candidate rule and assigns it to the deterministic, LLM-assisted, or human-only zone based on whether it's mechanically evaluable, requires interpretation, or is too high-stakes for automation.
 
-**Pass 4 — assembly and validation.** The assembled Skill is validated against the JSON Schema. If validation fails, the failure is fed back to a repair prompt that asks the model to fix the specific schema violation. Up to 2 repair attempts before failing the extraction.
+**Pass 4 — assembly and validation.** The assembled Skill is validated against the JSON Schema, and every citation is resolved against the source document: the quoted text must appear at (or within a small tolerance of) the claimed offsets. A rule with an unresolvable citation is treated as a probable hallucination and either repaired or dropped with a logged warning. If schema validation fails, the failure is fed back to a repair prompt that asks the model to fix the specific violation. Up to 2 repair attempts before failing the extraction.
 
 The extraction output is stored as a new row in `skill_versions` with `status='draft'`. Human review (or in the demo, just user click-through) promotes it to `status='approved'`.
 
@@ -341,9 +356,13 @@ Given an approved skill version and a batch of tickets, the simulation engine ru
 
 Each ticket produces a `simulation_results` row capturing the decision, zone, reasoning, and (if LLM was invoked) the `llm_call_id`.
 
-After all tickets are processed, the aggregator computes the SimulationReport: match rate (decisions matching the ticket's `ground_truth_decision`), escalation accuracy (escalations that were correctly escalated vs. cases that should have been escalated but weren't), and contradiction detection (cases where the deterministic rule produced a decision that diverged from historical behavior at a frequency above 5%).
+After all tickets are processed, the aggregator computes the SimulationReport: match rate (decisions matching the ticket's `ground_truth_decision`), escalation accuracy (escalations that were correctly escalated vs. cases that should have been escalated but weren't), and detected contradictions.
 
-Contradiction detection is a particularly nice signal — it's the BRD's "policy vs practice" insight made concrete. The aggregator groups tickets by similar features, looks for cases where the skill's decision systematically diverges from the ground truth, and flags those as contradictions.
+**Shadow-policy synthetic data.** A naive generator would produce tickets from the same policy the skill was extracted from — which makes the simulation circular: match rate would measure the model's self-consistency, and contradiction detection would have nothing to find. Instead, the generator works from a *shadow policy*: the written policy plus a hidden layer of informal rules that mimic how real teams actually behave. Examples: VIP customers get exceptions the policy doesn't allow, refunds slightly above the threshold get quietly approved, holiday-season cases get extra leniency. The shadow policy is authored per corpus policy as a structured divergence spec (which rules diverge, under what conditions, at what frequency), and ground-truth decisions come from the shadow policy, not the written one.
+
+This turns contradiction detection into a measurable problem. The divergence spec is known ground truth: the detector's job is to recover it from ticket outcomes alone. That yields real precision (of flagged contradictions, how many are genuine planted divergences) and recall (of planted divergences, how many were flagged) — the first quantitative footing for the system's flagship feature.
+
+**Contradiction detection.** The detector groups per-ticket results by feature clusters (amount band, customer segment, reason category, time window), computes the divergence rate between the skill's decision and the ground truth within each cluster, and flags clusters whose divergence exceeds a threshold with statistical support (minimum cluster size, binomial test against the base error rate). Each flagged contradiction carries: the written rule (with its citation), the observed behavior pattern, frequency, affected segment, and an estimated financial impact.
 
 ### 5.5 Storage layer
 
@@ -435,6 +454,20 @@ The harness runs in CI on every PR via `.github/workflows/eval.yml`. Metrics are
 
 The test set is kept in `data/eval/test/` with a CODEOWNERS rule and a `.gitattributes` note that it should not be examined during development to prevent overfitting. This is mostly social hygiene rather than enforcement, but it's the right discipline.
 
+### 5.11 Cross-document contradiction detection
+
+Companies rarely have one policy document — they have a ToS, a refund help-center page, a support macro, and a pricing FAQ, written by different teams at different times. These documents contradict each other more often than any of them contradicts behavior. The corpus contains a live example: Shopify's Terms of Service state that refunds are not allowed, while its help center documents time-window-based eligibility for case-by-case review.
+
+Cross-document detection runs entirely on extraction output — no ticket data required. Given N documents from the same company, the system extracts a skill from each, aligns rules that govern the same decision surface (same trigger, overlapping conditions), and flags pairs whose actions or thresholds disagree. Alignment is LLM-assisted (a comparison prompt over rule pairs with citations); conflict verification is mechanical (the predicate structures either conflict or they don't).
+
+This matters for two reasons. It's the highest-value output per unit of customer friction — a customer supplies two URLs and gets findings, with no data export, no integration, and no trust barrier. And it's the engine behind the self-serve consistency checker described in Section 14 (v1.05), the first monetizable artifact on the roadmap.
+
+### 5.12 Report rendering
+
+The SimulationReport and the contradiction findings compile to a rendered artifact — a standalone HTML document (print-friendly for PDF) with the summary metrics, the contradiction list with citations and evidence, and a per-ticket appendix. The BRD identifies this report as the first sellable deliverable; the system treats it accordingly, as a first-class output rather than a JSON payload someone else must make presentable.
+
+Rendering is a Jinja2 template over the report data — deliberately boring technology. No charting library in v1; tables and typography carry it. The Streamlit demo links to the rendered artifact, and the API exposes it at `GET /simulations/{id}/report.html`.
+
 ## 6. Key design decisions
 
 This section captures the decisions where alternatives were seriously considered. For each, the chosen path, what was considered, and why.
@@ -513,7 +546,7 @@ The LLM is the primary source of non-determinism and the primary failure mode. S
 
 **Refusal or empty output.** The model refuses to extract (rare with policy text but possible) or produces an empty response. Detected by the LLM client; treated as a non-retryable failure with the response logged.
 
-**Hallucinated content.** The model invents thresholds or conditions not present in the source policy. The eval harness catches this systematically. At runtime, the human review step is the last line of defense — the demo UI shows extracted rules with source text references, so the reviewer can spot fabrications.
+**Hallucinated content.** The model invents thresholds or conditions not present in the source policy. The primary defense is citation resolution in Pass 4: a rule whose quoted text does not appear at or near the claimed character offsets in the source document fails assembly and is either repaired or dropped. The eval harness measures citation resolution rate as a CI-blocking metric (must stay at 100%). At runtime, the human review step shows each rule alongside its source citation, so an approver can verify the provenance of every threshold.
 
 **Token limit exceeded.** The model produces output that hits the max_tokens limit and is truncated. Detected via the `stop_reason` field on the response; treated as a retryable failure with a higher max_tokens budget.
 
@@ -577,7 +610,7 @@ Datasets:
 - Dev set (`data/eval/dev/`): 15 examples, used to validate changes before opening a PR.
 - Test set (`data/eval/test/`): 15 examples, only run in CI on PRs and never examined manually.
 
-Regression thresholds: extraction recall must not drop more than 2 percentage points, simulation match rate must not drop more than 3 points, end-to-end accuracy must not drop more than 3 points. Hitting any of these blocks merge.
+Regression thresholds: extraction recall must not drop more than 2 percentage points, citation resolution rate must stay at 100% (any rule with an unresolvable citation is a broken build), contradiction recall must not drop more than 5 percentage points, simulation match rate must not drop more than 3 points, end-to-end accuracy must not drop more than 3 points. Hitting any of these blocks merge.
 
 ## 10. Deployment
 
@@ -620,9 +653,9 @@ By end of week 2, the system can accept a real refund or credit policy document 
 
 By end of week 3, the system can take an extracted skill and a batch of tickets, run each ticket through the skill's decision zones, and produce a SimulationReport with match rate, escalation accuracy, and detected contradictions. This includes the synthetic ticket generator, the rule evaluator for deterministic zones, the LLM-assisted zone executor, the contradiction detector, and the simulation API.
 
-**Deliverables:** Synthetic ticket generator producing realistic refund/credit cases with ground-truth decisions. Rule evaluator for the predicate language. Per-zone executors. SimulationReport aggregation. Contradiction detection. POST `/simulations` and GET `/simulations/{id}/report` endpoints. 100 synthetic tickets covering the eligibility surface. Unit tests for the simulation engine.
+**Deliverables:** Shadow-policy ticket generator producing realistic refund/credit cases with ground-truth decisions authored against the shadow policy (not the written policy), covering all expected decision paths with planted divergences. Rule evaluator for the predicate language. Per-zone executors. SimulationReport aggregation. Contradiction detection with precision/recall against planted divergences. POST `/simulations` and GET `/simulations/{id}/report` endpoints. 100 synthetic tickets covering the eligibility surface. Unit tests for the simulation engine.
 
-**Risk to manage:** The synthetic ticket generator is more important than it looks. If the tickets aren't realistic, the simulation report is meaningless. Spend real time on the generator prompts.
+**Risk to manage:** The shadow-policy ticket generator is load-bearing — read the shadow-policy design in Section 5.4 before starting. Generating tickets from the written policy is circular and makes contradiction detection unverifiable. The shadow policy + divergence spec is what gives the contradiction detector measurable ground truth.
 
 ### Week 4 — Demo UI, SDK, integration
 
@@ -647,6 +680,10 @@ By end of week 6, the system is deployed and accessible at a public URL, with do
 **Deliverables:** `render.yaml` and deployment configured. Live deployed URL. Comprehensive README with architecture diagram, demo link, and clear explanation of the system. `ARCHITECTURE.md` deep-dive. Documentation blog post draft (1500–2500 words) on the extraction architecture. 4-minute demo video for documentation walking through the system.
 
 **Risk to manage:** Deployment always takes longer than expected. Start it on Monday of week 6 so debugging time is available.
+
+### The revenue thread running through the build
+
+Commits A2 (rendered report) and A3 (cross-document contradiction) are the v1.05 product minus a payment flow. Every other commit in weeks 1–4 is infrastructure for them. Hold A2 and A3 to product-grade quality on output, error handling, and presentation — they are not internal tools. Published teardown posts drive distribution during the build: teardown #1 from extraction output during week 3, teardown #2 from A3's Shopify finding during week 6. If asked to generate teardown material, source it from real extraction runs against corpus policies — never fabricated findings.
 
 ## 12. Commit-level breakdown
 
@@ -758,9 +795,9 @@ Each commit below should be atomic, leave the repo in a working state, and pass 
 
 ### Week 3
 
-26. `feat(core): synthetic ticket generator`
-    Adds a generator that prompts Claude to produce realistic refund/credit/billing tickets across a parameterized distribution (amount, days, customer segment, fraud flags, reason, ground-truth decision).
-    *Acceptance:* Generating 50 tickets produces a varied set covering all the expected decision paths.
+26. `feat(core): shadow-policy ticket generator`
+    Adds the shadow-policy generator for realistic synthetic ticket batches. Accepts a written policy and a structured divergence spec (which rules diverge, under what conditions, at what frequency). Generates tickets whose ground-truth decisions follow the shadow policy, not the written policy, creating planted contradictions the detector can recover.
+    *Acceptance:* Generating 50 tickets produces a varied set; at least 2 planted divergence patterns are present with the expected frequency; detector recall ≥0.8 on planted divergences with ≤1 false positive per run.
 
 27. `feat(core): rule evaluator for deterministic zone`
     Implements the predicate DSL evaluator. Pure Python, no LLM. Comprehensive table-driven tests.
@@ -916,6 +953,22 @@ Each commit below should be atomic, leave the repo in a working state, and pass 
     Records the demo video walking through the system, uploads, embeds in README as a visual companion to the written documentation.
     *Acceptance:* The README displays the video thumbnail and the video plays.
 
+### Scope additions
+
+These commits were added after the initial design and slot into the weekly schedule at the points noted.
+
+**A1 (week 2, after commit 16):** `feat(core): LLM response cache`
+    Adds a `llm_cache` Postgres table and a new Alembic migration. Cache key is `sha256(provider|model|prompt_version|prompt)`. Temperature-0 calls check the cache before calling the API; hits are logged with `cached=true`. Per-call bypass flag available for sampling experiments.
+    *Acceptance:* Running the same extraction twice returns the same structured output without a second API call; `llm_calls` row for the second call has `cached=true`.
+
+**A2 (week 4, after commit 41):** `feat(api): rendered report at GET /simulations/{id}/report.html`
+    Adds a Jinja2 template that compiles the SimulationReport into a standalone print-friendly HTML document with summary metrics, the contradiction list with citations and evidence, and a per-ticket appendix. Linked from the Streamlit demo.
+    *Acceptance:* `GET /simulations/{id}/report.html` returns valid HTML that renders correctly in a browser and produces a readable PDF when printed.
+
+**A3 (week 5, after commit 54):** `feat(core): cross-document contradiction detection`
+    Given N policy documents from the same company, extracts a skill from each, aligns rules governing the same decision surface, and flags pairs with conflicting actions or thresholds. Alignment is LLM-assisted; conflict verification is mechanical. The Shopify ToS ("no refunds") vs. help-center (case-by-case review windows) pair from POLICY_CORPUS.md is the acceptance case.
+    *Acceptance:* Running the detector against the Shopify document pair flags the conflict with citations from both sources.
+
 ## 13. Open questions
 
 A handful of decisions are deferred to the build phase rather than committed in this doc:
@@ -931,6 +984,12 @@ Whether the documentation blog post is the right format for the long-form writeu
 ## 14. Paths forward beyond the 6-week build
 
 The 6-week scope produces a working extraction and simulation system, but the underlying problem extends well past that. This section sketches what each subsequent version would look like if the project continues into fall and beyond. The versions are roughly sequenced by dependency — each one assumes the previous ones are in place — but the decision to keep going can be made at any inflection point.
+
+### v1.05 — Self-serve policy consistency checker (first revenue)
+
+Commits A2 and A3 form the core of this tier when combined with a Stripe payment flow. A customer supplies two or more policy document URLs, receives a rendered contradiction report with citations, and pays per document analyzed. No data export, no ticket history, no integrations — just document-in, findings-out. This is the shortest path to a transaction.
+
+The work adds a billing page to the Streamlit demo (or its Next.js replacement), a Stripe Checkout integration, and a per-customer usage ledger. The technical additions are small; the value is in the product framing: the contradiction report becomes the deliverable, not a demo artifact.
 
 ### v1.1 — Replace Streamlit with a real review UI
 
