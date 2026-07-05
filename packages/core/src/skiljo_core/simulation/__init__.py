@@ -1,3 +1,4 @@
+from skiljo_core.simulation.contradictions import Contradiction, detect_contradictions
 from skiljo_core.simulation.engine import compute_report, simulate_batch
 from skiljo_core.simulation.evaluator import (
     evaluate_condition,
@@ -18,4 +19,6 @@ __all__ = [
     "DivergenceSpec",
     "TicketFieldRanges",
     "generate_ticket_batch",
+    "Contradiction",
+    "detect_contradictions",
 ]
