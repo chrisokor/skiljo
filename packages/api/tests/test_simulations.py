@@ -110,6 +110,9 @@ def test_post_simulations_creates_simulation_run_row() -> None:
         with SessionLocal() as session:
             job = session.get(Job, uuid.UUID(job_id))
             assert job is not None
+            sim_run_id = uuid.UUID(job.payload["sim_run_id"])
+            sim_run = session.get(SimulationRun, sim_run_id)
+            assert sim_run is not None
     finally:
         app.dependency_overrides.clear()
 
@@ -130,12 +133,13 @@ def test_get_simulation_report_after_completion() -> None:
         with SessionLocal() as session:
             job = session.get(Job, job_id)
             assert job is not None
-            if job.status == "completed" and job.result_ref is not None:
-                sim_id = job.result_ref
-                report_resp = client.get(f"/simulations/{sim_id}/report")
-                assert report_resp.status_code == 200
-                report = report_resp.json()
-                assert "match_rate" in report
-                assert "results" in report
+            assert job.status == "completed", f"Expected job completed, got {job.status}: {job.error}"
+            assert job.result_ref is not None
+            sim_id = job.result_ref
+            report_resp = client.get(f"/simulations/{sim_id}/report")
+            assert report_resp.status_code == 200
+            report = report_resp.json()
+            assert "match_rate" in report
+            assert "results" in report
     finally:
         app.dependency_overrides.clear()

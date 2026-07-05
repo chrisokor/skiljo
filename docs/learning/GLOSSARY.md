@@ -2,6 +2,14 @@
 
 Running list of concepts introduced across learning debriefs, alphabetical by term. Each entry links to the debrief where it's explained in full.
 
+## Cluster (contradiction detection)
+
+A grouping of tickets by (amount_band, customer_segment) dimensions, used by the contradiction detector to identify systematic divergences. For example, all tickets with refund amounts in the $101–200 range and customer_segment="vip" form one cluster. The detector measures divergence rate per cluster (mismatches / cluster size) and flags clusters exceeding a threshold. See [Week 3 Task 5](week3-task5-contradiction-detection.md).
+
+## Contradiction (planted divergence detection)
+
+A record of systematic divergence between the skill's decision and ground-truth outcomes, identified by the contradiction detector. Each contradiction captures: the cluster it occurred in, the divergence rate, the most common (written, observed) decision pair, ticket count, and affected ticket IDs. Contradictions are measurable against planted divergences in the shadow policy — a good detector recovers planted patterns with high recall. See [Week 3 Task 5](week3-task5-contradiction-detection.md).
+
 ## Cache key (LLM response cache)
 
 A `sha256` hex digest over the string `"{provider}|{model}|{prompt_version}|{prompt_text}"`. Changing any of the four components produces a completely different key, so a prompt edit automatically busts the cache for that prompt while leaving all other cached entries intact. Temperature-0 calls only — non-deterministic calls are never keyed or stored. See [Week 3 Task 1](week3-task1-llm-cache.md).
