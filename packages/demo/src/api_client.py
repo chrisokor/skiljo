@@ -92,3 +92,33 @@ def approve_version(skill_id: str, version_id: str) -> dict:
     )
     resp.raise_for_status()
     return resp.json()
+
+
+def list_ticket_batches() -> list[dict]:
+    """List available ticket batches (synthetic + imported)."""
+    return [
+        {"id": "refund_v1", "name": "refund_v1 (100 tickets, seed=42)"},
+    ]
+
+
+def create_simulation(skill_version_id: str, tickets: list[dict]) -> str:
+    """Start a simulation job. Returns job_id as str."""
+    resp = requests.post(
+        f"{API_BASE}/simulations",
+        json={"skill_version_id": skill_version_id, "tickets": tickets},
+        headers=get_headers(),
+        timeout=30,
+    )
+    resp.raise_for_status()
+    return str(resp.json()["job_id"])
+
+
+def get_simulation(sim_id: str) -> dict:
+    """Fetch simulation run summary by simulation run id."""
+    resp = requests.get(
+        f"{API_BASE}/simulations/{sim_id}",
+        headers=get_headers(),
+        timeout=10,
+    )
+    resp.raise_for_status()
+    return resp.json()
