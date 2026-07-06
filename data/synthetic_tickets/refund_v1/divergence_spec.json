@@ -1,0 +1,27 @@
+[
+  {
+    "rule_id": "vip_exception",
+    "condition": {
+      "all": [
+        {"field": "customer_segment", "op": "eq", "value": "vip"},
+        {"field": "refund_amount", "op": "gt", "value": 100.0}
+      ]
+    },
+    "base_decision": "deny_refund",
+    "shadow_decision": "approve_refund",
+    "frequency": 0.85
+  },
+  {
+    "rule_id": "near_threshold_leniency",
+    "condition": {
+      "all": [
+        {"field": "refund_amount", "op": "gte", "value": 100.0},
+        {"field": "refund_amount", "op": "lte", "value": 120.0},
+        {"field": "purchase_days_ago", "op": "lte", "value": 30}
+      ]
+    },
+    "base_decision": "deny_refund",
+    "shadow_decision": "approve_refund",
+    "frequency": 0.60
+  }
+]

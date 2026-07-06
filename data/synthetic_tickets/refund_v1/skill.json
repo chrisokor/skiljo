@@ -1,0 +1,55 @@
+{
+  "skill_name": "process_refund_request",
+  "version": 1,
+  "trigger": "customer_requests_refund",
+  "inputs": [
+    {"name": "refund_amount", "type": "number"},
+    {"name": "purchase_days_ago", "type": "integer"},
+    {"name": "customer_segment", "type": "string"},
+    {"name": "fraud_flags", "type": "array"},
+    {"name": "refund_reason", "type": "string"}
+  ],
+  "decision_zones": {
+    "deterministic": [
+      {
+        "condition": {
+          "all": [
+            {"field": "refund_amount", "op": "lte", "value": 100.0},
+            {"field": "purchase_days_ago", "op": "lte", "value": 30},
+            {"field": "fraud_flags", "op": "empty", "value": null}
+          ]
+        },
+        "action": "approve_refund"
+      },
+      {
+        "condition": {
+          "all": [
+            {"field": "refund_amount", "op": "gt", "value": 500.0}
+          ]
+        },
+        "action": "escalate_to_finance"
+      }
+    ],
+    "llm_assisted": [
+      {
+        "condition": {
+          "all": [
+            {"field": "refund_reason", "op": "contains", "value": "goodwill"}
+          ]
+        },
+        "action": "draft_recommendation",
+        "requires_human_approval": true
+      }
+    ],
+    "human_only": [
+      {
+        "condition": {
+          "all": [
+            {"field": "fraud_flags", "op": "not_empty", "value": null}
+          ]
+        },
+        "action": "escalate_to_fraud_team"
+      }
+    ]
+  }
+}

@@ -1,0 +1,924 @@
+[
+  {
+    "ticket_id": "bd9c66b3-ad3c-2d6d-1a3d-1fa7bc8960a9",
+    "refund_amount": 383.66,
+    "purchase_days_ago": 3,
+    "customer_segment": "premium",
+    "fraud_flags": [],
+    "refund_reason": "not_as_described",
+    "ground_truth_decision": "escalate_to_human"
+  },
+  {
+    "ticket_id": "9a1de644-815e-f6d1-3b8f-aa1837f8a88b",
+    "refund_amount": 535.31,
+    "purchase_days_ago": 11,
+    "customer_segment": "standard",
+    "fraud_flags": [
+      "suspicious_activity"
+    ],
+    "refund_reason": "product_defect",
+    "ground_truth_decision": "escalate_to_finance"
+  },
+  {
+    "ticket_id": "47378190-96da-1dac-72ff-5d2a386ecbe0",
+    "refund_amount": 15.92,
+    "purchase_days_ago": 25,
+    "customer_segment": "premium",
+    "fraud_flags": [],
+    "refund_reason": "goodwill",
+    "ground_truth_decision": "approve_refund"
+  },
+  {
+    "ticket_id": "371ecd7b-27cd-8130-4722-9389571aa876",
+    "refund_amount": 485.66,
+    "purchase_days_ago": 0,
+    "customer_segment": "premium",
+    "fraud_flags": [],
+    "refund_reason": "goodwill",
+    "ground_truth_decision": "requires_human_review"
+  },
+  {
+    "ticket_id": "43b7a3a6-9a8d-ca03-580d-7b71d8f56413",
+    "refund_amount": 574.33,
+    "purchase_days_ago": 43,
+    "customer_segment": "standard",
+    "fraud_flags": [],
+    "refund_reason": "changed_mind",
+    "ground_truth_decision": "escalate_to_finance"
+  },
+  {
+    "ticket_id": "d453dd32-4b0d-bb41-8d52-88f1142c3fe8",
+    "refund_amount": 484.28,
+    "purchase_days_ago": 58,
+    "customer_segment": "standard",
+    "fraud_flags": [],
+    "refund_reason": "goodwill",
+    "ground_truth_decision": "requires_human_review"
+  },
+  {
+    "ticket_id": "4a15544d-c5e7-ce8a-3a57-8a8ea9488d99",
+    "refund_amount": 377.18,
+    "purchase_days_ago": 46,
+    "customer_segment": "standard",
+    "fraud_flags": [],
+    "refund_reason": "product_defect",
+    "ground_truth_decision": "escalate_to_human"
+  },
+  {
+    "ticket_id": "29a3b2e9-5d65-a441-d588-42dea2bc372f",
+    "refund_amount": 591.13,
+    "purchase_days_ago": 29,
+    "customer_segment": "premium",
+    "fraud_flags": [],
+    "refund_reason": "goodwill",
+    "ground_truth_decision": "escalate_to_finance"
+  },
+  {
+    "ticket_id": "88bd6407-2bcf-be01-a28d-efe39bf00273",
+    "refund_amount": 222.11,
+    "purchase_days_ago": 26,
+    "customer_segment": "premium",
+    "fraud_flags": [],
+    "refund_reason": "product_defect",
+    "ground_truth_decision": "escalate_to_human"
+  },
+  {
+    "ticket_id": "c4b032cc-d7c5-24a5-5304-317faf42e12f",
+    "refund_amount": 437.48,
+    "purchase_days_ago": 20,
+    "customer_segment": "standard",
+    "fraud_flags": [],
+    "refund_reason": "not_as_described",
+    "ground_truth_decision": "escalate_to_human"
+  },
+  {
+    "ticket_id": "e9c349e0-3602-f8ac-10f1-bc81448aaa9e",
+    "refund_amount": 465.6,
+    "purchase_days_ago": 29,
+    "customer_segment": "premium",
+    "fraud_flags": [],
+    "refund_reason": "goodwill",
+    "ground_truth_decision": "requires_human_review"
+  },
+  {
+    "ticket_id": "3f22faf8-23be-d01d-43cf-2fde24933b83",
+    "refund_amount": 565.75,
+    "purchase_days_ago": 40,
+    "customer_segment": "standard",
+    "fraud_flags": [],
+    "refund_reason": "goodwill",
+    "ground_truth_decision": "escalate_to_finance"
+  },
+  {
+    "ticket_id": "ff5e9ff0-ff50-bde4-3825-67b85cabcc97",
+    "refund_amount": 446.99,
+    "purchase_days_ago": 68,
+    "customer_segment": "standard",
+    "fraud_flags": [],
+    "refund_reason": "goodwill",
+    "ground_truth_decision": "requires_human_review"
+  },
+  {
+    "ticket_id": "cac5b68c-28f4-9481-a0a0-4dc427209bdf",
+    "refund_amount": 83.0,
+    "purchase_days_ago": 63,
+    "customer_segment": "standard",
+    "fraud_flags": [
+      "suspicious_activity"
+    ],
+    "refund_reason": "product_defect",
+    "ground_truth_decision": "escalate_to_human"
+  },
+  {
+    "ticket_id": "8da0365b-f898-97b9-405c-acec877409a9",
+    "refund_amount": 408.29,
+    "purchase_days_ago": 76,
+    "customer_segment": "standard",
+    "fraud_flags": [],
+    "refund_reason": "goodwill",
+    "ground_truth_decision": "requires_human_review"
+  },
+  {
+    "ticket_id": "1c8eaee9-5715-bd6f-a416-1293c4c2e2e3",
+    "refund_amount": 516.47,
+    "purchase_days_ago": 1,
+    "customer_segment": "premium",
+    "fraud_flags": [],
+    "refund_reason": "changed_mind",
+    "ground_truth_decision": "escalate_to_finance"
+  },
+  {
+    "ticket_id": "2dbc2134-c30f-f46e-8026-695ff8cda88b",
+    "refund_amount": 176.1,
+    "purchase_days_ago": 20,
+    "customer_segment": "standard",
+    "fraud_flags": [],
+    "refund_reason": "changed_mind",
+    "ground_truth_decision": "escalate_to_human"
+  },
+  {
+    "ticket_id": "295b4715-c333-e861-5fb8-d16c2720797d",
+    "refund_amount": 304.61,
+    "purchase_days_ago": 13,
+    "customer_segment": "premium",
+    "fraud_flags": [],
+    "refund_reason": "not_as_described",
+    "ground_truth_decision": "escalate_to_human"
+  },
+  {
+    "ticket_id": "fc3e058b-e0f3-eab0-5cec-4eb5edd96831",
+    "refund_amount": 323.63,
+    "purchase_days_ago": 67,
+    "customer_segment": "vip",
+    "fraud_flags": [],
+    "refund_reason": "goodwill",
+    "ground_truth_decision": "approve_refund"
+  },
+  {
+    "ticket_id": "d0e6e660-7c69-dee1-bb5e-4bcf15ed6269",
+    "refund_amount": 499.0,
+    "purchase_days_ago": 39,
+    "customer_segment": "standard",
+    "fraud_flags": [],
+    "refund_reason": "product_defect",
+    "ground_truth_decision": "escalate_to_human"
+  },
+  {
+    "ticket_id": "43dac043-2a45-c2ab-8cbf-edb0f264accc",
+    "refund_amount": 41.53,
+    "purchase_days_ago": 68,
+    "customer_segment": "premium",
+    "fraud_flags": [],
+    "refund_reason": "goodwill",
+    "ground_truth_decision": "requires_human_review"
+  },
+  {
+    "ticket_id": "fec21bbe-6624-5bfa-4fcc-a39ab683d2e6",
+    "refund_amount": 316.6,
+    "purchase_days_ago": 77,
+    "customer_segment": "standard",
+    "fraud_flags": [],
+    "refund_reason": "not_as_described",
+    "ground_truth_decision": "escalate_to_human"
+  },
+  {
+    "ticket_id": "568cc69b-1064-005c-3985-c3cf3f76be1d",
+    "refund_amount": 403.01,
+    "purchase_days_ago": 47,
+    "customer_segment": "standard",
+    "fraud_flags": [],
+    "refund_reason": "product_defect",
+    "ground_truth_decision": "escalate_to_human"
+  },
+  {
+    "ticket_id": "3a9bedd4-0f12-59e0-a18f-f6b6b535106e",
+    "refund_amount": 12.62,
+    "purchase_days_ago": 70,
+    "customer_segment": "standard",
+    "fraud_flags": [],
+    "refund_reason": "product_defect",
+    "ground_truth_decision": "escalate_to_human"
+  },
+  {
+    "ticket_id": "36d8393a-7c44-1fe7-ab42-20a7474a493b",
+    "refund_amount": 40.44,
+    "purchase_days_ago": 4,
+    "customer_segment": "premium",
+    "fraud_flags": [
+      "suspicious_activity"
+    ],
+    "refund_reason": "not_as_described",
+    "ground_truth_decision": "escalate_to_human"
+  },
+  {
+    "ticket_id": "1825bc54-30be-b45f-6835-14f2ceb81f9d",
+    "refund_amount": 323.54,
+    "purchase_days_ago": 73,
+    "customer_segment": "standard",
+    "fraud_flags": [],
+    "refund_reason": "goodwill",
+    "ground_truth_decision": "requires_human_review"
+  },
+  {
+    "ticket_id": "a56c0941-fbf2-4050-a748-dbcfac619e63",
+    "refund_amount": 58.16,
+    "purchase_days_ago": 55,
+    "customer_segment": "standard",
+    "fraud_flags": [],
+    "refund_reason": "product_defect",
+    "ground_truth_decision": "escalate_to_human"
+  },
+  {
+    "ticket_id": "894a05e4-30b1-87ef-310c-0c003fa7f104",
+    "refund_amount": 59.05,
+    "purchase_days_ago": 51,
+    "customer_segment": "premium",
+    "fraud_flags": [],
+    "refund_reason": "product_defect",
+    "ground_truth_decision": "escalate_to_human"
+  },
+  {
+    "ticket_id": "db20a56e-dc81-5fe7-ceda-8bbb71710434",
+    "refund_amount": 269.17,
+    "purchase_days_ago": 54,
+    "customer_segment": "standard",
+    "fraud_flags": [],
+    "refund_reason": "product_defect",
+    "ground_truth_decision": "escalate_to_human"
+  },
+  {
+    "ticket_id": "c0e9ab30-ed26-62e9-17e0-11b7f8102383",
+    "refund_amount": 330.2,
+    "purchase_days_ago": 6,
+    "customer_segment": "premium",
+    "fraud_flags": [],
+    "refund_reason": "product_defect",
+    "ground_truth_decision": "escalate_to_human"
+  },
+  {
+    "ticket_id": "610461e3-2a25-a888-0f02-bad0e7067ef4",
+    "refund_amount": 509.22,
+    "purchase_days_ago": 21,
+    "customer_segment": "standard",
+    "fraud_flags": [],
+    "refund_reason": "goodwill",
+    "ground_truth_decision": "escalate_to_finance"
+  },
+  {
+    "ticket_id": "f512c4c3-b253-d218-6c4a-37ea490617f2",
+    "refund_amount": 1.29,
+    "purchase_days_ago": 49,
+    "customer_segment": "standard",
+    "fraud_flags": [],
+    "refund_reason": "goodwill",
+    "ground_truth_decision": "requires_human_review"
+  },
+  {
+    "ticket_id": "0ef8c2d6-f7fd-5646-37bb-3eec4bf50b52",
+    "refund_amount": 438.3,
+    "purchase_days_ago": 71,
+    "customer_segment": "premium",
+    "fraud_flags": [],
+    "refund_reason": "not_as_described",
+    "ground_truth_decision": "escalate_to_human"
+  },
+  {
+    "ticket_id": "eb5cf467-80ba-cd64-7a0e-cfea958ca9ba",
+    "refund_amount": 347.51,
+    "purchase_days_ago": 69,
+    "customer_segment": "standard",
+    "fraud_flags": [],
+    "refund_reason": "product_defect",
+    "ground_truth_decision": "escalate_to_human"
+  },
+  {
+    "ticket_id": "acdabacc-1165-e210-9854-3881118a9d29",
+    "refund_amount": 511.63,
+    "purchase_days_ago": 20,
+    "customer_segment": "standard",
+    "fraud_flags": [],
+    "refund_reason": "not_as_described",
+    "ground_truth_decision": "escalate_to_finance"
+  },
+  {
+    "ticket_id": "9e8fc965-0a2c-827e-9832-685694340a03",
+    "refund_amount": 517.09,
+    "purchase_days_ago": 51,
+    "customer_segment": "standard",
+    "fraud_flags": [],
+    "refund_reason": "not_as_described",
+    "ground_truth_decision": "escalate_to_finance"
+  },
+  {
+    "ticket_id": "506e5a9a-b758-588d-ab73-295b344a54b8",
+    "refund_amount": 49.19,
+    "purchase_days_ago": 84,
+    "customer_segment": "standard",
+    "fraud_flags": [],
+    "refund_reason": "changed_mind",
+    "ground_truth_decision": "escalate_to_human"
+  },
+  {
+    "ticket_id": "ef8c485b-c07a-30f2-edd4-253b50f0fd0a",
+    "refund_amount": 143.21,
+    "purchase_days_ago": 50,
+    "customer_segment": "standard",
+    "fraud_flags": [],
+    "refund_reason": "goodwill",
+    "ground_truth_decision": "requires_human_review"
+  },
+  {
+    "ticket_id": "8181a8cc-3691-47eb-89a2-688b12c136e0",
+    "refund_amount": 43.53,
+    "purchase_days_ago": 58,
+    "customer_segment": "premium",
+    "fraud_flags": [],
+    "refund_reason": "product_defect",
+    "ground_truth_decision": "escalate_to_human"
+  },
+  {
+    "ticket_id": "d5704f32-702c-dd20-2862-18b848f4ef12",
+    "refund_amount": 159.12,
+    "purchase_days_ago": 44,
+    "customer_segment": "premium",
+    "fraud_flags": [],
+    "refund_reason": "changed_mind",
+    "ground_truth_decision": "escalate_to_human"
+  },
+  {
+    "ticket_id": "4ca415ea-8dfa-6a56-d12d-bc9aaaf91531",
+    "refund_amount": 325.93,
+    "purchase_days_ago": 38,
+    "customer_segment": "premium",
+    "fraud_flags": [],
+    "refund_reason": "product_defect",
+    "ground_truth_decision": "escalate_to_human"
+  },
+  {
+    "ticket_id": "45b89cd9-27cb-6f2a-8da0-1097be0f051b",
+    "refund_amount": 559.05,
+    "purchase_days_ago": 13,
+    "customer_segment": "vip",
+    "fraud_flags": [],
+    "refund_reason": "product_defect",
+    "ground_truth_decision": "escalate_to_finance"
+  },
+  {
+    "ticket_id": "e7c421c7-4049-7b71-7d10-6c6081627cf1",
+    "refund_amount": 169.05,
+    "purchase_days_ago": 26,
+    "customer_segment": "premium",
+    "fraud_flags": [],
+    "refund_reason": "changed_mind",
+    "ground_truth_decision": "escalate_to_human"
+  },
+  {
+    "ticket_id": "c56811cd-5563-f616-00e8-5ece0b49452d",
+    "refund_amount": 544.9,
+    "purchase_days_ago": 6,
+    "customer_segment": "standard",
+    "fraud_flags": [],
+    "refund_reason": "changed_mind",
+    "ground_truth_decision": "escalate_to_finance"
+  },
+  {
+    "ticket_id": "13432e61-1ca3-c448-0279-b6a68f9797b0",
+    "refund_amount": 78.49,
+    "purchase_days_ago": 33,
+    "customer_segment": "standard",
+    "fraud_flags": [],
+    "refund_reason": "goodwill",
+    "ground_truth_decision": "requires_human_review"
+  },
+  {
+    "ticket_id": "0ab54bde-20a0-4502-6e06-809725e97977",
+    "refund_amount": 567.03,
+    "purchase_days_ago": 88,
+    "customer_segment": "vip",
+    "fraud_flags": [],
+    "refund_reason": "changed_mind",
+    "ground_truth_decision": "approve_refund"
+  },
+  {
+    "ticket_id": "c7b5b2bc-5a8a-aeca-1a50-aec3aabc25fa",
+    "refund_amount": 184.96,
+    "purchase_days_ago": 5,
+    "customer_segment": "premium",
+    "fraud_flags": [],
+    "refund_reason": "not_as_described",
+    "ground_truth_decision": "escalate_to_human"
+  },
+  {
+    "ticket_id": "2d534dd0-cf8e-bc5a-ccc5-6569f9e8a369",
+    "refund_amount": 335.93,
+    "purchase_days_ago": 52,
+    "customer_segment": "vip",
+    "fraud_flags": [],
+    "refund_reason": "not_as_described",
+    "ground_truth_decision": "escalate_to_human"
+  },
+  {
+    "ticket_id": "bc2cbb0d-dd33-4cc7-ab7f-089acd5f4822",
+    "refund_amount": 528.85,
+    "purchase_days_ago": 3,
+    "customer_segment": "standard",
+    "fraud_flags": [],
+    "refund_reason": "goodwill",
+    "ground_truth_decision": "escalate_to_finance"
+  },
+  {
+    "ticket_id": "787f2425-dbcc-c477-09e9-db0adf465290",
+    "refund_amount": 486.45,
+    "purchase_days_ago": 34,
+    "customer_segment": "standard",
+    "fraud_flags": [],
+    "refund_reason": "goodwill",
+    "ground_truth_decision": "requires_human_review"
+  },
+  {
+    "ticket_id": "3170f437-a8f7-ef5a-060e-df5b39118497",
+    "refund_amount": 133.46,
+    "purchase_days_ago": 58,
+    "customer_segment": "standard",
+    "fraud_flags": [],
+    "refund_reason": "not_as_described",
+    "ground_truth_decision": "escalate_to_human"
+  },
+  {
+    "ticket_id": "6651529e-8268-690b-a438-25b559e4b671",
+    "refund_amount": 239.08,
+    "purchase_days_ago": 35,
+    "customer_segment": "premium",
+    "fraud_flags": [],
+    "refund_reason": "changed_mind",
+    "ground_truth_decision": "escalate_to_human"
+  },
+  {
+    "ticket_id": "fbc9f87a-f668-a617-94a1-875d2db69edb",
+    "refund_amount": 407.71,
+    "purchase_days_ago": 68,
+    "customer_segment": "standard",
+    "fraud_flags": [
+      "suspicious_activity"
+    ],
+    "refund_reason": "changed_mind",
+    "ground_truth_decision": "escalate_to_human"
+  },
+  {
+    "ticket_id": "82ec9f2d-fbf6-e16f-9b30-80d56fb78271",
+    "refund_amount": 159.28,
+    "purchase_days_ago": 13,
+    "customer_segment": "standard",
+    "fraud_flags": [],
+    "refund_reason": "changed_mind",
+    "ground_truth_decision": "escalate_to_human"
+  },
+  {
+    "ticket_id": "ce777f00-ecf2-7e76-8519-7ff4006ed6e3",
+    "refund_amount": 69.39,
+    "purchase_days_ago": 73,
+    "customer_segment": "standard",
+    "fraud_flags": [
+      "suspicious_activity"
+    ],
+    "refund_reason": "goodwill",
+    "ground_truth_decision": "requires_human_review"
+  },
+  {
+    "ticket_id": "d9178793-a9d3-c2e6-505c-c6869f871ce7",
+    "refund_amount": 323.07,
+    "purchase_days_ago": 85,
+    "customer_segment": "standard",
+    "fraud_flags": [],
+    "refund_reason": "changed_mind",
+    "ground_truth_decision": "escalate_to_human"
+  },
+  {
+    "ticket_id": "8dedf9fb-4bb0-0f20-b27c-40266703b636",
+    "refund_amount": 74.78,
+    "purchase_days_ago": 38,
+    "customer_segment": "standard",
+    "fraud_flags": [],
+    "refund_reason": "changed_mind",
+    "ground_truth_decision": "escalate_to_human"
+  },
+  {
+    "ticket_id": "67f48ad5-4d0b-0d1a-91b0-e1d99d9262af",
+    "refund_amount": 76.37,
+    "purchase_days_ago": 53,
+    "customer_segment": "premium",
+    "fraud_flags": [],
+    "refund_reason": "not_as_described",
+    "ground_truth_decision": "escalate_to_human"
+  },
+  {
+    "ticket_id": "acf5e81e-7131-6269-7118-e36477097749",
+    "refund_amount": 328.76,
+    "purchase_days_ago": 0,
+    "customer_segment": "standard",
+    "fraud_flags": [],
+    "refund_reason": "changed_mind",
+    "ground_truth_decision": "escalate_to_human"
+  },
+  {
+    "ticket_id": "83f4a9a9-48a6-39d0-15b5-2908a8aa7158",
+    "refund_amount": 128.22,
+    "purchase_days_ago": 60,
+    "customer_segment": "premium",
+    "fraud_flags": [],
+    "refund_reason": "not_as_described",
+    "ground_truth_decision": "escalate_to_human"
+  },
+  {
+    "ticket_id": "ce7ae7f6-3982-0cff-4f77-a665ac3c5640",
+    "refund_amount": 398.31,
+    "purchase_days_ago": 79,
+    "customer_segment": "standard",
+    "fraud_flags": [],
+    "refund_reason": "not_as_described",
+    "ground_truth_decision": "escalate_to_human"
+  },
+  {
+    "ticket_id": "31c681ec-935f-2b0a-a138-4ddce2d9de5d",
+    "refund_amount": 119.48,
+    "purchase_days_ago": 3,
+    "customer_segment": "standard",
+    "fraud_flags": [],
+    "refund_reason": "product_defect",
+    "ground_truth_decision": "approve_refund"
+  },
+  {
+    "ticket_id": "c521bf2d-dc45-d539-c03f-3538e4855aa1",
+    "refund_amount": 431.01,
+    "purchase_days_ago": 49,
+    "customer_segment": "standard",
+    "fraud_flags": [],
+    "refund_reason": "product_defect",
+    "ground_truth_decision": "escalate_to_human"
+  },
+  {
+    "ticket_id": "eadf5085-3fcb-7546-8eb2-25790cdb1ca4",
+    "refund_amount": 531.28,
+    "purchase_days_ago": 54,
+    "customer_segment": "standard",
+    "fraud_flags": [],
+    "refund_reason": "goodwill",
+    "ground_truth_decision": "escalate_to_finance"
+  },
+  {
+    "ticket_id": "714c7df4-e434-7d51-c158-1092f335cba3",
+    "refund_amount": 509.0,
+    "purchase_days_ago": 58,
+    "customer_segment": "standard",
+    "fraud_flags": [],
+    "refund_reason": "changed_mind",
+    "ground_truth_decision": "escalate_to_finance"
+  },
+  {
+    "ticket_id": "dc8aee30-be60-33f7-28be-9288e5af6e39",
+    "refund_amount": 367.59,
+    "purchase_days_ago": 64,
+    "customer_segment": "standard",
+    "fraud_flags": [],
+    "refund_reason": "goodwill",
+    "ground_truth_decision": "requires_human_review"
+  },
+  {
+    "ticket_id": "7c0e8cd8-8573-e793-c715-b2b9c40c5d91",
+    "refund_amount": 284.8,
+    "purchase_days_ago": 33,
+    "customer_segment": "premium",
+    "fraud_flags": [],
+    "refund_reason": "changed_mind",
+    "ground_truth_decision": "escalate_to_human"
+  },
+  {
+    "ticket_id": "e49d681d-51d8-7c64-55fa-1ab8458f1f19",
+    "refund_amount": 376.05,
+    "purchase_days_ago": 35,
+    "customer_segment": "standard",
+    "fraud_flags": [],
+    "refund_reason": "not_as_described",
+    "ground_truth_decision": "escalate_to_human"
+  },
+  {
+    "ticket_id": "6a34c854-1071-4d51-36c5-9dacb4d7e28e",
+    "refund_amount": 324.09,
+    "purchase_days_ago": 17,
+    "customer_segment": "standard",
+    "fraud_flags": [],
+    "refund_reason": "not_as_described",
+    "ground_truth_decision": "escalate_to_human"
+  },
+  {
+    "ticket_id": "95863a76-c511-55ff-e7a3-7e8163b4c08b",
+    "refund_amount": 244.56,
+    "purchase_days_ago": 69,
+    "customer_segment": "standard",
+    "fraud_flags": [
+      "suspicious_activity"
+    ],
+    "refund_reason": "goodwill",
+    "ground_truth_decision": "requires_human_review"
+  },
+  {
+    "ticket_id": "5a0cdd7c-f157-8470-0182-67c47a1b5806",
+    "refund_amount": 567.64,
+    "purchase_days_ago": 2,
+    "customer_segment": "premium",
+    "fraud_flags": [],
+    "refund_reason": "goodwill",
+    "ground_truth_decision": "escalate_to_finance"
+  },
+  {
+    "ticket_id": "8bcf53a1-bc10-fa52-bf5d-2fdf89c8d2ab",
+    "refund_amount": 179.17,
+    "purchase_days_ago": 49,
+    "customer_segment": "premium",
+    "fraud_flags": [],
+    "refund_reason": "goodwill",
+    "ground_truth_decision": "requires_human_review"
+  },
+  {
+    "ticket_id": "ab3b4d37-560c-95ee-638c-254c076e2bba",
+    "refund_amount": 479.92,
+    "purchase_days_ago": 28,
+    "customer_segment": "standard",
+    "fraud_flags": [],
+    "refund_reason": "goodwill",
+    "ground_truth_decision": "requires_human_review"
+  },
+  {
+    "ticket_id": "06e745f9-88bc-539c-9f4c-3b79fb10987f",
+    "refund_amount": 407.49,
+    "purchase_days_ago": 51,
+    "customer_segment": "premium",
+    "fraud_flags": [],
+    "refund_reason": "not_as_described",
+    "ground_truth_decision": "escalate_to_human"
+  },
+  {
+    "ticket_id": "2e85cb21-7631-de9d-dde9-f86322bd3388",
+    "refund_amount": 544.16,
+    "purchase_days_ago": 75,
+    "customer_segment": "standard",
+    "fraud_flags": [
+      "suspicious_activity"
+    ],
+    "refund_reason": "goodwill",
+    "ground_truth_decision": "escalate_to_finance"
+  },
+  {
+    "ticket_id": "473bd358-610e-6a64-e130-1617c2dff335",
+    "refund_amount": 30.17,
+    "purchase_days_ago": 48,
+    "customer_segment": "standard",
+    "fraud_flags": [],
+    "refund_reason": "changed_mind",
+    "ground_truth_decision": "escalate_to_human"
+  },
+  {
+    "ticket_id": "fff9f585-0d55-7b61-8a17-5dfebfc00dc8",
+    "refund_amount": 451.21,
+    "purchase_days_ago": 53,
+    "customer_segment": "standard",
+    "fraud_flags": [
+      "suspicious_activity"
+    ],
+    "refund_reason": "product_defect",
+    "ground_truth_decision": "escalate_to_human"
+  },
+  {
+    "ticket_id": "3f4df561-f319-c125-07f1-94f9c1156d6d",
+    "refund_amount": 571.15,
+    "purchase_days_ago": 28,
+    "customer_segment": "premium",
+    "fraud_flags": [],
+    "refund_reason": "product_defect",
+    "ground_truth_decision": "escalate_to_finance"
+  },
+  {
+    "ticket_id": "770c7798-37cc-863b-f2a0-345990604f62",
+    "refund_amount": 119.62,
+    "purchase_days_ago": 2,
+    "customer_segment": "premium",
+    "fraud_flags": [],
+    "refund_reason": "goodwill",
+    "ground_truth_decision": "requires_human_review"
+  },
+  {
+    "ticket_id": "f6f7f0cc-29ec-8e49-d1bd-b8c0c71d5e60",
+    "refund_amount": 419.68,
+    "purchase_days_ago": 47,
+    "customer_segment": "standard",
+    "fraud_flags": [],
+    "refund_reason": "product_defect",
+    "ground_truth_decision": "escalate_to_human"
+  },
+  {
+    "ticket_id": "32c5bd89-b70b-3420-f104-3785658b2523",
+    "refund_amount": 186.62,
+    "purchase_days_ago": 74,
+    "customer_segment": "standard",
+    "fraud_flags": [],
+    "refund_reason": "goodwill",
+    "ground_truth_decision": "requires_human_review"
+  },
+  {
+    "ticket_id": "ce3714af-99b4-9350-af2b-99b4d9acd158",
+    "refund_amount": 45.6,
+    "purchase_days_ago": 88,
+    "customer_segment": "premium",
+    "fraud_flags": [],
+    "refund_reason": "changed_mind",
+    "ground_truth_decision": "escalate_to_human"
+  },
+  {
+    "ticket_id": "8186a576-11a7-2609-5edd-bbbfa9597663",
+    "refund_amount": 72.63,
+    "purchase_days_ago": 72,
+    "customer_segment": "premium",
+    "fraud_flags": [],
+    "refund_reason": "goodwill",
+    "ground_truth_decision": "requires_human_review"
+  },
+  {
+    "ticket_id": "a2b5b498-5cb8-5aed-f5f6-2c976efb63b1",
+    "refund_amount": 388.53,
+    "purchase_days_ago": 1,
+    "customer_segment": "premium",
+    "fraud_flags": [],
+    "refund_reason": "product_defect",
+    "ground_truth_decision": "escalate_to_human"
+  },
+  {
+    "ticket_id": "89c5b31a-eb6c-1016-cee6-24d09dac6e83",
+    "refund_amount": 534.95,
+    "purchase_days_ago": 58,
+    "customer_segment": "premium",
+    "fraud_flags": [],
+    "refund_reason": "changed_mind",
+    "ground_truth_decision": "escalate_to_finance"
+  },
+  {
+    "ticket_id": "d4aac9a3-3ed8-c56c-da09-dfa052828d80",
+    "refund_amount": 464.78,
+    "purchase_days_ago": 59,
+    "customer_segment": "standard",
+    "fraud_flags": [],
+    "refund_reason": "changed_mind",
+    "ground_truth_decision": "escalate_to_human"
+  },
+  {
+    "ticket_id": "6105716b-ab0e-664e-9c3e-b2d591e1aa96",
+    "refund_amount": 560.77,
+    "purchase_days_ago": 35,
+    "customer_segment": "premium",
+    "fraud_flags": [],
+    "refund_reason": "goodwill",
+    "ground_truth_decision": "escalate_to_finance"
+  },
+  {
+    "ticket_id": "57207246-4223-623b-cc3e-bdde5ad5cf06",
+    "refund_amount": 201.84,
+    "purchase_days_ago": 63,
+    "customer_segment": "premium",
+    "fraud_flags": [],
+    "refund_reason": "not_as_described",
+    "ground_truth_decision": "escalate_to_human"
+  },
+  {
+    "ticket_id": "15eabb27-30e9-12f2-f2b4-3abf8441aefd",
+    "refund_amount": 167.8,
+    "purchase_days_ago": 76,
+    "customer_segment": "premium",
+    "fraud_flags": [],
+    "refund_reason": "product_defect",
+    "ground_truth_decision": "escalate_to_human"
+  },
+  {
+    "ticket_id": "72bb912d-7da6-7785-b63b-4dc3a559e463",
+    "refund_amount": 144.81,
+    "purchase_days_ago": 52,
+    "customer_segment": "standard",
+    "fraud_flags": [],
+    "refund_reason": "goodwill",
+    "ground_truth_decision": "requires_human_review"
+  },
+  {
+    "ticket_id": "5e781fd7-94e0-d3ba-a9f9-48b24e6384bb",
+    "refund_amount": 475.76,
+    "purchase_days_ago": 11,
+    "customer_segment": "standard",
+    "fraud_flags": [],
+    "refund_reason": "not_as_described",
+    "ground_truth_decision": "escalate_to_human"
+  },
+  {
+    "ticket_id": "455ac762-7428-a656-b3ee-4d3b5a104129",
+    "refund_amount": 283.96,
+    "purchase_days_ago": 67,
+    "customer_segment": "standard",
+    "fraud_flags": [],
+    "refund_reason": "changed_mind",
+    "ground_truth_decision": "escalate_to_human"
+  },
+  {
+    "ticket_id": "c31edbbc-f36c-b62b-892e-6161be2d740a",
+    "refund_amount": 183.97,
+    "purchase_days_ago": 29,
+    "customer_segment": "standard",
+    "fraud_flags": [],
+    "refund_reason": "product_defect",
+    "ground_truth_decision": "escalate_to_human"
+  },
+  {
+    "ticket_id": "31b1b099-d527-21e7-19bc-143efb02bebb",
+    "refund_amount": 414.1,
+    "purchase_days_ago": 24,
+    "customer_segment": "standard",
+    "fraud_flags": [],
+    "refund_reason": "changed_mind",
+    "ground_truth_decision": "escalate_to_human"
+  },
+  {
+    "ticket_id": "0df56ac6-f96b-648a-0ba6-eab94639447b",
+    "refund_amount": 177.75,
+    "purchase_days_ago": 46,
+    "customer_segment": "standard",
+    "fraud_flags": [
+      "suspicious_activity"
+    ],
+    "refund_reason": "not_as_described",
+    "ground_truth_decision": "escalate_to_human"
+  },
+  {
+    "ticket_id": "782a65e0-48ca-7651-92f5-df7b0323d342",
+    "refund_amount": 332.02,
+    "purchase_days_ago": 89,
+    "customer_segment": "vip",
+    "fraud_flags": [],
+    "refund_reason": "goodwill",
+    "ground_truth_decision": "approve_refund"
+  },
+  {
+    "ticket_id": "6694c343-10ba-58e3-d276-2bdc1d34d08e",
+    "refund_amount": 287.23,
+    "purchase_days_ago": 43,
+    "customer_segment": "standard",
+    "fraud_flags": [
+      "suspicious_activity"
+    ],
+    "refund_reason": "goodwill",
+    "ground_truth_decision": "requires_human_review"
+  },
+  {
+    "ticket_id": "4dc82a1e-f2f9-e5fa-9016-4161cfa701cd",
+    "refund_amount": 295.05,
+    "purchase_days_ago": 73,
+    "customer_segment": "premium",
+    "fraud_flags": [
+      "suspicious_activity"
+    ],
+    "refund_reason": "not_as_described",
+    "ground_truth_decision": "escalate_to_human"
+  },
+  {
+    "ticket_id": "7354ea6f-6160-7459-85c7-504bc693da11",
+    "refund_amount": 51.11,
+    "purchase_days_ago": 31,
+    "customer_segment": "standard",
+    "fraud_flags": [],
+    "refund_reason": "not_as_described",
+    "ground_truth_decision": "escalate_to_human"
+  },
+  {
+    "ticket_id": "9c10c572-0f6b-40d0-9efb-a58b9191b363",
+    "refund_amount": 545.1,
+    "purchase_days_ago": 38,
+    "customer_segment": "premium",
+    "fraud_flags": [],
+    "refund_reason": "changed_mind",
+    "ground_truth_decision": "escalate_to_finance"
+  }
+]
