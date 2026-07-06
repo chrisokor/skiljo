@@ -93,3 +93,15 @@ A mode where the API is given a JSON Schema "tool" definition and forced to resp
 ## `mypy` type narrowing via `assert`
 
 A runtime `assert x is not None` also tells mypy's static analysis "treat `x` as non-`None` for the rest of this scope." Used when a value is typed `T | None` (because it's read from environment/config) but a particular code path can only run correctly when it's actually set. See [Task 3](week2-task3-llm-call-logging.md).
+
+## `asyncio.to_thread()`
+
+A Python asyncio function that offloads a blocking synchronous function to a thread-pool thread, returning an awaitable that the event loop can manage. Used when you need concurrent execution of I/O-bound sync code (like LLM API calls via a sync client) without rewriting the underlying code as async. See [Week 3 Task 2](week3-task2-simulation-engine.md).
+
+## Simulation semaphore
+
+An `asyncio.Semaphore` with a fixed bound (e.g., 5) that limits the number of concurrent LLM API calls during batch simulation. Without a semaphore, 100 tickets could fire 100 concurrent LLM calls, overwhelming the Anthropic API rate limit. The semaphore ensures at most N calls are active at once, preventing a thundering herd. See [Week 3 Task 2](week3-task2-simulation-engine.md).
+
+## Golden fixture test
+
+A test pattern where data is pre-generated, version-controlled, and loaded from files (rather than generated fresh in each test run). Golden fixture tests trade test independence for stability and regression detection — they catch behavioral changes in integration scenarios. Useful for complex workflows (like end-to-end simulation) where unit tests alone can't verify the full pipeline. See [Week 3 Task 8](week3-task8-golden-tests.md).

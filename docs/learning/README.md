@@ -7,10 +7,13 @@ See `GLOSSARY.md` for a running list of concepts introduced across debriefs.
 ## Week 3 — Simulation engine
 
 1. [Task 1: LLM response cache (scope addition A1)](week3-task1-llm-cache.md)
-2. [Task 3: Rule evaluator for deterministic zone](week3-task3-rule-evaluator.md)
-3. [Task 4: Shadow-policy ticket generator](week3-task4-shadow-policy-generator.md)
-4. [Task 5: Contradiction detection](week3-task5-contradiction-detection.md)
-5. [Task 6: Simulation API endpoints POST /simulations, GET /simulations/{id}/report](week3-task6-simulation-api.md)
+2. [Task 2: Simulation engine — asyncio batch execution, zone routing, report aggregation](week3-task2-simulation-engine.md)
+3. [Task 3: Rule evaluator for deterministic zone](week3-task3-rule-evaluator.md)
+4. [Task 4: Shadow-policy ticket generator](week3-task4-shadow-policy-generator.md)
+5. [Task 5: Contradiction detection](week3-task5-contradiction-detection.md)
+6. [Task 6: Simulation API endpoints POST /simulations, GET /simulations/{id}/report](week3-task6-simulation-api.md)
+7. [Task 7: Synthetic ticket generation with planted divergences](week3-task7-synthetic-tickets.md)
+8. [Task 8: Golden fixture tests for end-to-end simulation](week3-task8-golden-tests.md)
 
 ## Week 2 — Extraction pipeline
 
