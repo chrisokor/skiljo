@@ -6,7 +6,7 @@ from typing import Any
 from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException
 from pydantic import BaseModel
 
-from skiljo_api.dependencies import get_llm_client
+from skiljo_api.dependencies import get_llm_client, verify_api_key
 from skiljo_core.db.models import Job, SimulationResult, SimulationRun, SkillVersion
 from skiljo_core.db.session import SessionLocal
 from skiljo_core.llm.base import LLMClient
@@ -15,7 +15,7 @@ from skiljo_core.schemas.ticket_schema import Ticket
 from skiljo_core.simulation.contradictions import detect_contradictions
 from skiljo_core.simulation.engine import compute_report, simulate_batch
 
-router = APIRouter()
+router = APIRouter(dependencies=[Depends(verify_api_key)])
 
 
 class SimulationRequest(BaseModel):
@@ -53,6 +53,9 @@ def _run_simulation_job(
             skill = Skill.model_validate(sv.spec)
             tickets = [Ticket.model_validate(t) for t in tickets_raw]
 
+            # asyncio.run() creates a new event loop here because BackgroundTasks
+            # executes this function in a sync thread pool (starlette's run_in_threadpool),
+            # outside the main async event loop — calling await directly would fail.
             results = asyncio.run(simulate_batch(skill, tickets, llm_client))
             report = compute_report(skill_version_id, results, tickets)
             contradictions = detect_contradictions(results, tickets)

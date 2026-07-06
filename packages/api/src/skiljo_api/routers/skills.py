@@ -4,13 +4,13 @@ from datetime import UTC, datetime
 from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException
 from pydantic import BaseModel
 
-from skiljo_api.dependencies import get_llm_client
+from skiljo_api.dependencies import get_llm_client, verify_api_key
 from skiljo_core.db.models import Job, Policy, Skill, SkillVersion
 from skiljo_core.db.session import SessionLocal
 from skiljo_core.extraction.pipeline import run_extraction_pipeline
 from skiljo_core.llm.base import LLMClient
 
-router = APIRouter()
+router = APIRouter(dependencies=[Depends(verify_api_key)])
 
 
 class ExtractRequest(BaseModel):

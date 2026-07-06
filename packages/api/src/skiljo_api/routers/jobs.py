@@ -1,12 +1,13 @@
 import uuid
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
 
+from skiljo_api.dependencies import verify_api_key
 from skiljo_core.db.models import Job
 from skiljo_core.db.session import SessionLocal
 
-router = APIRouter()
+router = APIRouter(dependencies=[Depends(verify_api_key)])
 
 
 class JobResponse(BaseModel):
