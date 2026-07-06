@@ -134,3 +134,23 @@ def list_skill_versions(skill_id: uuid.UUID) -> list[SkillVersionSummary]:
             SkillVersionSummary(id=r.id, version_number=r.version_number, status=r.status, spec=r.spec)
             for r in rows
         ]
+
+
+@router.patch("/skills/{skill_id}/versions/{version_id}/approve")
+def approve_skill_version(skill_id: uuid.UUID, version_id: uuid.UUID) -> SkillVersionSummary:
+    with SessionLocal() as session:
+        skill = session.get(Skill, skill_id)
+        if skill is None:
+            raise HTTPException(status_code=404, detail="skill not found")
+        version = session.get(SkillVersion, version_id)
+        if version is None or version.skill_id != skill_id:
+            raise HTTPException(status_code=404, detail="version not found")
+        version.status = "approved"
+        session.commit()
+        session.refresh(version)
+        return SkillVersionSummary(
+            id=version.id,
+            version_number=version.version_number,
+            status=version.status,
+            spec=version.spec,
+        )

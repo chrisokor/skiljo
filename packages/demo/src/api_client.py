@@ -70,3 +70,25 @@ def list_skills() -> list[dict]:
     )
     resp.raise_for_status()
     return resp.json()
+
+
+def get_skill_versions(skill_id: str) -> list[dict]:
+    """List all versions for a skill."""
+    resp = requests.get(
+        f"{API_BASE}/skills/{skill_id}/versions",
+        headers=get_headers(),
+        timeout=10,
+    )
+    resp.raise_for_status()
+    return resp.json()
+
+
+def approve_version(skill_id: str, version_id: str) -> dict:
+    """Approve a draft skill version. Returns the updated version summary."""
+    resp = requests.patch(
+        f"{API_BASE}/skills/{skill_id}/versions/{version_id}/approve",
+        headers=get_headers(),
+        timeout=10,
+    )
+    resp.raise_for_status()
+    return resp.json()
