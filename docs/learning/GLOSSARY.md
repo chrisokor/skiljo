@@ -30,6 +30,10 @@ FastAPI's idiomatic way to abort a request with an HTTP error. `raise HTTPExcept
 
 FastAPI's mechanism for running work after the HTTP response is sent. The endpoint registers a function via `background_tasks.add_task(fn, *args)` and returns immediately; the function runs afterward. Note: Starlette's `TestClient` runs background tasks *synchronously* before returning the simulated response, so tests can assert on DB state immediately without polling. See [Task 8](week2-task8-extract-endpoint.md).
 
+## Batch simulation
+
+Running `simulate_ticket()` concurrently over a list of tickets using `asyncio.gather` with `asyncio.to_thread` (to wrap the sync LLM client) and an `asyncio.Semaphore(5)` to bound API concurrency. Implemented in `simulate_batch()` in `packages/core/src/skiljo_core/simulation/engine.py`. See [Week 3 Task 2](week3-task2-simulation-engine.md).
+
 ## FastAPI `dependency_overrides`
 
 A dict on the FastAPI `app` object that replaces dependency functions for tests. `app.dependency_overrides[get_llm_client] = lambda: fake_client` makes every request in that test use the fake instead of the real singleton. Must be cleared in `finally` to prevent leaking into other tests. See [Task 8](week2-task8-extract-endpoint.md).
@@ -97,6 +101,10 @@ A runtime `assert x is not None` also tells mypy's static analysis "treat `x` as
 ## `asyncio.to_thread()`
 
 A Python asyncio function that offloads a blocking synchronous function to a thread-pool thread, returning an awaitable that the event loop can manage. Used when you need concurrent execution of I/O-bound sync code (like LLM API calls via a sync client) without rewriting the underlying code as async. See [Week 3 Task 2](week3-task2-simulation-engine.md).
+
+## Simulation Engine
+
+The module in `packages/core/src/skiljo_core/simulation/` that routes each ticket through three decision zones (deterministic → llm_assisted → human_only) and aggregates per-ticket results into a `SimulationReport`. See [Week 3 Task 2](week3-task2-simulation-engine.md).
 
 ## Simulation semaphore
 
