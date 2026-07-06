@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Simulation Report</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; line-height: 1.6; }
+        .summary { background: #f0f0f0; padding: 20px; border-radius: 5px; margin-bottom: 20px; }
+        .metric { display: inline-block; margin-right: 40px; }
+        .metric-value { font-size: 24px; font-weight: bold; }
+        .contradiction { border: 1px solid #ddd; padding: 15px; margin: 10px 0; border-radius: 4px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th, td { padding: 10px; text-align: left; border: 1px solid #ddd; }
+        th { background: #f0f0f0; }
+        .page-break { page-break-after: always; }
+        .match-yes { color: green; }
+        .match-no { color: red; }
+    </style>
+</head>
+<body>
+    <h1>Simulation Report</h1>
+    <p><strong>Skill Version:</strong> {{ report.skill_version_id }}</p>
+
+    <div class="summary">
+        <h2>Executive Summary</h2>
+        <div class="metric">
+            <div>Match Rate</div>
+            <div class="metric-value">{{ "%.1f"|format(report.match_rate * 100) }}%</div>
+        </div>
+        <div class="metric">
+            <div>Escalation Accuracy</div>
+            <div class="metric-value">{{ "%.1f"|format(report.escalation_accuracy * 100) }}%</div>
+        </div>
+        <div class="metric">
+            <div>Contradictions</div>
+            <div class="metric-value">{{ report.contradictions|length if report.contradictions else 0 }}</div>
+        </div>
+        {% if report.automation_candidate_count is not none %}
+        <div class="metric">
+            <div>Automation Candidates</div>
+            <div class="metric-value">{{ report.automation_candidate_count }}</div>
+        </div>
+        {% endif %}
+    </div>
+
+    {% if report.roi_estimates %}
+    <div class="summary">
+        <h2>ROI Estimates</h2>
+        {% if report.roi_estimates.automation_safe_volume is not none %}
+        <p><strong>Automation-safe volume:</strong> {{ report.roi_estimates.automation_safe_volume }} tickets/run</p>
+        {% endif %}
+        {% if report.roi_estimates.manual_review_hours_per_month is not none %}
+        <p><strong>Manual review hours saved/month:</strong> {{ "%.1f"|format(report.roi_estimates.manual_review_hours_per_month) }}</p>
+        {% endif %}
+        {% if report.roi_estimates.estimated_value_usd is not none %}
+        <p><strong>Estimated value:</strong> ${{ "%.2f"|format(report.roi_estimates.estimated_value_usd) }}</p>
+        {% endif %}
+    </div>
+    {% endif %}
+
+    <div class="page-break"></div>
+
+    {% if report.contradictions %}
+    <h2>Contradictions Detected</h2>
+    {% for c in report.contradictions %}
+    <div class="contradiction">
+        <h3>Cluster: {{ c.cluster_key }}</h3>
+        <p><strong>Written decision:</strong> {{ c.written_decision }}</p>
+        <p><strong>Observed decision:</strong> {{ c.observed_decision }}</p>
+        <p><strong>Divergence rate:</strong> {{ "%.1f"|format(c.frequency * 100) }}%</p>
+        <p><strong>Affected tickets:</strong> {{ c.ticket_count }}</p>
+        {% if c.citation %}
+        <p><strong>Citation ({{ c.citation.policy_id }}):</strong> <em>"{{ c.citation.quoted_text }}"</em></p>
+        {% endif %}
+        {% if c.estimated_financial_impact and c.estimated_financial_impact.estimated_impact_usd is not none %}
+        <p><strong>Estimated financial impact:</strong> ${{ "%.2f"|format(c.estimated_financial_impact.estimated_impact_usd) }}
+           ({{ c.estimated_financial_impact.divergent_ticket_count }} divergent tickets,
+           avg ${{ "%.2f"|format(c.estimated_financial_impact.average_refund_amount) }})</p>
+        {% endif %}
+    </div>
+    {% endfor %}
+    {% else %}
+    <h2>Contradictions Detected</h2>
+    <p>No contradictions detected.</p>
+    {% endif %}
+
+    <div class="page-break"></div>
+
+    <h2>Per-Ticket Results</h2>
+    <table>
+        <tr>
+            <th>Ticket ID</th>
+            <th>Decision</th>
+            <th>Zone</th>
+            <th>Match</th>
+            <th>Reasoning</th>
+        </tr>
+        {% for r in report.results %}
+        <tr>
+            <td>{{ r.ticket_id }}</td>
+            <td>{{ r.decision }}</td>
+            <td>{{ r.zone }}</td>
+            <td>
+                {% if r.matched_human_decision is none %}
+                —
+                {% elif r.matched_human_decision %}
+                <span class="match-yes">&#10003;</span>
+                {% else %}
+                <span class="match-no">&#10007;</span>
+                {% endif %}
+            </td>
+            <td>{{ r.reasoning or "" }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>

@@ -1,19 +1,26 @@
 import asyncio
+import os
 import uuid
 from datetime import UTC, datetime
 from typing import Any
 
 from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException
+from fastapi.responses import HTMLResponse
+from jinja2 import Environment, FileSystemLoader
 from pydantic import BaseModel
 
 from skiljo_api.dependencies import get_llm_client, verify_api_key
 from skiljo_core.db.models import Job, SimulationResult, SimulationRun, SkillVersion
 from skiljo_core.db.session import SessionLocal
 from skiljo_core.llm.base import LLMClient
+from skiljo_core.schemas.simulation_report_schema import SimulationReport
 from skiljo_core.schemas.skill_schema import Skill
 from skiljo_core.schemas.ticket_schema import Ticket
 from skiljo_core.simulation.contradictions import detect_contradictions
 from skiljo_core.simulation.engine import compute_report, simulate_batch
+
+_TEMPLATES_DIR = os.path.join(os.path.dirname(__file__), "../templates")
+_jinja_env = Environment(loader=FileSystemLoader(_TEMPLATES_DIR), autoescape=True)
 
 router = APIRouter(dependencies=[Depends(verify_api_key)])
 
@@ -158,3 +165,18 @@ def get_simulation_report(sim_id: uuid.UUID) -> dict[str, Any]:
         if run.status != "completed" or run.summary is None:
             raise HTTPException(status_code=409, detail="simulation not yet completed")
         return run.summary
+
+
+@router.get("/simulations/{sim_id}/report.html", response_class=HTMLResponse)
+def get_simulation_report_html(sim_id: uuid.UUID) -> str:
+    """Render simulation report as a print-friendly standalone HTML page."""
+    with SessionLocal() as session:
+        run = session.get(SimulationRun, sim_id)
+        if run is None:
+            raise HTTPException(status_code=404, detail="simulation not found")
+        if run.status != "completed" or run.summary is None:
+            raise HTTPException(status_code=409, detail="simulation not yet completed")
+        report = SimulationReport.model_validate(run.summary)
+
+    template = _jinja_env.get_template("report.html")
+    return template.render(report=report)
