@@ -27,7 +27,7 @@ api: ## Run the FastAPI dev server
 	uv run uvicorn skiljo_api.main:app --reload --port 8000
 
 demo: ## Run the Streamlit demo (functional from Week 4 onward)
-	uv run streamlit run packages/demo/src/skiljo_demo/app.py
+	uv run streamlit run packages/demo/src/app.py
 
 migrate: ## Apply database migrations
 	uv run alembic -c packages/core/alembic.ini upgrade head

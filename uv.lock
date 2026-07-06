@@ -1077,14 +1077,16 @@ name = "skiljo-demo"
 version = "0.1.0"
 source = { editable = "packages/demo" }
 dependencies = [
+    { name = "requests" },
     { name = "skiljo-core" },
     { name = "streamlit" },
 ]
 
 [package.metadata]
 requires-dist = [
+    { name = "requests", specifier = ">=2.31" },
     { name = "skiljo-core", editable = "packages/core" },
-    { name = "streamlit", specifier = ">=1.38" },
+    { name = "streamlit", specifier = ">=1.28" },
 ]
 
 [[package]]
