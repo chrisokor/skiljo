@@ -23,6 +23,78 @@
           "reasoning": { "type": "string" }
         }
       }
+    },
+    "contradictions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["cluster_key", "written_decision", "observed_decision", "frequency", "ticket_count"],
+        "properties": {
+          "cluster_key": {
+            "type": "object",
+            "description": "Grouping dimensions (amount_band, customer_segment)"
+          },
+          "written_decision": {
+            "type": "string",
+            "description": "What the extracted skill says"
+          },
+          "observed_decision": {
+            "type": "string",
+            "description": "What actually happened (ground truth)"
+          },
+          "frequency": {
+            "type": "number",
+            "description": "Divergence rate (0-1)",
+            "minimum": 0,
+            "maximum": 1
+          },
+          "ticket_count": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "affected_ticket_ids": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "citation": {
+            "type": "object",
+            "required": ["policy_id", "rule_id", "span_start", "span_end", "quoted_text"],
+            "properties": {
+              "policy_id": { "type": "string" },
+              "rule_id": { "type": "string" },
+              "span_start": { "type": "integer", "minimum": 0 },
+              "span_end": { "type": "integer", "minimum": 0 },
+              "quoted_text": { "type": "string" }
+            }
+          },
+          "estimated_financial_impact": {
+            "type": "object",
+            "properties": {
+              "divergent_ticket_count": { "type": "integer", "minimum": 0 },
+              "average_refund_amount": { "type": "number" },
+              "estimated_impact_usd": { "type": "number" }
+            }
+          }
+        }
+      }
+    },
+    "roi_estimates": {
+      "type": "object",
+      "properties": {
+        "automation_safe_volume": {
+          "type": "integer",
+          "description": "Tickets that can safely be auto-approved",
+          "minimum": 0
+        },
+        "manual_review_hours_per_month": {
+          "type": "number",
+          "description": "Estimated hours saved by automation"
+        },
+        "estimated_value_usd": {
+          "type": "number",
+          "description": "Dollar value of correctly automated decisions"
+        }
+      }
     }
   }
 }

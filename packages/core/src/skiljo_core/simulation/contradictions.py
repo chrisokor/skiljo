@@ -9,6 +9,22 @@ from skiljo_core.schemas.ticket_schema import Ticket
 
 
 @dataclass
+class Citation:
+    policy_id: str
+    rule_id: str
+    span_start: int
+    span_end: int
+    quoted_text: str
+
+
+@dataclass
+class FinancialImpact:
+    divergent_ticket_count: int
+    average_refund_amount: float
+    estimated_impact_usd: float
+
+
+@dataclass
 class Contradiction:
     cluster_key: dict[str, Any]
     written_decision: str
@@ -16,6 +32,8 @@ class Contradiction:
     frequency: float
     ticket_count: int
     affected_ticket_ids: list[str] = field(default_factory=list)
+    citation: Citation | None = None
+    estimated_financial_impact: FinancialImpact | None = None
 
 
 def _amount_band(amount: float) -> str:
@@ -67,6 +85,17 @@ def detect_contradictions(
         )
         (written, observed) = pair_counts.most_common(1)[0][0]
 
+        # Compute financial impact from divergent cluster tickets
+        divergent_amounts = [t.refund_amount for _, t in diverged]
+        avg_amount = (
+            sum(divergent_amounts) / len(divergent_amounts) if divergent_amounts else 0.0
+        )
+        financial_impact = FinancialImpact(
+            divergent_ticket_count=len(diverged),
+            average_refund_amount=avg_amount,
+            estimated_impact_usd=avg_amount * len(diverged),
+        )
+
         contradictions.append(
             Contradiction(
                 cluster_key={"amount_band": amount_band, "customer_segment": segment},
@@ -75,6 +104,7 @@ def detect_contradictions(
                 frequency=rate,
                 ticket_count=len(items),
                 affected_ticket_ids=[str(r.ticket_id) for r, _ in diverged],
+                estimated_financial_impact=financial_impact,
             )
         )
     return contradictions
