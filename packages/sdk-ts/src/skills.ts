@@ -21,13 +21,14 @@ export class SkillsResource {
   constructor(private client: SkiljoClient) {}
 
   async extract(
-    policyId: string,
-    skillName: string
+    policyText: string,
+    skillName: string,
+    trigger?: string
   ): Promise<{ job_id: string }> {
     return this.client.request<{ job_id: string }>(
       "POST",
       "/skills/extract",
-      { policy_id: policyId, skill_name: skillName }
+      { policy_text: policyText, skill_name: skillName, trigger: trigger ?? "" }
     );
   }
 

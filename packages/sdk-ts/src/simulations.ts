@@ -10,20 +10,21 @@ export interface SimulationReport {
 
 export interface SimulationResponse {
   id: string;
-  skill_id: string;
-  batch_id: string;
-  summary: SimulationReport;
-  created_at: string;
+  status: string;
+  summary: SimulationReport | null;
 }
 
 export class SimulationsResource {
   constructor(private client: SkiljoClient) {}
 
-  async create(skillId: string, batchId: string): Promise<{ job_id: string }> {
+  async create(
+    skillVersionId: string,
+    tickets: Record<string, unknown>[]
+  ): Promise<{ job_id: string }> {
     return this.client.request<{ job_id: string }>(
       "POST",
       "/simulations",
-      { skill_id: skillId, batch_id: batchId }
+      { skill_version_id: skillVersionId, tickets }
     );
   }
 
@@ -36,6 +37,9 @@ export class SimulationsResource {
 
   async getReport(simId: string): Promise<SimulationReport> {
     const response = await this.get(simId);
+    if (response.summary === null) {
+      throw new Error(`Simulation ${simId} has no report yet (status: ${response.status})`);
+    }
     return response.summary;
   }
 }

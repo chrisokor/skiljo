@@ -52,8 +52,29 @@ describe("Skiljo top-level client", () => {
       mockFetch({ job_id: "j42" });
 
       const sdk = new Skiljo({ apiKey: "k" });
-      const result = await sdk.skills.extract("p1", "refund_v1");
+      const result = await sdk.skills.extract("no refunds allowed", "refund_v1", "refund");
       expect(result.job_id).toBe("j42");
+
+      const [url, init] = vi.mocked(fetch).mock.calls[0];
+      expect(String(url)).toContain("/skills/extract");
+      expect(init?.method).toBe("POST");
+      const body = JSON.parse(init?.body as string);
+      expect(body).toEqual({
+        policy_text: "no refunds allowed",
+        skill_name: "refund_v1",
+        trigger: "refund",
+      });
+    });
+
+    it("sends empty string trigger when omitted", async () => {
+      mockFetch({ job_id: "j43" });
+
+      const sdk = new Skiljo({ apiKey: "k" });
+      await sdk.skills.extract("no refunds allowed", "refund_v1");
+
+      const [, init] = vi.mocked(fetch).mock.calls[0];
+      const body = JSON.parse(init?.body as string);
+      expect(body.trigger).toBe("");
     });
   });
 
@@ -175,12 +196,18 @@ describe("Skiljo top-level client", () => {
       mockFetch({ job_id: "sim-job-1" });
 
       const sdk = new Skiljo({ apiKey: "k" });
-      const result = await sdk.simulations.create("s1", "batch-1");
+      const tickets = [{ ticket_id: "t1", amount: 100 }];
+      const result = await sdk.simulations.create("sv-uuid-1", tickets);
       expect(result.job_id).toBe("sim-job-1");
 
       const [url, init] = vi.mocked(fetch).mock.calls[0];
       expect(String(url)).toContain("/simulations");
       expect(init?.method).toBe("POST");
+      const body = JSON.parse(init?.body as string);
+      expect(body).toEqual({
+        skill_version_id: "sv-uuid-1",
+        tickets: [{ ticket_id: "t1", amount: 100 }],
+      });
     });
   });
 
@@ -188,8 +215,7 @@ describe("Skiljo top-level client", () => {
     it("GETs /simulations/{id} and returns SimulationResponse", async () => {
       const simulation: SimulationResponse = {
         id: "sim-1",
-        skill_id: "s1",
-        batch_id: "batch-1",
+        status: "completed",
         summary: {
           match_rate: 0.95,
           escalation_accuracy: 0.92,
@@ -197,14 +223,14 @@ describe("Skiljo top-level client", () => {
           results: [],
           contradictions: [],
         },
-        created_at: "2026-01-01T00:00:00Z",
       };
       mockFetch(simulation);
 
       const sdk = new Skiljo({ apiKey: "k" });
       const result = await sdk.simulations.get("sim-1");
       expect(result.id).toBe("sim-1");
-      expect(result.summary.match_rate).toBe(0.95);
+      expect(result.status).toBe("completed");
+      expect(result.summary?.match_rate).toBe(0.95);
 
       const [url] = vi.mocked(fetch).mock.calls[0];
       expect(String(url)).toContain("/simulations/sim-1");
@@ -212,18 +238,16 @@ describe("Skiljo top-level client", () => {
   });
 
   describe("simulations.getReport", () => {
-    it("calls get and returns only the summary", async () => {
+    it("calls get and returns only the summary when completed", async () => {
       const simulation: SimulationResponse = {
         id: "sim-2",
-        skill_id: "s1",
-        batch_id: "batch-1",
+        status: "completed",
         summary: {
           match_rate: 0.88,
           escalation_accuracy: 0.85,
           automation_candidate_count: 5,
           results: [],
         },
-        created_at: "2026-01-01T00:00:00Z",
       };
       mockFetch(simulation);
 
@@ -231,6 +255,20 @@ describe("Skiljo top-level client", () => {
       const result = await sdk.simulations.getReport("sim-2");
       expect(result.match_rate).toBe(0.88);
       expect(result.escalation_accuracy).toBe(0.85);
+    });
+
+    it("throws when summary is null", async () => {
+      const simulation: SimulationResponse = {
+        id: "sim-3",
+        status: "running",
+        summary: null,
+      };
+      mockFetch(simulation);
+
+      const sdk = new Skiljo({ apiKey: "k" });
+      await expect(sdk.simulations.getReport("sim-3")).rejects.toThrow(
+        "Simulation sim-3 has no report yet (status: running)"
+      );
     });
   });
 });
