@@ -3,6 +3,7 @@ import { Skiljo } from "./index";
 import type { Policy } from "./policies";
 import type { Skill, SkillVersion } from "./skills";
 import type { Job } from "./jobs";
+import type { SimulationReport, SimulationResponse } from "./simulations";
 
 function mockFetch(data: unknown, ok = true, status = 200) {
   vi.stubGlobal(
@@ -21,11 +22,12 @@ describe("Skiljo top-level client", () => {
     vi.unstubAllGlobals();
   });
 
-  it("exposes policies, skills, and jobs resources", () => {
+  it("exposes policies, skills, jobs, and simulations resources", () => {
     const sdk = new Skiljo({ apiKey: "k" });
     expect(sdk.policies).toBeDefined();
     expect(sdk.skills).toBeDefined();
     expect(sdk.jobs).toBeDefined();
+    expect(sdk.simulations).toBeDefined();
   });
 
   describe("policies.upload", () => {
@@ -165,6 +167,70 @@ describe("Skiljo top-level client", () => {
       await assertion;
 
       vi.useRealTimers();
+    });
+  });
+
+  describe("simulations.create", () => {
+    it("POSTs to /simulations and returns job_id", async () => {
+      mockFetch({ job_id: "sim-job-1" });
+
+      const sdk = new Skiljo({ apiKey: "k" });
+      const result = await sdk.simulations.create("s1", "batch-1");
+      expect(result.job_id).toBe("sim-job-1");
+
+      const [url, init] = vi.mocked(fetch).mock.calls[0];
+      expect(String(url)).toContain("/simulations");
+      expect(init?.method).toBe("POST");
+    });
+  });
+
+  describe("simulations.get", () => {
+    it("GETs /simulations/{id} and returns SimulationResponse", async () => {
+      const simulation: SimulationResponse = {
+        id: "sim-1",
+        skill_id: "s1",
+        batch_id: "batch-1",
+        summary: {
+          match_rate: 0.95,
+          escalation_accuracy: 0.92,
+          automation_candidate_count: 10,
+          results: [],
+          contradictions: [],
+        },
+        created_at: "2026-01-01T00:00:00Z",
+      };
+      mockFetch(simulation);
+
+      const sdk = new Skiljo({ apiKey: "k" });
+      const result = await sdk.simulations.get("sim-1");
+      expect(result.id).toBe("sim-1");
+      expect(result.summary.match_rate).toBe(0.95);
+
+      const [url] = vi.mocked(fetch).mock.calls[0];
+      expect(String(url)).toContain("/simulations/sim-1");
+    });
+  });
+
+  describe("simulations.getReport", () => {
+    it("calls get and returns only the summary", async () => {
+      const simulation: SimulationResponse = {
+        id: "sim-2",
+        skill_id: "s1",
+        batch_id: "batch-1",
+        summary: {
+          match_rate: 0.88,
+          escalation_accuracy: 0.85,
+          automation_candidate_count: 5,
+          results: [],
+        },
+        created_at: "2026-01-01T00:00:00Z",
+      };
+      mockFetch(simulation);
+
+      const sdk = new Skiljo({ apiKey: "k" });
+      const result = await sdk.simulations.getReport("sim-2");
+      expect(result.match_rate).toBe(0.88);
+      expect(result.escalation_accuracy).toBe(0.85);
     });
   });
 });
