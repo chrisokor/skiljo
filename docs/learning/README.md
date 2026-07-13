@@ -4,6 +4,10 @@ An index of written explanations for each implementation task — what was built
 
 See `GLOSSARY.md` for a running list of concepts introduced across debriefs.
 
+## Week 4 — Demo UI, SDK, integration, and documentation
+
+12. [Task 12: ARCHITECTURE.md with full system deep dive](week4-task12-architecture-documentation.md)
+
 ## Week 3 — Simulation engine
 
 1. [Task 1: LLM response cache (scope addition A1)](week3-task1-llm-cache.md)
