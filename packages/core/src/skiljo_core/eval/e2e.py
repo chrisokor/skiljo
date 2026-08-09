@@ -16,6 +16,7 @@ The E2EEval task wraps this scorer in an Inspect Task for use with the
 from __future__ import annotations
 
 import json
+from typing import Any
 
 from inspect_ai import Task, task
 from inspect_ai.scorer import Score, Scorer, Target, mean, scorer
@@ -27,7 +28,7 @@ from inspect_ai.scorer._scorer import TaskState
 # ---------------------------------------------------------------------------
 
 
-def e2e_accuracy(expected: dict, actual: dict) -> Score:
+def e2e_accuracy(expected: dict[str, Any], actual: dict[str, Any]) -> Score:
     """Measure how close observed end-to-end accuracy is to the expected value.
 
     ``expected_e2e_accuracy`` is the labeled ground-truth accuracy for the
@@ -72,10 +73,10 @@ def e2e_accuracy_scorer() -> Scorer:
     """
 
     async def score(state: TaskState, target: Target) -> Score:
-        actual: dict = state.metadata.get("actual_e2e", {})
+        actual: dict[str, Any] = state.metadata.get("actual_e2e", {})
         target_text = target.text if isinstance(target.text, str) else "{}"
         try:
-            expected: dict = json.loads(target_text)
+            expected: dict[str, Any] = json.loads(target_text)
         except json.JSONDecodeError:
             expected = {}
         return e2e_accuracy(expected, actual)

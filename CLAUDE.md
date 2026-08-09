@@ -14,18 +14,18 @@ This is a real project being built seriously by one developer part-time over sum
 
 All planning docs live in the repo root (or `docs/planning/` if reorganized):
 
-- **DESIGN_DOCUMENT.md** — the engineering source of truth. Architecture, data model, component design, key decisions with rationale, week-by-week build plan, and a commit-level breakdown (commits 1–63 plus scope additions A1–A3). When in doubt, DESIGN_DOCUMENT.md wins.
+- **DESIGN_DOCUMENT.md** — the engineering source of truth. Architecture, data model, component design, key decisions with rationale, week-by-week build plan, and a commit-level breakdown (commits 1–63 plus scope additions A1–A6). When in doubt, DESIGN_DOCUMENT.md wins.
 - **docs/BRD.md** — business context: the wedge (credit/refund workflows in usage-based billing), the buyer (Controller/Head of Finance Ops), pricing tiers (Tier 0 self-serve checker → diagnostic → recurring → runtime).
 - **docs/PRFAQ.md** — customer-facing framing. Placeholder quotes; not for external use yet.
 - **docs/POLICY_CORPUS.md** — the 14 real public policies used as extraction targets, with per-policy extraction challenges and instructions for slicing them into labeled eval examples.
 
 ## Current status
 
-**Phase: week 2 complete.** Commits 1–25 are done: monorepo scaffolding, schemas + codegen, Postgres + migrations, CI, the LLM client, the four-pass extraction pipeline with citations, the extract endpoint with background jobs, and the first 20 hand-labeled eval examples. If scope addition A1 (LLM response cache) hasn't landed yet, it should go in before week 3 starts — it makes the eval iteration in weeks 3–5 dramatically cheaper.
+**Phase: week 5 complete.** Commits 1–56 plus scope additions A1, A4, A5, A2, and A3 are done: the full extraction pipeline, the simulation engine, the Streamlit demo, the TypeScript SDK, the expanded Inspect eval harness (extraction/simulation/e2e suites, 60-example train/dev/test dataset, CI regression gate, persisted metric history), cross-document contradiction detection (A3), and the week-5 cleanup pass on `packages/core` (commit 56). **A6** (completing contradiction clustering — reason/time-window dimensions plus a binomial test, documented below under "Contradiction detection") has **not** landed; the detector is still the week-3 first version (amount band × segment, bare frequency threshold). Resolve that gap explicitly — either schedule A6 or remove it from the scope-addition list — before treating week 5 as fully closed against this doc.
 
-**Next: week 3, starting with commit 26 (shadow-policy ticket generator).** Read the shadow-policy design in DESIGN_DOCUMENT.md Section 5.4 before starting — it's the load-bearing design of the week.
+**Next: week 6, starting with commit 57 (Render blueprint for backend + Streamlit + Postgres).**
 
-Track progress by which numbered commit was last completed. Commits should be executed in order within a week; scope additions A1 (week 2), A2 (week 4), A3 (week 5) slot in where noted. Update this section as commits land.
+Track progress by which numbered commit was last completed. Commits should be executed in order within a week; scope additions A1 (week 2), A4/A5/A2 (week 4, in that order), A3 (week 5, done) and A6 (week 5, not yet done) slot in where noted. Update this section as commits land.
 
 ## Architecture at a glance
 
@@ -83,11 +83,13 @@ Stack: Python 3.12 + uv workspaces, TypeScript 5.4+ + pnpm, Postgres 16 (Docker 
 
 **Shadow-policy synthetic data (week 3 — this is load-bearing).** Tickets are NOT generated from the written policy — that would make simulation circular. They're generated from a *shadow policy*: the written policy plus an authored divergence spec (which rules diverge, under what conditions, at what frequency — e.g., VIP exceptions, quiet over-threshold approvals). Ground truth follows the shadow policy. This makes contradiction detection measurable: precision/recall against the planted divergences. Acceptance for the detector: ≥0.8 recall on planted divergences, ≤1 false positive per run.
 
-**Contradiction detection.** Cluster per-ticket results by features (amount band, segment, reason, time window) → divergence rate per cluster → flag with statistical support (min cluster size, binomial test against the base error rate). Each contradiction carries: written rule + citation, observed pattern, frequency, affected segment, estimated financial impact.
+**Contradiction detection.** Cluster per-ticket results by features (amount band, segment, reason, time window) → divergence rate per cluster → flag with statistical support (min cluster size, binomial test against the base error rate). Each contradiction carries: written rule + citation, observed pattern, frequency, affected segment, estimated financial impact. The week-3 first version clusters on amount band × segment with a bare frequency threshold; A5 (week 4) adds the citation and financial-impact fields to the record, A6 (week 5) completes the clustering dimensions and the binomial test.
 
 **Cross-document contradiction (commit A3).** Given N documents from one company, align extracted rules on the same decision surface, flag conflicting actions/thresholds. LLM-assisted alignment, mechanical conflict verification. Acceptance case: the Shopify ToS ("no refunds") vs. help-center (case-by-case review windows) pair from POLICY_CORPUS.md.
 
-**Rendered report (commit A2).** Jinja2 → standalone print-friendly HTML at `GET /simulations/{id}/report.html`. This is a first-class product artifact (the BRD's first sellable deliverable), not an afterthought.
+**Rendered report (commit A2).** Jinja2 → standalone print-friendly HTML at `GET /simulations/{id}/report.html`. This is a first-class product artifact (the BRD's first sellable deliverable), not an afterthought. Content is specced to BRD Section 11: executive summary, contradictions with citations and estimated financial impact, missed/over-escalations, automation candidates, ROI estimates (from A5's schema fields), per-ticket evidence appendix.
+
+**Ticket CSV import (commit A4).** `POST /tickets/import` maps a documented CSV format onto the Ticket schema and creates a batch usable in simulations; the Streamlit simulate page gets an upload widget. Deliberately minimal — no Zendesk/Stripe connectors (v1.2) — but it's what lets a design partner run the diagnostic on their own data instead of a demo.
 
 **Background jobs.** FastAPI BackgroundTasks + a `jobs` table (pending/running/completed/failed). Known limitation: jobs die on process restart — documented, not fixed in v1. Do NOT add Celery/Redis/Temporal.
 
@@ -127,7 +129,7 @@ Model selection is env-configurable per pipeline stage. During development, pref
 
 ## Where the project is going (context, not tasks)
 
-After the 6-week v1.0: v1.05 is a self-serve policy consistency checker (first revenue, built on A2+A3), v1.1 replaces Streamlit with a real review UI, v1.2 is a Stripe App for policy-fidelity monitoring on Stripe Billing. Details in DESIGN_DOCUMENT.md Section 14. This matters for architectural decisions today: the cross-document detector and rendered report are product surfaces, not internal tools — build them accordingly.
+After the 6-week v1.0: v1.05 is a self-serve policy consistency checker (lead magnet and first transaction, built on A2+A3 — the first *serious* revenue is the BRD's Tier 1 paid diagnostic delivered white-glove), v1.1 replaces Streamlit with a real review UI, v1.2 replaces CSV upload with real Zendesk/Intercom/Stripe integrations. Details in DESIGN_DOCUMENT.md Section 14. This matters for architectural decisions today: the cross-document detector and rendered report are product surfaces, not internal tools — build them accordingly.
 
 **The revenue thread (DESIGN_DOCUMENT.md Section 11, "The revenue thread running through the build"):** Commits A2 and A3 are the v1.05 product minus a payment flow — hold them to product-grade quality on output, error handling, and presentation. Policy teardown posts are published during the build (teardown #1 during week 3 from extraction output; teardown #2 during week 6 from A3's Shopify finding). If asked to generate teardown material, the source is real extraction runs against corpus policies — never fabricated findings.
 

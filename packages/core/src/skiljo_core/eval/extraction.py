@@ -11,6 +11,7 @@ the ``inspect eval`` CLI and programmatic evaluation harness.
 from __future__ import annotations
 
 import json
+from typing import Any
 
 from inspect_ai import Task, task
 from inspect_ai.scorer import Score, Scorer, Target, mean, scorer
@@ -22,7 +23,7 @@ from inspect_ai.scorer._scorer import TaskState
 # ---------------------------------------------------------------------------
 
 
-def _iter_rules(spec: dict) -> list[dict]:
+def _iter_rules(spec: dict[str, Any]) -> list[dict[str, Any]]:
     """Flatten a Skill dict's three decision zones into one list of rule dicts.
 
     Real Skill specs (both hand-labeled ground truth in ``data/eval/*/*.skill.yaml``
@@ -32,13 +33,13 @@ def _iter_rules(spec: dict) -> list[dict]:
     schema, so callers must key on structure (see ``_rule_key``), not identity.
     """
     zones = spec.get("decision_zones") or {}
-    rules: list[dict] = []
+    rules: list[dict[str, Any]] = []
     for zone_name in ("deterministic", "llm_assisted", "human_only"):
         rules.extend(zones.get(zone_name) or [])
     return rules
 
 
-def _rule_key(rule: dict) -> str:
+def _rule_key(rule: dict[str, Any]) -> str:
     """Structural identity for a rule: its condition + action as canonical JSON.
 
     Rules carry no stable ``id`` in ``rule.schema.json``, so two rules are
@@ -51,7 +52,7 @@ def _rule_key(rule: dict) -> str:
     )
 
 
-def extraction_recall(expected: dict, actual: dict) -> Score:
+def extraction_recall(expected: dict[str, Any], actual: dict[str, Any]) -> Score:
     """Measure percentage of expected rules found in extracted skill spec.
 
     Compares rules (by condition+action structure — see ``_rule_key``) found
@@ -82,7 +83,7 @@ def extraction_recall(expected: dict, actual: dict) -> Score:
     )
 
 
-def citation_resolution(expected: dict, actual: dict) -> Score:
+def citation_resolution(expected: dict[str, Any], actual: dict[str, Any]) -> Score:
     """Verify 100% of extracted rules have valid citation spans.
 
     Each rule in ``actual`` (across all three decision zones — see
@@ -141,10 +142,10 @@ def recall_scorer() -> Scorer:
     """
 
     async def score(state: TaskState, target: Target) -> Score:
-        actual: dict = state.metadata.get("actual_spec", {})
+        actual: dict[str, Any] = state.metadata.get("actual_spec", {})
         target_text = target.text if isinstance(target.text, str) else "{}"
         try:
-            expected: dict = json.loads(target_text)
+            expected: dict[str, Any] = json.loads(target_text)
         except json.JSONDecodeError:
             expected = {}
         return extraction_recall(expected, actual)
@@ -160,7 +161,7 @@ def citation_scorer() -> Scorer:
     """
 
     async def score(state: TaskState, target: Target) -> Score:
-        actual: dict = state.metadata.get("actual_spec", {})
+        actual: dict[str, Any] = state.metadata.get("actual_spec", {})
         return citation_resolution({}, actual)
 
     return score  # type: ignore[return-value]

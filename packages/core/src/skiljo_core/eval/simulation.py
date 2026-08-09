@@ -15,6 +15,7 @@ the ``inspect eval`` CLI and programmatic evaluation harness.
 from __future__ import annotations
 
 import json
+from typing import Any
 
 from inspect_ai import Task, task
 from inspect_ai.scorer import Score, Scorer, Target, mean, scorer
@@ -26,7 +27,7 @@ from inspect_ai.scorer._scorer import TaskState
 # ---------------------------------------------------------------------------
 
 
-def simulation_match_rate(expected: dict, actual: dict) -> Score:
+def simulation_match_rate(expected: dict[str, Any], actual: dict[str, Any]) -> Score:
     """Measure percentage of tickets where the simulated decision matches
     ground truth.
 
@@ -61,7 +62,7 @@ def simulation_match_rate(expected: dict, actual: dict) -> Score:
     )
 
 
-def contradiction_detection_precision(expected: dict, actual: dict) -> Score:
+def contradiction_detection_precision(expected: dict[str, Any], actual: dict[str, Any]) -> Score:
     """Of the contradictions flagged, how many were real (planted)?
 
     Compares detected contradiction rule IDs against the set of planted
@@ -90,7 +91,7 @@ def contradiction_detection_precision(expected: dict, actual: dict) -> Score:
     )
 
 
-def contradiction_detection_recall(expected: dict, actual: dict) -> Score:
+def contradiction_detection_recall(expected: dict[str, Any], actual: dict[str, Any]) -> Score:
     """Of the planted divergences, how many did the detector flag?
 
     Acceptance target per CLAUDE.md is >=0.8 recall on planted divergences.
@@ -132,10 +133,10 @@ def match_rate_scorer() -> Scorer:
     """
 
     async def score(state: TaskState, target: Target) -> Score:
-        actual: dict = state.metadata.get("actual_result", {})
+        actual: dict[str, Any] = state.metadata.get("actual_result", {})
         target_text = target.text if isinstance(target.text, str) else "{}"
         try:
-            expected: dict = json.loads(target_text)
+            expected: dict[str, Any] = json.loads(target_text)
         except json.JSONDecodeError:
             expected = {}
         return simulation_match_rate(expected, actual)
@@ -152,10 +153,10 @@ def contradiction_precision_scorer() -> Scorer:
     """
 
     async def score(state: TaskState, target: Target) -> Score:
-        actual: dict = state.metadata.get("actual_result", {})
+        actual: dict[str, Any] = state.metadata.get("actual_result", {})
         target_text = target.text if isinstance(target.text, str) else "{}"
         try:
-            expected: dict = json.loads(target_text)
+            expected: dict[str, Any] = json.loads(target_text)
         except json.JSONDecodeError:
             expected = {}
         return contradiction_detection_precision(expected, actual)
@@ -172,10 +173,10 @@ def contradiction_recall_scorer() -> Scorer:
     """
 
     async def score(state: TaskState, target: Target) -> Score:
-        actual: dict = state.metadata.get("actual_result", {})
+        actual: dict[str, Any] = state.metadata.get("actual_result", {})
         target_text = target.text if isinstance(target.text, str) else "{}"
         try:
-            expected: dict = json.loads(target_text)
+            expected: dict[str, Any] = json.loads(target_text)
         except json.JSONDecodeError:
             expected = {}
         return contradiction_detection_recall(expected, actual)

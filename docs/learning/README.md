@@ -4,6 +4,10 @@ An index of written explanations for each implementation task — what was built
 
 See `GLOSSARY.md` for a running list of concepts introduced across debriefs.
 
+## Week 5 — Eval harness expansion and cross-document contradictions
+
+10. [Task 10: Eval harness integration and final cleanup](week5-task10-eval-harness-integration.md)
+
 ## Week 4 — Demo UI, SDK, integration, and documentation
 
 12. [Task 12: ARCHITECTURE.md with full system deep dive](week4-task12-architecture-documentation.md)

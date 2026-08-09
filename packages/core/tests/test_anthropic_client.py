@@ -110,6 +110,8 @@ def test_logs_every_attempt_to_llm_calls_table() -> None:
         assert rows[0].prompt_version == "v1"
         assert rows[0].input_tokens == 7
         assert rows[0].output_tokens == 3
+        assert rows[0].cost_estimate_usd is not None
+        assert float(rows[0].cost_estimate_usd) == round((7 * 3.00 + 3 * 15.00) / 1_000_000, 6)
 
 
 def test_cache_hit_skips_api_call_and_logs_cached_true(

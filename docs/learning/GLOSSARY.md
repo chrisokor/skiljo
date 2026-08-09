@@ -113,3 +113,19 @@ An `asyncio.Semaphore` with a fixed bound (e.g., 5) that limits the number of co
 ## Golden fixture test
 
 A test pattern where data is pre-generated, version-controlled, and loaded from files (rather than generated fresh in each test run). Golden fixture tests trade test independence for stability and regression detection — they catch behavioral changes in integration scenarios. Useful for complex workflows (like end-to-end simulation) where unit tests alone can't verify the full pipeline. See [Week 3 Task 8](week3-task8-golden-tests.md).
+
+## Inspect AI (`Task` / `Scorer` / `Score`)
+
+Anthropic's open-source eval framework. A `Task` bundles a dataset, a model (or mock provider), and one or more `Scorer`s; running it via the `inspect eval` CLI (or `inspect_ai.eval()` programmatically) produces an `EvalLog` with per-sample and aggregate scores. A `Scorer` is a factory returning an async `score(state, target) -> Score` function; `Score.value` is the metric (typically 0.0–1.0) and `Score.explanation` is a human-readable reason. This project wraps each `Scorer` around a plain, synchronous, framework-free function (e.g. `extraction_recall(expected, actual) -> Score`) so the comparison logic is testable without any Inspect machinery — the `Scorer` factory is a thin adapter that reads the right values out of `TaskState`/`Target` and delegates. See [Week 5 Task 10](week5-task10-eval-harness-integration.md).
+
+## Vacuous score
+
+A scorer's designated "nothing to measure, so don't penalize" return value — e.g. `extraction_recall` returns `1.0` when the expected example has zero rules (there's nothing to recall, so 100% of nothing was found), and `contradiction_detection_precision` returns `1.0` when nothing was detected (no false positives possible). The alternative — dividing by zero, or defaulting to `0.0` — would make an empty edge case look like a failure. Distinct from a scorer being *currently* vacuous because no real pipeline output has been wired in yet (see the eval harness's `mockllm/model` note in [Week 5 Task 10](week5-task10-eval-harness-integration.md)) — that's an honest placeholder, not a vacuous-truth edge case, though both produce a `1.0`.
+
+## Decision surface (cross-document contradiction detection)
+
+A short, stable label (e.g. `refund_eligibility`, `sla_credit`) assigned to a rule so that rules governing the *same* underlying business decision can be compared across different source documents, even when their wording or conditions differ. Cross-document contradiction detection aligns rules onto decision surfaces via an LLM call, then only reports a conflict when a separate, purely mechanical check also confirms the two rules prescribe different actions — the mechanical gate means a hallucinated alignment can never produce a false contradiction on its own. See [Week 5 Task 10](week5-task10-eval-harness-integration.md).
+
+## Regression gate (CI)
+
+A CI check that fails a PR when a tracked metric drops more than an allowed threshold versus a baseline value (read from `origin/main` at merge time, or a committed baseline file). Distinguishes "no baseline to compare against" (first PR introducing a metric — passes) from "compared and it dropped too far" (fails). Skiljo's regression budget per metric is documented in `DESIGN_DOCUMENT.md` Section 9 and enforced by `scripts/check_regression.py` in `.github/workflows/eval.yml`. See [Week 5 Task 10](week5-task10-eval-harness-integration.md).

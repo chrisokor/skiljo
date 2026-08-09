@@ -382,6 +382,7 @@ GET    /skills                          # List skills
 GET    /skills/{id}                     # Get current version of a skill
 GET    /skills/{id}/versions            # List versions of a skill
 POST   /skills/{id}/versions/{ver}/approve  # Promote version to 'approved'
+POST   /tickets/import                  # Import a ticket batch from CSV (A4)
 POST   /simulations                     # Start a simulation run (async)
 GET    /simulations/{id}                # Get simulation status + summary
 GET    /simulations/{id}/report         # Get full SimulationReport
@@ -434,7 +435,7 @@ Three pages, navigated via Streamlit's multi-page app feature:
 
 **Page 2 — Review.** User reviews the extracted skill, can mark rules as accepted/rejected, can promote the version to `approved`. This is intentionally minimal — the point is to demonstrate the workflow, not build a real review UI.
 
-**Page 3 — Simulate.** User picks an approved skill, picks a ticket batch (synthetic batches are pre-loaded), runs simulation, sees the report rendered with match rate, breakdown by zone, contradiction list, and a sortable table of per-ticket outcomes.
+**Page 3 — Simulate.** User picks an approved skill, picks a ticket batch (synthetic batches are pre-loaded; a CSV upload widget creates a new batch via A4's import endpoint), runs simulation, sees the report rendered with match rate, breakdown by zone, contradiction list, and a sortable table of per-ticket outcomes.
 
 Styled with Streamlit's defaults plus minimal custom CSS. No attempt to look like a polished product — it looks like a working tool, which is appropriate for the audience.
 
@@ -961,13 +962,25 @@ These commits were added after the initial design and slot into the weekly sched
     Adds a `llm_cache` Postgres table and a new Alembic migration. Cache key is `sha256(provider|model|prompt_version|prompt)`. Temperature-0 calls check the cache before calling the API; hits are logged with `cached=true`. Per-call bypass flag available for sampling experiments.
     *Acceptance:* Running the same extraction twice returns the same structured output without a second API call; `llm_calls` row for the second call has `cached=true`.
 
-**A2 (week 4, after commit 41):** `feat(api): rendered report at GET /simulations/{id}/report.html`
-    Adds a Jinja2 template that compiles the SimulationReport into a standalone print-friendly HTML document with summary metrics, the contradiction list with citations and evidence, and a per-ticket appendix. Linked from the Streamlit demo.
-    *Acceptance:* `GET /simulations/{id}/report.html` returns valid HTML that renders correctly in a browser and produces a readable PDF when printed.
+**A2 (week 4, after A5):** `feat(api): rendered report at GET /simulations/{id}/report.html`
+    Adds a Jinja2 template that compiles the SimulationReport into a standalone print-friendly HTML document. Content is specced to the report the BRD describes in Section 11 — this is the Tier 1 diagnostic deliverable, written for a Controller: an executive summary (match rate, escalation accuracy, contradiction count in plain language), the contradiction list with citations, observed pattern, frequency, affected segment, and estimated financial impact, missed and over-escalated cases, automation candidates, the ROI estimates from A5's schema fields, and a per-ticket evidence appendix. Linked from the Streamlit demo.
+    *Acceptance:* `GET /simulations/{id}/report.html` returns valid HTML that renders correctly in a browser and produces a readable PDF when printed; every BRD Section 11 content element is present; every contradiction shown carries a resolvable citation.
 
 **A3 (week 5, after commit 54):** `feat(core): cross-document contradiction detection`
     Given N policy documents from the same company, extracts a skill from each, aligns rules governing the same decision surface, and flags pairs with conflicting actions or thresholds. Alignment is LLM-assisted; conflict verification is mechanical. The Shopify ToS ("no refunds") vs. help-center (case-by-case review windows) pair from POLICY_CORPUS.md is the acceptance case.
     *Acceptance:* Running the detector against the Shopify document pair flags the conflict with citations from both sources.
+
+**A4 (week 4, after commit 41):** `feat(api): minimal ticket CSV import`
+    Adds `POST /tickets/import` accepting a CSV whose columns map onto the Ticket schema (`refund_amount`, `purchase_days_ago`, `customer_segment`, `fraud_flags`, `refund_reason`, `ground_truth_decision`), creating a ticket batch usable in simulations. Column mapping is documented, validation errors use the standard envelope with row-level detail. The Streamlit simulate page gains a CSV upload widget alongside the pre-loaded synthetic batches. Deliberately minimal — no Zendesk/Stripe connectors (those are v1.2) — but it is the difference between a demo and a diagnostic a design partner can run on their own data.
+    *Acceptance:* Importing a sample CSV creates a batch, a simulation runs against it end-to-end, and a malformed row produces a 400 with the offending row and column identified.
+
+**A5 (week 4, after A4, before A2):** `feat(core): contradiction records and report ROI fields to design spec`
+    Brings the detector's output up to what Section 5.4 already specifies: each Contradiction carries the written rule with its citation, the observed behavior pattern, frequency, affected segment, and an estimated financial impact (divergent-ticket count × average refund amount in the cluster, labeled as an estimate). Extends `simulation_report.schema.json` with the aggregate ROI fields the BRD's Section 11 report promises: estimated automation-safe ticket volume, estimated manual review hours saved per month, and estimated dollar value of contradicted decisions. Schema change → codegen → both languages compile.
+    *Acceptance:* A simulation report validates against the extended schema in both Python and TypeScript; every contradiction in the report resolves its citation against the source policy text.
+
+**A6 (week 5, after commit 54, before A3):** `feat(core): contradiction clustering to spec`
+    Completes the Section 5.4 detector design: adds reason category and time window as clustering dimensions alongside amount band and customer segment, and replaces the bare frequency threshold with statistical support (minimum cluster size plus a binomial test against the base error rate). Tuned against the expanded eval set from commit 51.
+    *Acceptance:* Detector maintains ≥0.8 recall on planted divergences with ≤1 false positive per run under the new clustering; the simulation eval suite reports precision/recall for it.
 
 ## 13. Open questions
 
@@ -985,9 +998,11 @@ Whether the documentation blog post is the right format for the long-form writeu
 
 The 6-week scope produces a working extraction and simulation system, but the underlying problem extends well past that. This section sketches what each subsequent version would look like if the project continues into fall and beyond. The versions are roughly sequenced by dependency — each one assumes the previous ones are in place — but the decision to keep going can be made at any inflection point.
 
-### v1.05 — Self-serve policy consistency checker (first revenue)
+### v1.05 — Self-serve policy consistency checker (lead magnet and first transaction)
 
 Commits A2 and A3 form the core of this tier when combined with a Stripe payment flow. A customer supplies two or more policy document URLs, receives a rendered contradiction report with citations, and pays per document analyzed. No data export, no ticket history, no integrations — just document-in, findings-out. This is the shortest path to a transaction.
+
+Positioning, to keep this consistent with the BRD: the self-serve checker is the low-ticket entry point and distribution tool, not the first-revenue bet. The first serious revenue is the BRD's Tier 1 paid diagnostic ($10–25K) — the same A2 report and A3 findings delivered white-glove against a buyer's own documents and case data (via A4's CSV import). The checker exists to generate diagnostic conversations: self-serve checker → paid diagnostic → continuous policy fidelity → runtime, matching the BRD Section 15 sequence.
 
 The work adds a billing page to the Streamlit demo (or its Next.js replacement), a Stripe Checkout integration, and a per-customer usage ledger. The technical additions are small; the value is in the product framing: the contradiction report becomes the deliverable, not a demo artifact.
 
@@ -1001,7 +1016,7 @@ This is the version where the project starts looking like a product rather than 
 
 ### v1.2 — Real integrations replacing CSV upload
 
-The CSV upload flow used in the 6-week build is the right scope for the build but the wrong shape for actual usage. Real customers have tickets in Zendesk or Intercom, refund history in Stripe or a custom billing system, approval threads in Slack. The v1.2 work builds real read-only integrations for the two or three most common combinations.
+The minimal ticket CSV import from the 6-week build (scope addition A4) is the right scope for the build but the wrong shape for actual usage. Real customers have tickets in Zendesk or Intercom, refund history in Stripe or a custom billing system, approval threads in Slack. The v1.2 work builds real read-only integrations for the two or three most common combinations.
 
 The hard parts are not the API calls — those are well-documented — but the data normalization. A Zendesk ticket has a different schema from an Intercom ticket; both have to map into the system's internal Ticket primitive without losing information that matters for extraction or contradiction detection. This is where the schema-first architecture from the original build pays off: extending the Ticket schema with optional source-specific fields is mechanical, not a rewrite.
 
@@ -1035,7 +1050,7 @@ There are three points where the decision to continue is non-trivial.
 
 The first is at the end of the 6-week build itself. The system works, the architecture is sound, but actually using it on real customer data means either v1.1 + v1.2 (to make it usable) or accepting that it's a technical artifact rather than a product. Both are legitimate stopping points.
 
-The second is between v1.2 and v1.3. Going from a simulation system to a runtime is the largest single jump in the roadmap. It's where the project goes from "interesting technical work" to "real product with real liability." That transition deserves to be a conscious decision, ideally with at least one customer who has explicitly said they would use the runtime if it existed.
+The second is between v1.2 and v1.3. Going from a simulation system to a runtime is the largest single jump in the roadmap. It's where the project goes from "interesting technical work" to "real product with real liability." That transition deserves to be a conscious decision with explicit evidence of buyer pull, not just technical readiness. The gate before committing to runtime: 30+ target-buyer conversations run (the BRD Section 23 motion), 3+ paid or serious design-partner diagnostics delivered, at least one buyer explicitly asking for recurring monitoring, and at least one buyer saying they would pilot runtime once the simulation report has earned their trust. Without those, runtime is technically impressive but commercially unvalidated.
 
 The third is at v1.5. By that point the project is either a company or it isn't. Continuing past v1.5 as a side project is possible but inefficient — the work that matters then is sales, hiring, and customer success, not engineering.
 
@@ -1124,6 +1139,7 @@ Prompt versioning as first-class artifacts. Currently prompts are versioned via 
 | GET | `/skills/{id}/versions` | List versions | Bearer |
 | GET | `/skills/{id}/versions/{v}` | Get a specific version | Bearer |
 | POST | `/skills/{id}/versions/{v}/approve` | Approve version | Bearer |
+| POST | `/tickets/import` | Import ticket batch from CSV | Bearer |
 | POST | `/simulations` | Start simulation job | Bearer |
 | GET | `/simulations/{id}` | Get simulation status | Bearer |
 | GET | `/simulations/{id}/report` | Get full report | Bearer |
