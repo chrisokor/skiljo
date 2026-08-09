@@ -17,6 +17,11 @@ from skiljo_core.schemas.simulation_report_schema import SimulationReport
 from skiljo_core.schemas.skill_schema import Skill
 from skiljo_core.schemas.ticket_schema import Ticket
 from skiljo_core.simulation.contradictions import detect_contradictions
+from skiljo_core.simulation.cross_document import (
+    CrossDocumentContradiction,
+    PolicyDocument,
+    detect_cross_document_contradictions,
+)
 from skiljo_core.simulation.engine import compute_report, simulate_batch
 
 _TEMPLATES_DIR = os.path.join(os.path.dirname(__file__), "../templates")
@@ -180,3 +185,76 @@ def get_simulation_report_html(sim_id: uuid.UUID) -> str:
 
     template = _jinja_env.get_template("report.html")
     return template.render(report=report)
+
+
+class CrossDocumentContradictionRequest(BaseModel):
+    skill_version_ids: list[uuid.UUID]
+
+
+class CrossDocumentCitationResponse(BaseModel):
+    policy_id: str
+    zone: str
+    rule_index: int
+    action: str
+
+
+class CrossDocumentContradictionResponse(BaseModel):
+    decision_surface: str
+    policy_1: str
+    policy_2: str
+    action_1: str
+    action_2: str
+    rationale: str
+    citation_1: CrossDocumentCitationResponse
+    citation_2: CrossDocumentCitationResponse
+
+
+def _to_response(contradiction: CrossDocumentContradiction) -> CrossDocumentContradictionResponse:
+    return CrossDocumentContradictionResponse(
+        decision_surface=contradiction.decision_surface,
+        policy_1=contradiction.policy_1,
+        policy_2=contradiction.policy_2,
+        action_1=contradiction.action_1,
+        action_2=contradiction.action_2,
+        rationale=contradiction.rationale,
+        citation_1=CrossDocumentCitationResponse(
+            policy_id=contradiction.citation_1.policy_id,
+            zone=contradiction.citation_1.zone,
+            rule_index=contradiction.citation_1.rule_index,
+            action=contradiction.citation_1.action,
+        ),
+        citation_2=CrossDocumentCitationResponse(
+            policy_id=contradiction.citation_2.policy_id,
+            zone=contradiction.citation_2.zone,
+            rule_index=contradiction.citation_2.rule_index,
+            action=contradiction.citation_2.action,
+        ),
+    )
+
+
+@router.post("/cross-document-contradictions")
+def detect_conflicts(
+    request: CrossDocumentContradictionRequest,
+    llm_client: LLMClient = Depends(get_llm_client),
+) -> list[CrossDocumentContradictionResponse]:
+    """Detect contradictions across two or more policy documents (scope A3).
+
+    Synchronous by design: unlike /simulations, this aligns already-extracted
+    skill specs rather than simulating a ticket batch, so the LLM call count
+    is bounded by the number of rules and same-surface cross-document pairs,
+    not by ticket volume.
+    """
+    if len(request.skill_version_ids) < 2:
+        raise HTTPException(status_code=400, detail="at least 2 skill_version_ids are required")
+
+    with SessionLocal() as session:
+        policies: list[PolicyDocument] = []
+        for version_id in request.skill_version_ids:
+            sv = session.get(SkillVersion, version_id)
+            if sv is None:
+                raise HTTPException(status_code=404, detail=f"skill version {version_id} not found")
+            policy_id = str(sv.source_policy_id) if sv.source_policy_id is not None else str(sv.id)
+            policies.append(PolicyDocument(policy_id=policy_id, skill=Skill.model_validate(sv.spec)))
+
+    contradictions = detect_cross_document_contradictions(policies, llm_client)
+    return [_to_response(c) for c in contradictions]

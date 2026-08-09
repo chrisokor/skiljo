@@ -1,4 +1,10 @@
 from skiljo_core.simulation.contradictions import Citation, Contradiction, FinancialImpact, detect_contradictions
+from skiljo_core.simulation.cross_document import (
+    CrossDocumentCitation,
+    CrossDocumentContradiction,
+    PolicyDocument,
+    detect_cross_document_contradictions,
+)
 from skiljo_core.simulation.engine import compute_report, simulate_batch
 from skiljo_core.simulation.evaluator import (
     evaluate_condition,
@@ -23,4 +29,8 @@ __all__ = [
     "Contradiction",
     "FinancialImpact",
     "detect_contradictions",
+    "CrossDocumentCitation",
+    "CrossDocumentContradiction",
+    "PolicyDocument",
+    "detect_cross_document_contradictions",
 ]
