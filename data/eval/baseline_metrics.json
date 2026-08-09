@@ -1,0 +1,8 @@
+{
+  "citation_resolution": 1.0,
+  "contradiction_precision": 1.0,
+  "contradiction_recall": 1.0,
+  "e2e_accuracy": 1.0,
+  "extraction_recall": 1.0,
+  "simulation_match_rate": 1.0
+}

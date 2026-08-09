@@ -1,0 +1,65 @@
+name: Eval Gate
+
+# Runs the eval harness on every PR and blocks merge on regression, per
+# DESIGN_DOCUMENT.md Section 9. Only against data/eval/train (and, once a dataset
+# loader/solver land, dev/) -- data/eval/test/ is held out and never touched here.
+#
+# Current scope: all three suites (extraction plan #48, simulation plan #49, e2e
+# plan #50) run against Inspect's mockllm/model provider. None of them has a
+# dataset loader or solver wired to real pipeline/engine runs against
+# data/eval/train/ yet (see docs/evals.md, "Dataset" section), so every metric here
+# is vacuous (1.0) today -- this gate exercises the CI plumbing (collect metrics ->
+# diff against the committed baseline -> block on regression) honestly, without
+# fabricating quality numbers. Once the loader/solver land, pass a real --model to
+# skiljo_core.eval.collect_metrics and the numbers become real with no other change
+# needed here.
+on:
+  pull_request:
+
+jobs:
+  eval:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # need origin/main history to read the baseline metrics file
+
+      - uses: astral-sh/setup-uv@v5
+        with:
+          version: "latest"
+
+      - name: Install dependencies
+        run: uv sync --all-packages
+
+      - name: Run eval suite tests
+        run: |
+          uv run pytest \
+            packages/core/tests/test_eval_extraction.py \
+            packages/core/tests/test_eval_simulation.py \
+            packages/core/tests/test_eval_e2e.py \
+            packages/core/tests/test_eval_data.py \
+            packages/core/tests/test_eval_collect_metrics.py \
+            packages/core/tests/test_eval_regression.py \
+            -v
+
+      - name: Collect eval metrics
+        run: uv run python -m skiljo_core.eval.collect_metrics --output eval-results.json
+
+      - name: Check for regressions against main
+        run: |
+          uv run python scripts/check_regression.py \
+            --current eval-results.json \
+            --baseline-ref origin/main \
+            --baseline-path data/eval/baseline_metrics.json \
+            --check extraction_recall=-0.02 \
+            --check citation_resolution=0:min=1.0 \
+            --check contradiction_recall=-0.05 \
+            --check simulation_match_rate=-0.03 \
+            --check e2e_accuracy=-0.03
+
+      - name: Upload eval metrics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: eval-results
+          path: eval-results.json

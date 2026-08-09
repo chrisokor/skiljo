@@ -15,6 +15,10 @@ dist/
 # Env
 .env
 
+# Inspect eval logs / CI-produced metrics (not the committed baseline)
+logs/
+eval-results.json
+
 # OS
 .DS_Store
 

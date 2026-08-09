@@ -2,7 +2,7 @@
 
 Operator and maintainer reference for the eval harness: what it measures today, how it's structured, how to run it, and how the design is meant to grow. For the target design see [DESIGN_DOCUMENT.md Section 5.10](DESIGN_DOCUMENT.md) ("Eval harness") and Section 9 ("Testing and evaluation strategy"); for the "why Inspect" decision, see Section 6 ("Inspect for evals").
 
-**Read this section first if you're picking up eval work:** this doc describes the harness as it exists in the repo right now, which is still smaller than the target design in DESIGN_DOCUMENT.md in a few specific ways called out below. All three eval suites (extraction, simulation, end-to-end) and the eval-run persistence API are built. CI regression *gating* (a dedicated workflow that runs the suites on every PR and blocks merge on a drop) is not — `ci.yml` runs the suites' unit tests via plain `pytest`, but nothing yet runs `inspect eval` against real data or diffs metrics against `main`. The dataset's `train/` split is complete (30 examples); `dev/` and `test/` exist as directories but are still being populated. Where this doc says "planned," treat that as a TODO pointer, not a description of running code.
+**Read this section first if you're picking up eval work:** this doc describes the harness as it exists in the repo right now, which is still smaller than the target design in DESIGN_DOCUMENT.md in a few specific ways called out below. All three eval suites (extraction, simulation, end-to-end), the eval-run persistence API, and CI regression gating (`.github/workflows/eval.yml`, plan #52) are built. What's still missing is the piece all of those depend on for a *real* number: no suite has a dataset loader or solver wired up, so every suite still runs against a single vacuous dummy sample (`dataset=None`) rather than against `data/eval/train/`. The dataset itself is ready to be consumed once that lands — `train/` (30 examples), `dev/` (partially populated), and `test/` (15 examples, CODEOWNERS-gated) all exist. Where this doc says "planned," treat that as a TODO pointer, not a description of running code.
 
 ## Framework: Inspect
 
@@ -66,9 +66,13 @@ uv run pytest packages/core/tests/test_eval_simulation.py -v
 uv run pytest packages/core/tests/test_eval_e2e.py -v
 ```
 
-This is folded into the normal `uv run pytest` / `make test` run — there is no separate eval invocation path yet, and no `make eval-extraction` / `eval-simulation` / `eval-e2e` targets exist in the `Makefile` despite being named in CLAUDE.md's "Make targets" list. If you go looking for them, they don't exist yet; add them once the dataset loader/solver wiring below lands, so the target has something real to invoke.
+This is folded into the normal `uv run pytest` / `make test` run.
 
-**Planned:** once a dataset loader and solver exist (see previous section), `inspect eval packages/core/src/skiljo_core/eval/extraction.py --dataset data/eval/train/` (or `.../eval/simulation.py`, `.../eval/e2e.py`, against `train/` or `dev/`) would run the actual extraction pipeline / simulation engine against real labeled examples via Inspect's CLI, producing a scored log with real recall/match-rate/accuracy numbers. This is not runnable yet — the `dataset=None` placeholder on every `Task` is exactly the gap that blocks it.
+Separately, `make eval-extraction` / `make eval-simulation` / `make eval-e2e` (backed by `inspect eval packages/core/src/skiljo_core/eval/<suite>.py --model $(MODEL)`, `MODEL` defaulting to `mockllm/model`) run each Task through Inspect's actual CLI and print its scored log — real `inspect eval` invocations, but against the single dummy sample every `Task` currently falls back to, since none has a dataset yet. `mockllm/model` needs no API key and makes no network call, which is why it's the default; pass `MODEL=anthropic/claude-sonnet-4-6` (or similar) to point at a real provider once a dataset loader and solver exist, at which point these targets start producing real numbers.
+
+`skiljo_core.eval.collect_metrics` (`uv run python -m skiljo_core.eval.collect_metrics --output eval-results.json`) runs all three suites this way and flattens their scorer means into the Section 9 metric names in one JSON file — this is what `.github/workflows/eval.yml` calls to produce the artifact `scripts/check_regression.py` gates on. See "CI status" below.
+
+**Planned:** once a dataset loader and solver exist (see previous section), `inspect eval packages/core/src/skiljo_core/eval/extraction.py --dataset data/eval/train/` (or `.../eval/simulation.py`, `.../eval/e2e.py`, against `train/` or `dev/`) would run the actual extraction pipeline / simulation engine against real labeled examples via Inspect's CLI, producing a scored log with real recall/match-rate/accuracy numbers instead of the vacuous 1.0s every suite reports today. This is not runnable yet — the `dataset=None` placeholder on every `Task` is exactly the gap that blocks it. Nothing about `collect_metrics.py`, `eval.yml`, or `check_regression.py` needs to change when it lands; only `--model`/`MODEL` needs to point at a real provider.
 
 ## Persistent metric history
 
@@ -76,9 +80,18 @@ This is folded into the normal `uv run pytest` / `make test` run — there is no
 
 ## CI status
 
-`.github/workflows/ci.yml` runs `uv run pytest` (all Python tests, including every eval suite's scorer unit tests) and `uv run mypy` / `ruff check` on every push and PR — this is the only CI gate that currently touches eval code, and it's testing scorer *logic* and the `eval-runs` API contract, not running any suite against a dataset or comparing metrics to a baseline.
+`.github/workflows/ci.yml` runs `uv run pytest` (all Python tests, including every eval suite's scorer unit tests) and `uv run mypy` / `ruff check` on every push and PR.
 
-**Planned, not present:** a dedicated `.github/workflows/eval.yml` that runs `inspect eval` against train/dev on every PR, computes the regression thresholds below, calls `POST /eval-runs` with the result, and blocks merge on violation; a regression-check script that diffs current-branch metrics against `origin/main`'s last recorded run. None of this exists in the repo yet — it's the natural next piece once the dataset loader/solver gap above is closed, since there's no meaningful regression number to gate on until a suite can actually run against real data.
+`.github/workflows/eval.yml` (plan #52) is the dedicated eval gate, running on every `pull_request`:
+
+1. Runs the eval-suite `pytest` files explicitly (redundant with `ci.yml`'s full run, but keeps eval-specific failures visible as their own check).
+2. `uv run python -m skiljo_core.eval.collect_metrics --output eval-results.json` — runs all three Tasks against `mockllm/model` and writes their scorer means as `eval-results.json`.
+3. `scripts/check_regression.py` diffs `eval-results.json` against `data/eval/baseline_metrics.json` **as committed on `origin/main`** (read via `git show origin/main:data/eval/baseline_metrics.json`, not a live re-run of main's code) and fails the job if any metric drops beyond its Section 9 budget, or if `citation_resolution` isn't exactly `1.0`.
+4. Uploads `eval-results.json` as a build artifact regardless of outcome.
+
+**The honest caveat, stated plainly:** because no suite has a dataset loader/solver (see "Dataset" above), every metric this gate currently computes is vacuously `1.0` — it is exercising the CI plumbing (collect → diff → block), not measuring extraction/simulation/e2e quality yet. `data/eval/baseline_metrics.json` is committed with today's honest vacuous values for exactly this reason: don't read a passing eval-gate check on a PR today as "quality held steady," and don't be surprised that the gate can't yet catch a real regression. Once a dataset loader + solver land and `collect_metrics.py` is pointed at a real model, this same workflow starts gating on real numbers with no further changes, and `data/eval/baseline_metrics.json` should be updated (via a deliberate, reviewed commit — see "Tuning discipline" below) to the first real measured baseline.
+
+**Not yet wired:** `POST /eval-runs` (plan #53's persistence API) is not called from `eval.yml`. Doing so would also require fixing a separate pre-existing gap: there is no committed Alembic migration for the `eval_runs` table (see "Persistent metric history" above), so `POST /eval-runs` would fail against a freshly-migrated database today.
 
 ## Regression thresholds (target — for when CI gating lands)
 
