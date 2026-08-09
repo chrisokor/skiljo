@@ -22,41 +22,78 @@ from inspect_ai.scorer._scorer import TaskState
 # ---------------------------------------------------------------------------
 
 
+def _iter_rules(spec: dict) -> list[dict]:
+    """Flatten a Skill dict's three decision zones into one list of rule dicts.
+
+    Real Skill specs (both hand-labeled ground truth in ``data/eval/*/*.skill.yaml``
+    and pipeline output from ``assemble_skill``) have no top-level ``rules`` key —
+    rules live under ``decision_zones.{deterministic,llm_assisted,human_only}``
+    per ``schemas/skill.schema.json``. Rules also have no ``id`` field in the
+    schema, so callers must key on structure (see ``_rule_key``), not identity.
+    """
+    zones = spec.get("decision_zones") or {}
+    rules: list[dict] = []
+    for zone_name in ("deterministic", "llm_assisted", "human_only"):
+        rules.extend(zones.get(zone_name) or [])
+    return rules
+
+
+def _rule_key(rule: dict) -> str:
+    """Structural identity for a rule: its condition + action as canonical JSON.
+
+    Rules carry no stable ``id`` in ``rule.schema.json``, so two rules are
+    considered "the same rule" for recall purposes when their condition and
+    action match exactly.
+    """
+    return json.dumps(
+        {"condition": rule.get("condition"), "action": rule.get("action")},
+        sort_keys=True,
+    )
+
+
 def extraction_recall(expected: dict, actual: dict) -> Score:
     """Measure percentage of expected rules found in extracted skill spec.
 
-    Compares rule IDs in the expected spec against rule IDs present in the
-    actual extraction output.  Vacuously returns 1.0 when the expected spec
+    Compares rules (by condition+action structure — see ``_rule_key``) found
+    across all three decision zones of the expected spec against those in the
+    actual extraction output. Vacuously returns 1.0 when the expected spec
     has no rules (nothing to recall).
 
     Args:
-        expected: Ground-truth skill spec dict (``rules`` list with ``id`` keys).
-        actual:   Extracted skill spec dict to evaluate.
+        expected: Ground-truth Skill spec dict (``decision_zones.*`` rule lists).
+        actual:   Extracted Skill spec dict to evaluate.
 
     Returns:
         Score with value in [0.0, 1.0].
     """
-    expected_rule_ids = set(r["id"] for r in expected.get("rules", []))
-    actual_rule_ids = set(r["id"] for r in actual.get("rules", []))
+    expected_keys = {_rule_key(r) for r in _iter_rules(expected)}
+    actual_keys = {_rule_key(r) for r in _iter_rules(actual)}
 
-    if not expected_rule_ids:
+    if not expected_keys:
         return Score(value=1.0, explanation="No expected rules — vacuous recall")
 
-    recall = len(expected_rule_ids & actual_rule_ids) / len(expected_rule_ids)
-    matched = expected_rule_ids & actual_rule_ids
-    missed = expected_rule_ids - actual_rule_ids
+    matched = expected_keys & actual_keys
+    missed = expected_keys - actual_keys
+    recall = len(matched) / len(expected_keys)
     return Score(
         value=recall,
-        explanation=f"Matched: {sorted(matched)}, Missed: {sorted(missed)}",
+        explanation=f"Matched {len(matched)} of {len(expected_keys)} expected rules "
+        f"({len(missed)} missed)",
     )
 
 
 def citation_resolution(expected: dict, actual: dict) -> Score:
     """Verify 100% of extracted rules have valid citation spans.
 
-    Each rule in ``actual`` must have at least one citation entry containing
-    ``span_start``, ``span_end``, and ``quoted_text`` fields.  Returns 0.0
+    Each rule in ``actual`` (across all three decision zones — see
+    ``_iter_rules``) must have at least one citation entry containing
+    ``span_start``, ``span_end``, and ``quoted_text`` fields. Returns 0.0
     on the first rule that fails this invariant.
+
+    Note: ``rule.schema.json`` does not currently define a ``citations``
+    field at all, so this will score 0.0 against any real extraction output
+    until that schema gap is closed — that is expected and intentional; it
+    surfaces the CLAUDE.md invariant #3 violation rather than masking it.
 
     Args:
         expected: Not used for this scorer (ground-truth is structural).
@@ -65,14 +102,14 @@ def citation_resolution(expected: dict, actual: dict) -> Score:
     Returns:
         Score with value 1.0 (all citations valid) or 0.0 (violation found).
     """
-    rules = actual.get("rules", [])
+    rules = _iter_rules(actual)
 
     for rule in rules:
         citations = rule.get("citations", [])
         if not citations:
             return Score(
                 value=0.0,
-                explanation=f"Rule {rule.get('id', '?')} has no citations",
+                explanation=f"Rule with action {rule.get('action', '?')!r} has no citations",
             )
 
         for citation in citations:
@@ -82,7 +119,7 @@ def citation_resolution(expected: dict, actual: dict) -> Score:
                 return Score(
                     value=0.0,
                     explanation=(
-                        f"Citation for rule {rule.get('id', '?')} "
+                        f"Citation for rule with action {rule.get('action', '?')!r} "
                         f"missing fields: {missing}"
                     ),
                 )
