@@ -6,5 +6,6 @@ Task 3 (plan #50): E2EEval — end-to-end pipeline accuracy.
 """
 
 from .extraction import ExtractionEval
+from .simulation import SimulationEval
 
-__all__ = ["ExtractionEval"]
+__all__ = ["ExtractionEval", "SimulationEval"]
