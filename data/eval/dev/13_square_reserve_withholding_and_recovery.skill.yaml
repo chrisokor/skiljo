@@ -1,0 +1,24 @@
+skill_name: process_square_reserve_withholding_and_recovery
+version: 1
+trigger: merchant_risk_or_penalty_event
+inputs:
+  - name: event_type
+    type: string
+    description: "elevated_chargeback_risk_detected or network_fee_or_penalty_incurred"
+decision_zones:
+  deterministic:
+    - condition:
+        all:
+          - field: event_type
+            op: eq
+            value: network_fee_or_penalty_incurred
+      action: debit_linked_bank_account_recovery_authorization
+  llm_assisted:
+    - condition:
+        all:
+          - field: event_type
+            op: eq
+            value: elevated_chargeback_risk_detected
+      action: evaluate_and_withhold_settlement_reserve
+      requires_human_approval: true
+  human_only: []

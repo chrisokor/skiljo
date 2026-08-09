@@ -1,0 +1,27 @@
+skill_name: process_github_copilot_case_by_case_refund
+version: 1
+trigger: customer_requests_copilot_refund
+inputs:
+  - name: days_since_purchase
+    type: integer
+  - name: subscription_unused
+    type: boolean
+decision_zones:
+  deterministic:
+    - condition:
+        all:
+          - field: days_since_purchase
+            op: gt
+            value: 30
+      action: deny_refund_tos_no_exceptions
+  llm_assisted: []
+  human_only:
+    - condition:
+        all:
+          - field: days_since_purchase
+            op: lte
+            value: 30
+          - field: subscription_unused
+            op: eq
+            value: true
+      action: evaluate_case_by_case_via_support_virtual_agent

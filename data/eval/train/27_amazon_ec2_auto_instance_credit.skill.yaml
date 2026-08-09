@@ -1,0 +1,22 @@
+skill_name: process_amazon_ec2_auto_instance_credit
+version: 1
+trigger: instance_monitoring_detects_outage
+inputs:
+  - name: outage_duration_minutes
+    type: integer
+decision_zones:
+  deterministic:
+    - condition:
+        all:
+          - field: outage_duration_minutes
+            op: gt
+            value: 6
+      action: apply_automatic_instance_level_credit_no_claim_required
+    - condition:
+        all:
+          - field: outage_duration_minutes
+            op: lte
+            value: 6
+      action: no_credit_below_six_minute_threshold
+  llm_assisted: []
+  human_only: []

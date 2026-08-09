@@ -1,0 +1,36 @@
+skill_name: process_vercel_pro_allocation_cascade
+version: 1
+trigger: monthly_usage_calculated
+inputs:
+  - name: usage_within_included_allocation
+    type: boolean
+  - name: usage_credit_remaining_usd
+    type: number
+decision_zones:
+  deterministic:
+    - condition:
+        all:
+          - field: usage_within_included_allocation
+            op: eq
+            value: true
+      action: no_additional_charge
+    - condition:
+        all:
+          - field: usage_within_included_allocation
+            op: eq
+            value: false
+          - field: usage_credit_remaining_usd
+            op: gt
+            value: 0
+      action: apply_overage_against_remaining_usage_credit
+    - condition:
+        all:
+          - field: usage_within_included_allocation
+            op: eq
+            value: false
+          - field: usage_credit_remaining_usd
+            op: lte
+            value: 0
+      action: bill_overage_directly_at_standard_rate
+  llm_assisted: []
+  human_only: []

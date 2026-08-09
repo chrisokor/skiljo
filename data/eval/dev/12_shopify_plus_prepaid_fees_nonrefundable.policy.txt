@@ -1,0 +1,11 @@
+Shopify Plus Terms — Prepaid Fees
+
+Plus Plan fees are invoiced in advance according to your Order Form and are
+non-refundable and non-cancelable once paid, regardless of your actual usage
+of the platform during the contract term.
+
+If your contract is terminated by Shopify for your material breach, all
+remaining prepaid fees for the unexpired term are forfeited and no refund is
+due. If your contract is terminated by you for Shopify's uncured material
+breach, Shopify will refund a prorated portion of prepaid fees for the
+unexpired term.

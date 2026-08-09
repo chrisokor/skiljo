@@ -1,0 +1,10 @@
+Steam Refunds — Downloadable Content (DLC)
+
+DLC purchases are refundable within 14 days of purchase, provided the
+playtime of the underlying base game has not increased by more than 2 hours
+since the DLC was purchased, and provided the DLC itself has not been
+consumed, modified, or transferred (for example, a redeemable in-game item
+that has already been redeemed).
+
+If the DLC has been consumed, modified, or transferred, it is not eligible
+for a refund regardless of days since purchase or playtime.

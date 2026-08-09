@@ -1,0 +1,25 @@
+skill_name: process_twilio_late_fee_and_suspension
+version: 1
+trigger: invoice_past_due_review
+inputs:
+  - name: days_since_invoice_date
+    type: integer
+decision_zones:
+  deterministic:
+    - condition:
+        all:
+          - field: days_since_invoice_date
+            op: gt
+            value: 15
+          - field: days_since_invoice_date
+            op: lte
+            value: 45
+      action: assess_late_fee_lesser_of_1_5_percent_or_legal_max
+    - condition:
+        all:
+          - field: days_since_invoice_date
+            op: gt
+            value: 45
+      action: suspend_account_until_paid_in_full
+  llm_assisted: []
+  human_only: []

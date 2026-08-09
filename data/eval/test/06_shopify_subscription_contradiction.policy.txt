@@ -1,0 +1,17 @@
+Shopify — Terms of Service vs. Help Center (Refund Contradiction)
+
+Shopify's Terms of Service state plainly: "You acknowledge and agree that
+Shopify has no obligation to provide you with a refund of any prepaid fees
+for any reason, and that no refunds will be given under any circumstances."
+
+However, Shopify's published Help Center article on the refund policy for
+subscriptions states that customers can contact Shopify Support to request a
+refund, and that "eligibility is reviewed case-by-case" based on time since
+the charge and reason for the request, with typical approval for requests
+made within a short window of the billing date and a clearly stated reason
+(such as accidental renewal or plan change confusion).
+
+These two statements describe different practices for the same decision: the
+ToS asserts an absolute no-refund position while the Help Center describes an
+operational review-and-approve process that grants refunds under stated
+conditions.

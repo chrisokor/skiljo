@@ -1,0 +1,10 @@
+Atlassian Refund Policy — Renewals and Upgrades Carve-Out
+
+New Cloud subscription purchases are eligible for a refund within the
+standard window (first paid month for monthly billing, 30 days from purchase
+for annual billing). However, Cloud subscription renewals and upgrades to an
+existing subscription are not eligible for a refund, regardless of how
+recently the renewal or upgrade occurred.
+
+This carve-out exists because renewals and upgrades extend or expand access
+you already had, rather than constituting a new purchase decision.

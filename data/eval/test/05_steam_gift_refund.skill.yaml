@@ -1,0 +1,58 @@
+skill_name: process_steam_gift_refund
+version: 1
+trigger: customer_requests_gift_refund
+inputs:
+  - name: gift_redeemed
+    type: boolean
+  - name: requester_is_recipient
+    type: boolean
+  - name: days_since_purchase
+    type: integer
+  - name: playtime_hours
+    type: number
+  - name: has_frequent_refund_pattern
+    type: boolean
+decision_zones:
+  deterministic:
+    - condition:
+        all:
+          - field: gift_redeemed
+            op: eq
+            value: false
+          - field: days_since_purchase
+            op: lte
+            value: 14
+      action: approve_refund_to_purchaser
+    - condition:
+        all:
+          - field: gift_redeemed
+            op: eq
+            value: true
+          - field: requester_is_recipient
+            op: eq
+            value: false
+      action: deny_refund_only_recipient_may_request
+    - condition:
+        all:
+          - field: gift_redeemed
+            op: eq
+            value: true
+          - field: requester_is_recipient
+            op: eq
+            value: true
+          - field: days_since_purchase
+            op: lte
+            value: 14
+          - field: playtime_hours
+            op: lt
+            value: 2.0
+      action: approve_refund_to_recipient
+  llm_assisted:
+    - condition:
+        all:
+          - field: has_frequent_refund_pattern
+            op: eq
+            value: true
+      action: flag_account_for_refund_privilege_review
+      requires_human_approval: true
+  human_only: []

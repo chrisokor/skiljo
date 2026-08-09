@@ -1,0 +1,17 @@
+Stripe Subscription Plan Changes
+
+When you change your Subscription Plan, the timing of the change and any
+associated charge or credit depends on the direction of the change.
+
+Upgrades: If you upgrade to a higher-priced Subscription Plan, the new plan
+takes effect immediately. We will charge you a prorated amount for the
+remainder of the current billing period based on the difference between your
+old and new plan prices.
+
+Downgrades: If you downgrade to a lower-priced Subscription Plan, the change
+takes effect at the start of your next billing period. You will continue to
+have access to your current plan's features and Entitlements until the
+current billing period ends. We do not issue prorated refunds for downgrades.
+
+Same-price changes (e.g., switching between plans of equal price): the change
+takes effect immediately with no proration.

@@ -1,0 +1,11 @@
+DigitalOcean SLA — Managed Databases (Standby Nodes)
+
+Managed Database clusters configured with Standby Nodes carry a 99.95%
+monthly uptime SLA. Managed Database clusters without Standby Nodes carry a
+lower 99.5% monthly uptime SLA, reflecting the reduced redundancy of a
+single-node configuration.
+
+Credit tiers otherwise follow the standard structure: below the applicable
+threshold but at or above 99.0% yields a 10% credit; below 99.0% but at or
+above 95.0% yields a 25% credit; below 95.0% yields a 100% credit. Claims
+must be submitted within two billing cycles of the incident.

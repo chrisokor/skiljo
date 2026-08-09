@@ -1,0 +1,13 @@
+Amazon EC2 SLA — Automatic Instance-Level Credit
+
+In addition to the region-level Service Level Agreement, EC2 provides an
+automatic Service Credit for individual instance-level outages. If a single
+instance is unavailable for more than six consecutive minutes (an
+"Instance-Level Outage"), AWS automatically applies a Service Credit to your
+account for the affected instance's usage during the outage window.
+
+No support case or claim submission is required for the instance-level
+credit — it is applied automatically based on internal monitoring data.
+This is separate from and does not count against the region-level SLA credit
+claim process, which still requires a claim submitted by the end of the
+second billing cycle after the incident occurred.

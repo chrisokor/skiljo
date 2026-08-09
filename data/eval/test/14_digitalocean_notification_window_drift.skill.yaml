@@ -1,0 +1,42 @@
+skill_name: process_digitalocean_notification_window_by_product
+version: 1
+trigger: sla_credit_claim_submitted
+inputs:
+  - name: product
+    type: string
+    description: "droplet, volume, database, spaces, app_platform, nat_gateway, container_registry, or regional_load_balancer"
+  - name: days_since_incident
+    type: integer
+  - name: billing_cycles_since_incident
+    type: integer
+decision_zones:
+  deterministic:
+    - condition:
+        all:
+          - field: product
+            op: in
+            value: [droplet, volume, database, spaces]
+          - field: days_since_incident
+            op: lte
+            value: 30
+      action: accept_claim_for_review
+    - condition:
+        all:
+          - field: product
+            op: in
+            value: [app_platform, nat_gateway, container_registry]
+          - field: days_since_incident
+            op: lte
+            value: 1
+      action: accept_claim_for_review
+    - condition:
+        all:
+          - field: product
+            op: eq
+            value: regional_load_balancer
+          - field: billing_cycles_since_incident
+            op: lte
+            value: 2
+      action: accept_claim_for_review
+  llm_assisted: []
+  human_only: []

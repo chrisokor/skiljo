@@ -1,0 +1,15 @@
+Vercel Pro Spend Management
+
+Your Pro plan includes a $20 monthly usage credit applied automatically to
+on-demand overage charges. Once the included credit is exhausted, additional
+usage is billed at standard per-unit overage rates.
+
+Notifications: Vercel notifies the account owner by email once cumulative
+usage reaches 75% of the monthly usage credit, and again when the credit is
+fully consumed.
+
+Spend management: By default, a Spend Management cap of $200/month is
+applied to on-demand overage charges. Once cumulative overage charges reach
+the configured cap, further resource usage that would incur additional
+charges is paused until the next billing cycle unless the account owner
+raises or removes the cap.

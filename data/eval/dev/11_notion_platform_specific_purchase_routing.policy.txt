@@ -1,0 +1,10 @@
+Notion Refund Policy — Platform-Specific Purchase Routing
+
+Where you purchased your subscription determines how you must request a
+refund. Purchases made through the Apple App Store must be refunded directly
+through Apple using Apple's own refund request process — Notion cannot issue
+refunds for App Store purchases directly.
+
+Purchases made online at notion.so or via Google Pay on Android should be
+directed to Notion support at support@notion.so, and are handled under
+Notion's standard refund windows.

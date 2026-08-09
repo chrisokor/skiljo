@@ -1,0 +1,49 @@
+skill_name: process_atlassian_renewal_and_upgrade_carveout
+version: 1
+trigger: customer_requests_refund
+inputs:
+  - name: purchase_type
+    type: string
+    description: "new_subscription, renewal, or upgrade"
+  - name: billing_cadence
+    type: string
+    description: "monthly or annual"
+  - name: days_since_purchase
+    type: integer
+decision_zones:
+  deterministic:
+    - condition:
+        any:
+          - field: purchase_type
+            op: eq
+            value: renewal
+          - field: purchase_type
+            op: eq
+            value: upgrade
+      action: deny_refund_renewal_or_upgrade_carveout
+    - condition:
+        all:
+          - field: purchase_type
+            op: eq
+            value: new_subscription
+          - field: billing_cadence
+            op: eq
+            value: monthly
+          - field: days_since_purchase
+            op: lte
+            value: 30
+      action: approve_refund
+    - condition:
+        all:
+          - field: purchase_type
+            op: eq
+            value: new_subscription
+          - field: billing_cadence
+            op: eq
+            value: annual
+          - field: days_since_purchase
+            op: lte
+            value: 30
+      action: approve_refund
+  llm_assisted: []
+  human_only: []

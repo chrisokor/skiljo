@@ -1,0 +1,25 @@
+skill_name: process_aws_audit_manager_baseline_credit
+version: 1
+trigger: sla_credit_claim_submitted
+inputs:
+  - name: monthly_uptime_percentage
+    type: number
+decision_zones:
+  deterministic:
+    - condition:
+        all:
+          - field: monthly_uptime_percentage
+            op: lt
+            value: 99.9
+          - field: monthly_uptime_percentage
+            op: gte
+            value: 99.0
+      action: apply_10_percent_credit
+    - condition:
+        all:
+          - field: monthly_uptime_percentage
+            op: lt
+            value: 99.0
+      action: apply_25_percent_credit
+  llm_assisted: []
+  human_only: []

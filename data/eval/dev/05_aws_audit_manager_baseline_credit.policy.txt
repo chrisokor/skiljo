@@ -1,0 +1,10 @@
+AWS Audit Manager SLA — Baseline Credit Tier
+
+If the Monthly Uptime Percentage for AWS Audit Manager is below 99.9% but at
+or above 99.0% during any billing cycle, you are eligible for a Service
+Credit of 10% of your charges for that billing cycle. If the Monthly Uptime
+Percentage is below 99.0%, you are eligible for a Service Credit of 25%.
+
+There is only one SLA tier structure for Audit Manager; unlike EC2 or Google
+Compute Engine, there is no separate instance-level or configuration-based
+credit path.

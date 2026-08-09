@@ -1,0 +1,54 @@
+skill_name: process_digitalocean_app_platform_family_sla_credit
+version: 1
+trigger: sla_credit_claim_submitted
+inputs:
+  - name: resource_type
+    type: string
+    description: "app_platform, nat_gateway, or container_registry"
+  - name: monthly_uptime_percentage
+    type: number
+  - name: hours_since_incident_resolved
+    type: integer
+decision_zones:
+  deterministic:
+    - condition:
+        all:
+          - field: hours_since_incident_resolved
+            op: gt
+            value: 24
+      action: deny_claim_deadline_expired
+    - condition:
+        all:
+          - field: hours_since_incident_resolved
+            op: lte
+            value: 24
+          - field: monthly_uptime_percentage
+            op: lt
+            value: 99.95
+          - field: monthly_uptime_percentage
+            op: gte
+            value: 99.0
+      action: apply_10_percent_credit
+    - condition:
+        all:
+          - field: hours_since_incident_resolved
+            op: lte
+            value: 24
+          - field: monthly_uptime_percentage
+            op: lt
+            value: 99.0
+          - field: monthly_uptime_percentage
+            op: gte
+            value: 95.0
+      action: apply_25_percent_credit
+    - condition:
+        all:
+          - field: hours_since_incident_resolved
+            op: lte
+            value: 24
+          - field: monthly_uptime_percentage
+            op: lt
+            value: 95.0
+      action: apply_100_percent_credit
+  llm_assisted: []
+  human_only: []

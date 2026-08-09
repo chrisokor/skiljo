@@ -1,0 +1,41 @@
+skill_name: process_amazon_ec2_region_level_claim
+version: 1
+trigger: sla_credit_claim_submitted
+inputs:
+  - name: sla_type
+    type: string
+    description: "region_level"
+  - name: has_required_subject_line
+    type: boolean
+  - name: has_required_claim_details
+    type: boolean
+  - name: billing_cycles_since_incident
+    type: integer
+decision_zones:
+  deterministic:
+    - condition:
+        all:
+          - field: has_required_subject_line
+            op: eq
+            value: true
+          - field: has_required_claim_details
+            op: eq
+            value: true
+          - field: billing_cycles_since_incident
+            op: lte
+            value: 2
+      action: accept_region_level_claim_for_review
+    - condition:
+        any:
+          - field: has_required_subject_line
+            op: eq
+            value: false
+          - field: has_required_claim_details
+            op: eq
+            value: false
+          - field: billing_cycles_since_incident
+            op: gt
+            value: 2
+      action: deny_claim_missing_requirements_or_deadline
+  llm_assisted: []
+  human_only: []

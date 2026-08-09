@@ -1,0 +1,12 @@
+Stripe Bundled Pricing — Plan Tier Thresholds
+
+The Foundations, Expansion, and Scale plans differ in included payment
+volume before overage pricing applies. Foundations includes up to $250,000 in
+annual payment volume; Expansion includes up to $5,000,000; Scale includes up
+to $50,000,000. Payment volume processed above your plan's included amount is
+billed at your plan's marginal overage rate for the remainder of the annual
+period.
+
+If your account exceeds its plan's included volume, Stripe notifies you and
+recommends upgrading to the next tier; no automatic upgrade occurs without
+your consent.

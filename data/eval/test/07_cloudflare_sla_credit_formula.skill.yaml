@@ -1,0 +1,28 @@
+skill_name: process_cloudflare_sla_credit_formula
+version: 1
+trigger: monthly_uptime_below_guarantee
+inputs:
+  - name: outage_period_minutes
+    type: number
+  - name: affected_customer_ratio
+    type: number
+  - name: scheduled_availability_minutes
+    type: number
+  - name: rolling_12_month_credits_at_cap
+    type: boolean
+decision_zones:
+  deterministic:
+    - condition:
+        all:
+          - field: rolling_12_month_credits_at_cap
+            op: eq
+            value: true
+      action: deny_credit_annual_cap_reached
+    - condition:
+        all:
+          - field: rolling_12_month_credits_at_cap
+            op: eq
+            value: false
+      action: calculate_and_apply_service_credit_via_formula
+  llm_assisted: []
+  human_only: []

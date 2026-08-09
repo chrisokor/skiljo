@@ -1,0 +1,37 @@
+skill_name: process_atlassian_cancellation_mechanics
+version: 1
+trigger: customer_cancels_subscription
+inputs:
+  - name: plan_tier
+    type: string
+    description: "paid or free"
+  - name: days_since_billing_cycle_end
+    type: integer
+decision_zones:
+  deterministic:
+    - condition:
+        all:
+          - field: plan_tier
+            op: eq
+            value: free
+      action: deactivate_immediately
+    - condition:
+        all:
+          - field: plan_tier
+            op: eq
+            value: paid
+          - field: days_since_billing_cycle_end
+            op: lte
+            value: 15
+      action: allow_reactivation_within_grace_period
+    - condition:
+        all:
+          - field: plan_tier
+            op: eq
+            value: paid
+          - field: days_since_billing_cycle_end
+            op: gt
+            value: 15
+      action: deactivate_grace_period_expired
+  llm_assisted: []
+  human_only: []

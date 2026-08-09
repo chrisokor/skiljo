@@ -1,0 +1,12 @@
+Google Cloud Storage SLA — Sibling of Compute Engine
+
+Google Cloud Storage offers a Monthly Uptime Percentage SLA structurally
+similar to Compute Engine but with different credit tiers: below 99.95% but
+at or above 99.0% yields a 10% credit; below 99.0% but at or above 95.0%
+yields a 25% credit; below 95.0% yields a 50% credit.
+
+Unlike Compute Engine, Cloud Storage has no instance-configuration
+distinction (no multi-zone vs. single-zone branching) — a single credit
+ladder applies uniformly regardless of storage class or bucket
+configuration. The claim notification window is 30 days, matching Compute
+Engine's own claim window.

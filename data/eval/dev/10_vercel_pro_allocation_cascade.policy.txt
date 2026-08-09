@@ -1,0 +1,10 @@
+Vercel Pro Plan — Included Allocation Cascade
+
+Your Pro plan includes a base allocation of 1TB of Fast Data Transfer and 10
+million Edge Requests per month. Usage within the included allocation incurs
+no additional charge.
+
+Usage beyond the included allocation cascades to the monthly usage credit:
+overage is first covered by your remaining $20 usage credit at standard
+per-unit rates. Once the usage credit is exhausted, any further overage is
+billed directly at the standard per-unit overage rate on your next invoice.

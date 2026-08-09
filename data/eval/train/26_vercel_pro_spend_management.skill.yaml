@@ -1,0 +1,39 @@
+skill_name: process_vercel_pro_spend_management
+version: 1
+trigger: monthly_usage_credit_recalculated
+inputs:
+  - name: credit_consumed_percentage
+    type: number
+  - name: cumulative_overage_usd
+    type: number
+  - name: spend_cap_is_default
+    type: boolean
+    description: "True if the account owner has not raised or removed the default $200/month cap"
+decision_zones:
+  deterministic:
+    - condition:
+        all:
+          - field: credit_consumed_percentage
+            op: gte
+            value: 75
+          - field: credit_consumed_percentage
+            op: lt
+            value: 100
+      action: notify_owner_75_percent_credit_consumed
+    - condition:
+        all:
+          - field: credit_consumed_percentage
+            op: gte
+            value: 100
+      action: notify_owner_credit_fully_consumed_and_bill_overage
+    - condition:
+        all:
+          - field: spend_cap_is_default
+            op: eq
+            value: true
+          - field: cumulative_overage_usd
+            op: gte
+            value: 200
+      action: pause_usage_until_next_billing_cycle
+  llm_assisted: []
+  human_only: []

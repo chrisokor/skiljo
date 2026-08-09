@@ -1,0 +1,8 @@
+Twilio Billing Disputes
+
+If you believe an invoice contains an error, you must notify Twilio in
+writing within 60 days of the invoice date. Disputes submitted after the
+60-day window are waived, and the invoice is deemed final and undisputed.
+
+Timely disputes are reviewed and, if Twilio determines the charge was in
+error, credited to your account within one billing cycle.

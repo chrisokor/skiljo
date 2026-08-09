@@ -1,0 +1,42 @@
+skill_name: process_steam_dlc_refund
+version: 1
+trigger: customer_requests_dlc_refund
+inputs:
+  - name: days_since_dlc_purchase
+    type: integer
+  - name: base_game_playtime_increase_hours
+    type: number
+    description: "Increase in base-game playtime hours since the DLC was purchased"
+  - name: dlc_consumed_or_modified_or_transferred
+    type: boolean
+decision_zones:
+  deterministic:
+    - condition:
+        all:
+          - field: dlc_consumed_or_modified_or_transferred
+            op: eq
+            value: true
+      action: deny_refund_dlc_consumed_modified_or_transferred
+    - condition:
+        all:
+          - field: dlc_consumed_or_modified_or_transferred
+            op: eq
+            value: false
+          - field: days_since_dlc_purchase
+            op: lte
+            value: 14
+          - field: base_game_playtime_increase_hours
+            op: lte
+            value: 2.0
+      action: approve_refund
+    - condition:
+        all:
+          - field: dlc_consumed_or_modified_or_transferred
+            op: eq
+            value: false
+          - field: days_since_dlc_purchase
+            op: gt
+            value: 14
+      action: deny_refund_window_expired
+  llm_assisted: []
+  human_only: []

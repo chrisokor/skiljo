@@ -1,0 +1,35 @@
+skill_name: process_cloudflare_tier_gated_sla_eligibility
+version: 1
+trigger: sla_credit_claim_submitted
+inputs:
+  - name: plan_tier_at_time_of_outage
+    type: string
+    description: "free, pro, business, or enterprise"
+  - name: enterprise_success_tier_multiplier
+    type: number
+    description: "10 or 25, applicable only when plan_tier_at_time_of_outage is enterprise"
+decision_zones:
+  deterministic:
+    - condition:
+        any:
+          - field: plan_tier_at_time_of_outage
+            op: eq
+            value: free
+          - field: plan_tier_at_time_of_outage
+            op: eq
+            value: pro
+      action: deny_no_sla_coverage_for_tier
+    - condition:
+        all:
+          - field: plan_tier_at_time_of_outage
+            op: eq
+            value: business
+      action: apply_business_sla_100_percent_uptime_guarantee
+    - condition:
+        all:
+          - field: plan_tier_at_time_of_outage
+            op: eq
+            value: enterprise
+      action: apply_enterprise_sla_credit_multiplier
+  llm_assisted: []
+  human_only: []

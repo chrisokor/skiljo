@@ -1,0 +1,29 @@
+skill_name: process_shopify_subscription_refund_contradiction
+version: 1
+trigger: customer_requests_refund
+inputs:
+  - name: days_since_charge
+    type: integer
+  - name: has_stated_reason
+    type: boolean
+    description: "e.g. accidental renewal or plan change confusion"
+decision_zones:
+  deterministic:
+    - condition:
+        all:
+          - field: days_since_charge
+            op: gte
+            value: 0
+      action: deny_refund_tos_no_refunds_under_any_circumstances
+  llm_assisted:
+    - condition:
+        all:
+          - field: days_since_charge
+            op: lte
+            value: 14
+          - field: has_stated_reason
+            op: eq
+            value: true
+      action: evaluate_case_by_case_support_refund_review
+      requires_human_approval: true
+  human_only: []

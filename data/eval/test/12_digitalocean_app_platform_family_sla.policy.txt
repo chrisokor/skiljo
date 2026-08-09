@@ -1,0 +1,11 @@
+DigitalOcean SLA — App Platform, NAT Gateway, and Container Registry
+
+App Platform, NAT Gateway, and Container Registry each carry a 99.95%
+monthly uptime SLA — a lower guarantee than Droplets and Volumes (99.99%).
+Credit tiers follow the same percentage-based structure: below 99.95% but at
+or above 99.0% yields a 10% credit; below 99.0% but at or above 95.0% yields
+a 25% credit; below 95.0% yields a 100% credit.
+
+Claims for these three products must be submitted within 24 hours of the
+incident's resolution — a materially shorter window than the 30-day window
+for Droplets and Volumes.

@@ -1,0 +1,10 @@
+Amazon S3 SLA — Minimum Claim and Transferability
+
+Service Credits are calculated as a percentage of the total charges for S3
+usage in the affected billing cycle, and any Service Credit amount below
+$1 USD will not be issued. Service Credits may not be transferred or applied
+to any other account.
+
+Service Credits are your sole and exclusive remedy for any unavailability or
+non-performance of S3, and are mutually exclusive from any other remedy
+available under your agreement with AWS, unless otherwise stated.

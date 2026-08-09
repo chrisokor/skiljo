@@ -1,0 +1,54 @@
+skill_name: process_digitalocean_droplets_volumes_sla_credit
+version: 1
+trigger: sla_credit_claim_submitted
+inputs:
+  - name: resource_type
+    type: string
+    description: "droplet or volume"
+  - name: monthly_uptime_percentage
+    type: number
+  - name: days_since_incident
+    type: integer
+decision_zones:
+  deterministic:
+    - condition:
+        all:
+          - field: days_since_incident
+            op: gt
+            value: 30
+      action: deny_claim_deadline_expired
+    - condition:
+        all:
+          - field: days_since_incident
+            op: lte
+            value: 30
+          - field: monthly_uptime_percentage
+            op: lt
+            value: 99.99
+          - field: monthly_uptime_percentage
+            op: gte
+            value: 99.0
+      action: apply_10_percent_credit
+    - condition:
+        all:
+          - field: days_since_incident
+            op: lte
+            value: 30
+          - field: monthly_uptime_percentage
+            op: lt
+            value: 99.0
+          - field: monthly_uptime_percentage
+            op: gte
+            value: 95.0
+      action: apply_25_percent_credit
+    - condition:
+        all:
+          - field: days_since_incident
+            op: lte
+            value: 30
+          - field: monthly_uptime_percentage
+            op: lt
+            value: 95.0
+      action: apply_100_percent_credit
+  llm_assisted: []
+  human_only: []

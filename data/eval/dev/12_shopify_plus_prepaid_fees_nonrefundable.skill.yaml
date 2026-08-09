@@ -1,0 +1,23 @@
+skill_name: process_shopify_plus_prepaid_fee_termination
+version: 1
+trigger: contract_terminated
+inputs:
+  - name: terminated_for
+    type: string
+    description: "customer_material_breach, shopify_uncured_breach, or expiration"
+decision_zones:
+  deterministic:
+    - condition:
+        all:
+          - field: terminated_for
+            op: eq
+            value: customer_material_breach
+      action: forfeit_remaining_prepaid_fees_no_refund
+    - condition:
+        all:
+          - field: terminated_for
+            op: eq
+            value: shopify_uncured_breach
+      action: issue_prorated_refund_of_unexpired_term
+  llm_assisted: []
+  human_only: []

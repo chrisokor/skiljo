@@ -1,0 +1,40 @@
+skill_name: process_stripe_docs_plan_tier_threshold
+version: 1
+trigger: annual_payment_volume_recalculated
+inputs:
+  - name: plan_tier
+    type: string
+    description: "foundations, expansion, or scale"
+  - name: annual_payment_volume_usd
+    type: number
+decision_zones:
+  deterministic:
+    - condition:
+        all:
+          - field: plan_tier
+            op: eq
+            value: foundations
+          - field: annual_payment_volume_usd
+            op: gt
+            value: 250000
+      action: bill_marginal_overage_rate_and_notify_upgrade
+    - condition:
+        all:
+          - field: plan_tier
+            op: eq
+            value: expansion
+          - field: annual_payment_volume_usd
+            op: gt
+            value: 5000000
+      action: bill_marginal_overage_rate_and_notify_upgrade
+    - condition:
+        all:
+          - field: plan_tier
+            op: eq
+            value: scale
+          - field: annual_payment_volume_usd
+            op: gt
+            value: 50000000
+      action: bill_marginal_overage_rate_and_notify_upgrade
+  llm_assisted: []
+  human_only: []

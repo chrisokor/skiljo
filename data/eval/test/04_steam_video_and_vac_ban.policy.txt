@@ -1,0 +1,11 @@
+Steam Refunds — Video Content and VAC Bans
+
+Video content (movies, series) purchased individually is non-refundable
+once any portion has been viewed, and non-refundable after 14 days
+regardless of viewing status. Video content purchased as part of a bundle
+follows the bundle refund rules instead.
+
+VAC bans: if a VAC (Valve Anti-Cheat) ban is issued against an account for a
+game, the customer forfeits all refund rights for that game, regardless of
+days since purchase or playtime. This forfeiture applies even if a refund
+request was already pending at the time of the ban.

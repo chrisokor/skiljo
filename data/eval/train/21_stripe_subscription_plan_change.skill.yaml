@@ -1,0 +1,29 @@
+skill_name: process_stripe_subscription_plan_change
+version: 1
+trigger: customer_changes_subscription_plan
+inputs:
+  - name: change_direction
+    type: string
+    description: "upgrade, downgrade, or same_price"
+decision_zones:
+  deterministic:
+    - condition:
+        all:
+          - field: change_direction
+            op: eq
+            value: upgrade
+      action: apply_plan_immediately_and_charge_prorated_difference
+    - condition:
+        all:
+          - field: change_direction
+            op: eq
+            value: downgrade
+      action: apply_plan_at_next_billing_period_no_proration
+    - condition:
+        all:
+          - field: change_direction
+            op: eq
+            value: same_price
+      action: apply_plan_immediately_no_proration
+  llm_assisted: []
+  human_only: []

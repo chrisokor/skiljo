@@ -1,0 +1,13 @@
+Amazon EC2 SLA — Dual Claim Structure
+
+EC2 offers two distinct SLA credit paths: a region-level SLA and an
+instance-level SLA. A customer may submit a claim under the region-level SLA
+for a Region Unavailable event, and separately may be eligible for
+automatic instance-level credits. Credits under the two paths do not offset
+one another and may both apply to the same billing cycle.
+
+To submit a region-level claim, you must include "SLA Credit Request" in the
+subject line, the affected dates and times, and the affected resource IDs,
+and submit it by the end of the second billing cycle after the incident
+occurred. Claims that omit required information or miss the deadline are
+denied.

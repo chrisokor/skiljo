@@ -1,0 +1,11 @@
+Steam Refunds — Pre-Purchases and Early Access
+
+Pre-purchased titles: the standard 14-day refund window does not begin until
+the game's official release date, regardless of how far in advance the
+pre-purchase was made. Playtime accrued before release still counts toward
+the 2-hour playtime limit.
+
+Early Access titles: because Early Access games are playable before the
+"official release," playtime accrued during Early Access counts toward the
+2-hour limit from the moment of purchase — there is no release-date deferral
+for Early Access titles the way there is for standard pre-purchases.

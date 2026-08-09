@@ -1,0 +1,25 @@
+skill_name: process_openai_credit_transfer_prohibition
+version: 1
+trigger: customer_attempts_credit_transfer_sale_or_gift
+inputs:
+  - name: attempted_transfer_detected
+    type: boolean
+  - name: days_since_purchase
+    type: integer
+decision_zones:
+  deterministic:
+    - condition:
+        all:
+          - field: days_since_purchase
+            op: gt
+            value: 365
+      action: expire_credits_no_refund
+  llm_assisted:
+    - condition:
+        all:
+          - field: attempted_transfer_detected
+            op: eq
+            value: true
+      action: evaluate_revoke_credits_and_suspend_or_terminate_account
+      requires_human_approval: true
+  human_only: []

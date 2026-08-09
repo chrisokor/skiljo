@@ -1,0 +1,38 @@
+skill_name: process_steam_bundle_refund
+version: 1
+trigger: customer_requests_bundle_refund
+inputs:
+  - name: days_since_purchase
+    type: integer
+  - name: any_bundle_item_transferred
+    type: boolean
+  - name: combined_bundle_playtime_hours
+    type: number
+decision_zones:
+  deterministic:
+    - condition:
+        all:
+          - field: any_bundle_item_transferred
+            op: eq
+            value: false
+          - field: combined_bundle_playtime_hours
+            op: lt
+            value: 2.0
+          - field: days_since_purchase
+            op: lte
+            value: 14
+      action: approve_full_bundle_refund
+    - condition:
+        any:
+          - field: any_bundle_item_transferred
+            op: eq
+            value: true
+          - field: combined_bundle_playtime_hours
+            op: gte
+            value: 2.0
+          - field: days_since_purchase
+            op: gt
+            value: 14
+      action: deny_bundle_refund_no_partial_refunds
+  llm_assisted: []
+  human_only: []

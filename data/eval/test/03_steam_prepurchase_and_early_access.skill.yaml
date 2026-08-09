@@ -1,0 +1,49 @@
+skill_name: process_steam_prepurchase_and_early_access_refund
+version: 1
+trigger: customer_requests_refund
+inputs:
+  - name: product_type
+    type: string
+    description: "pre_purchase or early_access"
+  - name: days_since_release_or_purchase
+    type: integer
+    description: "For pre_purchase: days since official release date. For early_access: days since purchase."
+  - name: playtime_hours
+    type: number
+decision_zones:
+  deterministic:
+    - condition:
+        all:
+          - field: product_type
+            op: eq
+            value: pre_purchase
+          - field: days_since_release_or_purchase
+            op: lte
+            value: 14
+          - field: playtime_hours
+            op: lt
+            value: 2.0
+      action: approve_refund
+    - condition:
+        all:
+          - field: product_type
+            op: eq
+            value: early_access
+          - field: days_since_release_or_purchase
+            op: lte
+            value: 14
+          - field: playtime_hours
+            op: lt
+            value: 2.0
+      action: approve_refund
+    - condition:
+        any:
+          - field: days_since_release_or_purchase
+            op: gt
+            value: 14
+          - field: playtime_hours
+            op: gte
+            value: 2.0
+      action: deny_refund
+  llm_assisted: []
+  human_only: []

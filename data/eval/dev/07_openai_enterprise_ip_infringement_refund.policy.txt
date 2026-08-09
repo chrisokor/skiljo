@@ -1,0 +1,12 @@
+OpenAI Services Agreement — IP Infringement Refund Trigger
+
+If OpenAI reasonably believes the Services are likely to become the subject
+of a third-party intellectual property infringement claim, OpenAI may, at
+its option and expense: (a) procure the right for the customer to continue
+using the Services, (b) modify the Services to be non-infringing while
+maintaining substantially equivalent functionality, or (c) terminate the
+affected Services and refund the customer any prepaid, unused fees for the
+terminated portion of the Term.
+
+This remedy is OpenAI's sole obligation and the customer's exclusive remedy
+for any actual or alleged infringement claim.

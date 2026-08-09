@@ -1,0 +1,71 @@
+skill_name: process_digitalocean_managed_database_standby_node_sla
+version: 1
+trigger: sla_credit_claim_submitted
+inputs:
+  - name: has_standby_nodes
+    type: boolean
+  - name: monthly_uptime_percentage
+    type: number
+  - name: billing_cycles_since_incident
+    type: integer
+decision_zones:
+  deterministic:
+    - condition:
+        all:
+          - field: billing_cycles_since_incident
+            op: gt
+            value: 2
+      action: deny_claim_deadline_expired
+    - condition:
+        all:
+          - field: billing_cycles_since_incident
+            op: lte
+            value: 2
+          - field: has_standby_nodes
+            op: eq
+            value: true
+          - field: monthly_uptime_percentage
+            op: lt
+            value: 99.95
+          - field: monthly_uptime_percentage
+            op: gte
+            value: 99.0
+      action: apply_10_percent_credit
+    - condition:
+        all:
+          - field: billing_cycles_since_incident
+            op: lte
+            value: 2
+          - field: has_standby_nodes
+            op: eq
+            value: false
+          - field: monthly_uptime_percentage
+            op: lt
+            value: 99.5
+          - field: monthly_uptime_percentage
+            op: gte
+            value: 99.0
+      action: apply_10_percent_credit
+    - condition:
+        all:
+          - field: billing_cycles_since_incident
+            op: lte
+            value: 2
+          - field: monthly_uptime_percentage
+            op: lt
+            value: 99.0
+          - field: monthly_uptime_percentage
+            op: gte
+            value: 95.0
+      action: apply_25_percent_credit
+    - condition:
+        all:
+          - field: billing_cycles_since_incident
+            op: lte
+            value: 2
+          - field: monthly_uptime_percentage
+            op: lt
+            value: 95.0
+      action: apply_100_percent_credit
+  llm_assisted: []
+  human_only: []

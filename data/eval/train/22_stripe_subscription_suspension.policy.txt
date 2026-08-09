@@ -1,0 +1,16 @@
+Stripe Subscription Suspension and Payment Failure
+
+If a payment for your Subscription Plan fails, we will retry the charge
+according to our standard retry schedule. If payment continues to fail for
+more than 15 days after the original due date, we may suspend your access to
+the Service until payment is received.
+
+If your Subscription remains suspended for 30 consecutive days or more due to
+non-payment, we may terminate your Subscription. Upon termination for
+non-payment, any outstanding fees remain due and no refund is issued for the
+terminated period.
+
+Reinstatement: If you bring your account current within the 30-day suspension
+window, access is restored immediately upon successful payment. No late fee
+is assessed for the first payment failure in a rolling 12-month period; a 1.5%
+monthly late fee applies to any subsequent failure in that window.

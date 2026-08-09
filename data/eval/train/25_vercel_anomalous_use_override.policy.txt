@@ -1,0 +1,11 @@
+Vercel Anomalous Use
+
+Vercel may, in its sole discretion, identify usage on your account as
+elevated, irregular, high, or otherwise anomalous relative to your plan's
+expected usage patterns. Vercel reserves the right to automatically charge
+your payment method for fees accrued from anomalous use, or to suspend the
+offending resource, at its sole discretion.
+
+There is no fixed numeric threshold that defines "anomalous use" — Vercel
+evaluates the totality of usage patterns, including sudden spikes, unusual
+traffic sources, and deviation from the account's historical baseline.

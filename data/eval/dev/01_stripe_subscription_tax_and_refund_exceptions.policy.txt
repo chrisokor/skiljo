@@ -1,0 +1,11 @@
+Stripe Subscription — Taxes and Refund Exceptions
+
+All Subscription fees are exclusive of applicable taxes, which are added to
+each invoice based on your billing address. Subscription fees are
+non-refundable and non-cancelable once paid, except as required by
+applicable law.
+
+Notwithstanding the foregoing, if Stripe discontinues a Subscription Plan
+feature you were actively using and paying for, and no reasonably comparable
+replacement is offered, you are entitled to a prorated refund of fees paid
+for that feature for the remainder of the current billing period.

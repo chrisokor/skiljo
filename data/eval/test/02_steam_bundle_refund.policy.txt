@@ -1,0 +1,11 @@
+Steam Refunds — Bundles
+
+A bundle purchase is eligible for a full refund only if none of the
+individual items within the bundle have been transferred (for example,
+gifted or traded), and the combined playtime across all items in the bundle
+is less than 2 hours, and the request is made within 14 days of purchase.
+
+If any single item in the bundle has been transferred, or if combined
+playtime across the bundle reaches 2 hours or more, the entire bundle becomes
+ineligible for a refund — partial refunds for a subset of bundle items are
+not offered.

@@ -1,0 +1,50 @@
+skill_name: process_steam_video_and_vac_ban_refund
+version: 1
+trigger: customer_requests_refund
+inputs:
+  - name: product_type
+    type: string
+    description: "individual_video or video_in_bundle"
+  - name: any_portion_viewed
+    type: boolean
+  - name: days_since_purchase
+    type: integer
+  - name: vac_ban_issued
+    type: boolean
+decision_zones:
+  deterministic:
+    - condition:
+        all:
+          - field: vac_ban_issued
+            op: eq
+            value: true
+      action: forfeit_refund_rights_vac_ban
+    - condition:
+        all:
+          - field: vac_ban_issued
+            op: eq
+            value: false
+          - field: product_type
+            op: eq
+            value: individual_video
+          - field: any_portion_viewed
+            op: eq
+            value: false
+          - field: days_since_purchase
+            op: lte
+            value: 14
+      action: approve_refund
+    - condition:
+        all:
+          - field: vac_ban_issued
+            op: eq
+            value: false
+          - field: product_type
+            op: eq
+            value: individual_video
+          - field: any_portion_viewed
+            op: eq
+            value: true
+      action: deny_refund_video_viewed
+  llm_assisted: []
+  human_only: []

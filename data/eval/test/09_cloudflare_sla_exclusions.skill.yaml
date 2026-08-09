@@ -1,0 +1,62 @@
+skill_name: process_cloudflare_sla_exclusion_review
+version: 1
+trigger: outage_reported_for_sla_claim
+inputs:
+  - name: is_scheduled_maintenance_24h_notice
+    type: boolean
+  - name: is_force_majeure
+    type: boolean
+  - name: is_customer_equipment_or_network
+    type: boolean
+  - name: is_customer_tos_breach
+    type: boolean
+  - name: is_account_suspended_for_cause
+    type: boolean
+  - name: is_dns_issue_not_caused_by_cloudflare
+    type: boolean
+decision_zones:
+  deterministic:
+    - condition:
+        any:
+          - field: is_scheduled_maintenance_24h_notice
+            op: eq
+            value: true
+          - field: is_force_majeure
+            op: eq
+            value: true
+          - field: is_customer_equipment_or_network
+            op: eq
+            value: true
+          - field: is_customer_tos_breach
+            op: eq
+            value: true
+          - field: is_account_suspended_for_cause
+            op: eq
+            value: true
+          - field: is_dns_issue_not_caused_by_cloudflare
+            op: eq
+            value: true
+      action: exclude_from_outage_period_calculation
+    - condition:
+        all:
+          - field: is_scheduled_maintenance_24h_notice
+            op: eq
+            value: false
+          - field: is_force_majeure
+            op: eq
+            value: false
+          - field: is_customer_equipment_or_network
+            op: eq
+            value: false
+          - field: is_customer_tos_breach
+            op: eq
+            value: false
+          - field: is_account_suspended_for_cause
+            op: eq
+            value: false
+          - field: is_dns_issue_not_caused_by_cloudflare
+            op: eq
+            value: false
+      action: include_in_outage_period_calculation
+  llm_assisted: []
+  human_only: []

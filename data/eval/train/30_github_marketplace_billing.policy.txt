@@ -1,0 +1,11 @@
+GitHub Marketplace Billing
+
+If you downgrade or cancel a Marketplace app's paid plan, no refund or credit
+is issued for the unused portion of the current billing cycle. Your current
+plan, and any features or usage limits associated with it, remains active
+until the end of the billing cycle in which you downgraded or canceled; the
+new (lower or free) plan takes effect at the start of the next billing cycle.
+
+Upgrades to a higher Marketplace plan take effect immediately, and the
+prorated difference for the remainder of the current cycle is charged at the
+time of the upgrade.

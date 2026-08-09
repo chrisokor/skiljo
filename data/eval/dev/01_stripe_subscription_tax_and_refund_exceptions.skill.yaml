@@ -1,0 +1,30 @@
+skill_name: process_stripe_subscription_tax_and_refund_exception
+version: 1
+trigger: customer_requests_refund
+inputs:
+  - name: required_by_law
+    type: boolean
+  - name: feature_discontinued_no_replacement
+    type: boolean
+decision_zones:
+  deterministic:
+    - condition:
+        all:
+          - field: required_by_law
+            op: eq
+            value: false
+          - field: feature_discontinued_no_replacement
+            op: eq
+            value: false
+      action: deny_refund_fees_nonrefundable
+    - condition:
+        any:
+          - field: required_by_law
+            op: eq
+            value: true
+          - field: feature_discontinued_no_replacement
+            op: eq
+            value: true
+      action: issue_prorated_refund
+  llm_assisted: []
+  human_only: []

@@ -1,0 +1,40 @@
+skill_name: process_openai_services_agreement_late_fee
+version: 1
+trigger: monthly_invoice_review
+inputs:
+  - name: actual_usage_fees_usd
+    type: number
+  - name: committed_minimum_usd
+    type: number
+  - name: days_past_due
+    type: integer
+  - name: has_good_faith_dispute
+    type: boolean
+decision_zones:
+  deterministic:
+    - condition:
+        all:
+          - field: committed_minimum_usd
+            op: gt
+            value: 0
+      action: charge_greater_of_usage_or_committed_minimum
+    - condition:
+        all:
+          - field: days_past_due
+            op: gt
+            value: 30
+          - field: has_good_faith_dispute
+            op: eq
+            value: false
+      action: assess_late_fee_1_5_percent_per_month
+    - condition:
+        all:
+          - field: days_past_due
+            op: gt
+            value: 30
+          - field: has_good_faith_dispute
+            op: eq
+            value: true
+      action: waive_late_fee_on_disputed_portion_pending_resolution
+  llm_assisted: []
+  human_only: []

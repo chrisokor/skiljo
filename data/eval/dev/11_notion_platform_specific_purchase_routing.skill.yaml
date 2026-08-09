@@ -1,0 +1,26 @@
+skill_name: process_notion_platform_specific_purchase_routing
+version: 1
+trigger: customer_requests_refund
+inputs:
+  - name: purchase_platform
+    type: string
+    description: "apple_app_store, web, or google_pay"
+decision_zones:
+  deterministic:
+    - condition:
+        all:
+          - field: purchase_platform
+            op: eq
+            value: apple_app_store
+      action: redirect_to_apple_refund_process
+    - condition:
+        any:
+          - field: purchase_platform
+            op: eq
+            value: web
+          - field: purchase_platform
+            op: eq
+            value: google_pay
+      action: route_to_notion_support_standard_refund_windows
+  llm_assisted: []
+  human_only: []

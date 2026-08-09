@@ -1,0 +1,12 @@
+Cloudflare Billing Policy — Fees Are Nonrefundable
+
+FEES ARE NONREFUNDABLE. All fees paid for Cloudflare services are
+non-refundable except as expressly stated otherwise in your agreement with
+Cloudflare or as required by applicable law. There is a minimum one-month
+purchase obligation for all paid plans; canceling mid-month does not entitle
+you to a refund or credit for the remainder of that month.
+
+This billing policy is independent of the separate SLA Service Credit
+process: an SLA Service Credit is a credit toward a future invoice for
+uptime shortfalls, not a refund of fees already paid, and does not override
+the fees-are-nonrefundable billing policy.

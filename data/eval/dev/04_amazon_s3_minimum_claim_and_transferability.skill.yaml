@@ -1,0 +1,36 @@
+skill_name: process_amazon_s3_minimum_claim_and_transfer
+version: 1
+trigger: sla_credit_calculated
+inputs:
+  - name: calculated_credit_usd
+    type: number
+  - name: is_transfer_request
+    type: boolean
+decision_zones:
+  deterministic:
+    - condition:
+        all:
+          - field: is_transfer_request
+            op: eq
+            value: true
+      action: deny_transfer_credits_not_transferable
+    - condition:
+        all:
+          - field: is_transfer_request
+            op: eq
+            value: false
+          - field: calculated_credit_usd
+            op: lt
+            value: 1
+      action: withhold_credit_below_minimum
+    - condition:
+        all:
+          - field: is_transfer_request
+            op: eq
+            value: false
+          - field: calculated_credit_usd
+            op: gte
+            value: 1
+      action: issue_service_credit
+  llm_assisted: []
+  human_only: []

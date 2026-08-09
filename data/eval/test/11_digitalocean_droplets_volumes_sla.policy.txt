@@ -1,0 +1,9 @@
+DigitalOcean SLA — Droplets and Volumes
+
+Droplets and Volumes are each covered by a 99.99% monthly uptime SLA. If
+monthly uptime for the affected resource falls below 99.99% but at or above
+99.0%, you receive a 10% Service Credit. Below 99.0% but at or above 95.0%,
+a 25% Service Credit. Below 95.0%, a 100% Service Credit.
+
+To claim a credit, you must notify DigitalOcean support within 30 days of
+the incident, including the affected resource ID and the incident window.

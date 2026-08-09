@@ -1,0 +1,15 @@
+OpenAI Services Agreement — Minimum Commitment and Late Fees
+
+Enterprise customers with a minimum monthly commitment must pay the greater
+of (a) actual usage fees or (b) the committed minimum, for each month of the
+Term. Committed minimums are not refundable and cannot be applied to a future
+term.
+
+Invoices are due within 30 days of receipt (Net 30). Any amount not paid
+within 30 days of the due date is subject to a late fee of 1.5% per month, or
+the maximum rate permitted by applicable law, whichever is lower, accruing
+from the due date until paid in full.
+
+If a customer disputes a portion of an invoice in good faith, the customer
+must pay the undisputed portion by the due date; the disputed portion is not
+subject to a late fee while the dispute is pending resolution.

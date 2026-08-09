@@ -1,0 +1,13 @@
+DigitalOcean SLA Family — Notification Window Drift
+
+Across DigitalOcean's per-product SLAs, the claim notification window varies
+by product: Droplets, Volumes, Databases, and Spaces allow 30 days; App
+Platform, NAT Gateway, and Container Registry allow only 24 hours;
+Regional Load Balancers require notification within "two billing cycles" of
+the incident (a framing distinct from a fixed day count).
+
+This drift is not explained by any stated policy rationale in the public SLA
+pages — the products share the same underlying credit-tier structure and
+differ only in notification window length and framing, which is consistent
+with independent per-product drafting rather than a deliberate tiering
+decision.

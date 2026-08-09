@@ -1,0 +1,28 @@
+skill_name: process_vercel_non_vercel_service_ceasing_refund
+version: 1
+trigger: customer_requests_refund
+inputs:
+  - name: service_type
+    type: string
+    description: "non_vercel_service or core_platform"
+  - name: non_vercel_service_discontinued
+    type: boolean
+decision_zones:
+  deterministic:
+    - condition:
+        all:
+          - field: service_type
+            op: eq
+            value: non_vercel_service
+          - field: non_vercel_service_discontinued
+            op: eq
+            value: true
+      action: issue_prorated_refund_for_discontinued_service
+    - condition:
+        all:
+          - field: service_type
+            op: eq
+            value: core_platform
+      action: deny_refund_all_fees_nonrefundable
+  llm_assisted: []
+  human_only: []

@@ -1,0 +1,17 @@
+skill_name: process_openai_ip_infringement_remedy
+version: 1
+trigger: ip_infringement_risk_identified
+inputs:
+  - name: infringement_risk_believed_likely
+    type: boolean
+decision_zones:
+  deterministic: []
+  llm_assisted:
+    - condition:
+        all:
+          - field: infringement_risk_believed_likely
+            op: eq
+            value: true
+      action: choose_remedy_procure_modify_or_terminate_with_refund
+      requires_human_approval: true
+  human_only: []

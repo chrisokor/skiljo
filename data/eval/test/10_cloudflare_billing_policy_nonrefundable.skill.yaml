@@ -1,0 +1,30 @@
+skill_name: process_cloudflare_billing_policy_refund_request
+version: 1
+trigger: customer_requests_refund
+inputs:
+  - name: required_by_law
+    type: boolean
+  - name: expressly_stated_in_agreement
+    type: boolean
+decision_zones:
+  deterministic:
+    - condition:
+        all:
+          - field: required_by_law
+            op: eq
+            value: false
+          - field: expressly_stated_in_agreement
+            op: eq
+            value: false
+      action: deny_refund_fees_are_nonrefundable
+    - condition:
+        any:
+          - field: required_by_law
+            op: eq
+            value: true
+          - field: expressly_stated_in_agreement
+            op: eq
+            value: true
+      action: approve_refund_per_exception
+  llm_assisted: []
+  human_only: []

@@ -1,0 +1,12 @@
+Cloudflare SLA — Tier-Gated Eligibility
+
+SLA eligibility depends on your plan tier. Free and Pro plan accounts are not
+covered by any uptime SLA and are not eligible for Service Credits under any
+circumstances. Business plan accounts are covered by the 100% uptime
+guarantee described in the Business SLA. Enterprise plan accounts are
+covered by a separate Enterprise SLA that applies credit multipliers of 10x
+or 25x depending on which support success-tier the customer has purchased.
+
+A customer's plan tier at the time of the outage determines which SLA
+(if any) applies — retroactive upgrades after an outage do not confer
+eligibility for that outage.

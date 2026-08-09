@@ -1,0 +1,26 @@
+skill_name: process_github_marketplace_billing_change
+version: 1
+trigger: customer_changes_marketplace_plan
+inputs:
+  - name: change_direction
+    type: string
+    description: "upgrade, downgrade, or cancel"
+decision_zones:
+  deterministic:
+    - condition:
+        any:
+          - field: change_direction
+            op: eq
+            value: downgrade
+          - field: change_direction
+            op: eq
+            value: cancel
+      action: keep_current_plan_active_until_cycle_end_no_refund
+    - condition:
+        all:
+          - field: change_direction
+            op: eq
+            value: upgrade
+      action: apply_plan_immediately_and_charge_prorated_difference
+  llm_assisted: []
+  human_only: []

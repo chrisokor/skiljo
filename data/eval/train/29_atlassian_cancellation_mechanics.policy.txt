@@ -1,0 +1,10 @@
+Atlassian Cancellation Mechanics
+
+Paid subscriptions: If you cancel a paid Cloud subscription, your
+subscription remains active through the end of the current billing cycle. A
+15-day grace period after the billing cycle ends is provided during which you
+can reactivate without losing configuration or data; the subscription is
+deactivated at the end of the grace period if not reactivated.
+
+Free tier: If you cancel a free-tier product, deactivation is immediate upon
+cancellation — there is no grace period because no billing cycle applies.

@@ -1,0 +1,13 @@
+Cloudflare Business SLA — Credit Formula
+
+For qualifying Business plan accounts, if actual uptime falls below the
+100% uptime guarantee in a calendar month, Cloudflare calculates a Service
+Credit using the formula:
+
+Service Credit = (Outage Period in minutes x Affected Customer Ratio) /
+Scheduled Availability in minutes
+
+The resulting Service Credit is expressed as a percentage of the fees paid
+for the affected service during the affected month, and is applied as a
+credit toward a future invoice. Cumulative Service Credits in any rolling
+12-month period are capped at one month's cumulative fees.

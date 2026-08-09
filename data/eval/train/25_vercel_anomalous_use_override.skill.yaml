@@ -1,0 +1,17 @@
+skill_name: process_vercel_anomalous_use_override
+version: 1
+trigger: usage_pattern_flagged_for_review
+inputs:
+  - name: usage_deviation_description
+    type: string
+    description: "Free-text description of how usage deviates from the account's historical baseline; no fixed numeric threshold applies"
+decision_zones:
+  deterministic: []
+  llm_assisted:
+    - condition:
+        all:
+          - field: usage_deviation_description
+            op: not_empty
+      action: evaluate_anomalous_use_and_decide_charge_or_suspend
+      requires_human_approval: true
+  human_only: []

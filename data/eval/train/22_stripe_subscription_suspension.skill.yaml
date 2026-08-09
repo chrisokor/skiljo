@@ -1,0 +1,52 @@
+skill_name: process_stripe_subscription_suspension
+version: 1
+trigger: payment_failure_or_suspension_review
+inputs:
+  - name: days_since_payment_due
+    type: integer
+  - name: days_suspended
+    type: integer
+  - name: is_first_failure_in_12_months
+    type: boolean
+  - name: account_brought_current
+    type: boolean
+decision_zones:
+  deterministic:
+    - condition:
+        all:
+          - field: days_since_payment_due
+            op: gt
+            value: 15
+          - field: account_brought_current
+            op: eq
+            value: false
+      action: suspend_access
+    - condition:
+        all:
+          - field: days_suspended
+            op: gte
+            value: 30
+          - field: account_brought_current
+            op: eq
+            value: false
+      action: terminate_subscription_no_refund
+    - condition:
+        all:
+          - field: account_brought_current
+            op: eq
+            value: true
+          - field: days_suspended
+            op: lt
+            value: 30
+      action: restore_access_immediately
+    - condition:
+        all:
+          - field: is_first_failure_in_12_months
+            op: eq
+            value: false
+          - field: account_brought_current
+            op: eq
+            value: true
+      action: assess_late_fee_1_5_percent_per_month
+  llm_assisted: []
+  human_only: []

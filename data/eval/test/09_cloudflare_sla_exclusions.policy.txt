@@ -1,0 +1,15 @@
+Cloudflare Business SLA — Exclusions
+
+The following categories of downtime are excluded from Service Credit
+calculations and do not count as an "Outage Period" under the SLA:
+
+(a) scheduled maintenance announced at least 24 hours in advance,
+(b) factors outside Cloudflare's reasonable control (force majeure),
+(c) the customer's own equipment, software, or network,
+(d) the customer's breach of the Terms of Service,
+(e) suspension or termination of the customer's account for cause, and
+(f) DNS issues not directly caused by Cloudflare's network.
+
+If a reported outage falls into any of these six categories, it is excluded
+from the Outage Period calculation entirely, even if Cloudflare's systems
+were otherwise degraded during the same window.

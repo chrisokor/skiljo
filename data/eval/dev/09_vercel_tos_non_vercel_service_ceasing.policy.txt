@@ -1,0 +1,11 @@
+Vercel Terms of Service — Non-Vercel Service Discontinuation
+
+Some features available through Vercel are provided by third parties
+("Non-Vercel Services"). If a Non-Vercel Service you have paid for through
+Vercel ceases to be offered, Vercel will issue a prorated refund for the
+unused portion of fees attributable to that Non-Vercel Service for the
+current billing period.
+
+This refund right applies only to Non-Vercel Services; it does not extend to
+core Vercel platform features, which remain governed by the standard
+all-fees-nonrefundable policy.

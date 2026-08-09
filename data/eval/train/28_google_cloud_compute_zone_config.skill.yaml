@@ -1,0 +1,52 @@
+skill_name: process_google_cloud_compute_zone_config_credit
+version: 1
+trigger: sla_credit_claim_submitted
+inputs:
+  - name: instance_configuration
+    type: string
+    description: "multi_zone or single_zone"
+  - name: monthly_uptime_percentage
+    type: number
+decision_zones:
+  deterministic:
+    - condition:
+        all:
+          - field: instance_configuration
+            op: eq
+            value: multi_zone
+          - field: monthly_uptime_percentage
+            op: lt
+            value: 99.99
+          - field: monthly_uptime_percentage
+            op: gte
+            value: 99.0
+      action: apply_10_percent_credit
+    - condition:
+        all:
+          - field: instance_configuration
+            op: eq
+            value: single_zone
+          - field: monthly_uptime_percentage
+            op: lt
+            value: 99.5
+          - field: monthly_uptime_percentage
+            op: gte
+            value: 99.0
+      action: apply_10_percent_credit
+    - condition:
+        all:
+          - field: monthly_uptime_percentage
+            op: lt
+            value: 99.0
+          - field: monthly_uptime_percentage
+            op: gte
+            value: 95.0
+      action: apply_25_percent_credit
+    - condition:
+        all:
+          - field: monthly_uptime_percentage
+            op: lt
+            value: 95.0
+      action: apply_50_percent_credit_capped_at_50_percent_of_monthly_bill
+  llm_assisted: []
+  human_only: []

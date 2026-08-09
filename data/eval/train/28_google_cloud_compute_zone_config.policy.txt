@@ -1,0 +1,18 @@
+Google Cloud Compute Engine SLA — Instance Configuration
+
+The monthly uptime percentage credit ladder depends on how your instances are
+configured.
+
+Instances in Multiple Zones: If your Covered Instances are configured to run
+in multiple zones in more than one region, and the monthly uptime percentage
+falls below 99.99% but at or above 99.0%, you receive a 10% credit. Below
+99.0% but at or above 95.0%, a 25% credit. Below 95.0%, a 50% credit.
+
+Single Zone or Single Instance: If your Covered Instances are configured to
+run as a single instance or within a single zone, the monthly uptime
+percentage must fall below 99.5% but at or above 99.0% for a 10% credit,
+below 99.0% but at or above 95.0% for a 25% credit, and below 95.0% for a 50%
+credit.
+
+In no event will total credits for any billing month exceed 50% of the
+amount payable for that month, regardless of configuration.

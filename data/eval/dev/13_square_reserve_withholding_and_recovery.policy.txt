@@ -1,0 +1,11 @@
+Square Payment Terms — Reserve Withholding and Recovery Authorizations
+
+If Square determines, in its discretion, that a merchant account presents an
+elevated risk of chargebacks, refunds, or other liabilities, Square may
+withhold a reserve from the merchant's settlement funds until the risk
+period has passed.
+
+Separately, if a merchant incurs fees, fines, or penalties imposed by a card
+network or Square related to chargebacks or excessive refund activity, the
+merchant authorizes Square to debit the merchant's linked bank account for
+those amounts (a "Recovery Authorization") without further notice.

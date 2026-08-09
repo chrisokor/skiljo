@@ -1,0 +1,13 @@
+Steam Refunds — Gifts
+
+Unredeemed gifts: a gift that has not yet been redeemed by the recipient can
+be refunded by the purchaser within 14 days of purchase, following the same
+playtime-based rules as a normal purchase (since an unredeemed gift has zero
+playtime by definition, this generally means unredeemed gifts are refundable
+within the 14-day window).
+
+Redeemed gifts: once a recipient has redeemed a gift, only the recipient can
+request a refund, and the request is evaluated against the recipient's own
+playtime and the original purchase date — not the redemption date. Steam
+also monitors accounts for a pattern of frequent refund requests, which may
+result in additional review or restriction of future refund privileges.

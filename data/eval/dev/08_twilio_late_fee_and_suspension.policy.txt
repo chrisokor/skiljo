@@ -1,0 +1,9 @@
+Twilio Terms of Service — Late Fee and Suspension
+
+Payment is due within 15 days of the invoice date. Invoices unpaid after this
+15-day grace period accrue a late fee of the lesser of 1.5% per month or the
+maximum rate permitted by applicable law.
+
+If an invoice remains unpaid for 45 days past the invoice date, Twilio may
+suspend the account's ability to send messages or make calls until the
+outstanding balance, including accrued late fees, is paid in full.
