@@ -1,0 +1,84 @@
+DigitalOcean Terms of Service Agreement — Payments, Billing, and
+Termination Sections
+
+Source: https://www.digitalocean.com/legal/terms-of-service-agreement
+Retrieved: 2026-08-10
+Note: the task brief's suggested source
+(digitalocean.com/legal/terms-of-service/) returned HTTP 404 at retrieval
+time; DigitalOcean publishes the current agreement without a trailing
+slash and periodically republishes dated snapshots (e.g. an October 2025
+and an April 2025 version) alongside it. This excerpt uses the current,
+undated agreement page. This is a different DigitalOcean document from
+the Droplets SLA family named in docs/POLICY_CORPUS.md entry #17, which is
+reserved for the held-out eval test set — no overlap with that held-out
+content is intended or expected here. Quoted verbatim from the published
+agreement.
+
+Section 6 — Payments and Billing
+
+6.1 — Payment Obligations
+
+"You agree to pay us, through the Payment Processors or as otherwise
+agreed to by DigitalOcean, all sums for Services you select or use at
+applicable prices."
+
+6.3 — Non-Refundable Commitments
+
+"Your purchase of committed usage, reserved capacity, or a similar
+consumption commitment (e.g., Required Monthly Usage or a Term Spend
+Minimum) is non-cancelable and non-reducible, and the unpaid remainder of
+such commitment(s) is immediately due."
+
+This clause treats committed-usage purchases as locked in for their full
+committed value; canceling early does not reduce what is owed, and any
+remaining unpaid portion accelerates immediately.
+
+6.3 — Account Deactivation for Nonpayment
+
+"We reserve the right to deactivate, terminate, prevent access to,
+disable services for, and/or delete any Accounts or access to the
+Websites and Services at any time at our sole discretion, including for
+nonpayment, late payment, or failure to charge your Payment Methods."
+
+Nonpayment is named explicitly as a deactivation trigger, and the
+resulting action can extend as far as account deletion, not just a
+temporary service pause.
+
+Section 8.5 — Beta Services Termination
+
+"Your access to and use of each Beta Service will automatically terminate
+upon the release of a generally available version of the applicable Beta
+Service or upon notice of termination by us."
+
+Beta access is time-bounded by design — it ends either at GA release or at
+DigitalOcean's discretion, whichever comes first.
+
+Section 12 — Termination
+
+General Termination Policy
+
+"We reserve the right, in our sole discretion, to terminate your access to
+all or any part of the Websites and/or Services at any time, with or
+without notice."
+
+Non-Refundable Fees
+
+"Except as otherwise set forth herein or expressly agreed between the
+parties, any and all fees paid to us are non-refundable and any and all
+fees still owed to us at the time of such termination shall be immediately
+due and payable."
+
+Summary of the written position
+
+Across Sections 6 and 12, DigitalOcean states an unconditional
+non-refund position for fees already paid, combined with acceleration of
+any fees still owed at termination — mirroring the "outstanding balance
+due immediately" language in the Shopify Terms of Service excerpt in this
+corpus (shopify-tos.txt). The one qualifier present is "except as
+otherwise set forth herein or expressly agreed between the parties," which
+is a hook for negotiated enterprise exceptions but is not itself a
+described process, unlike Shopify's Help Center case-by-case path. This
+file is included in the corpus as a second no-refund-plus-acceleration
+baseline, useful for testing whether the cross-document detector correctly
+treats structurally similar clauses from different vendors as independent
+findings rather than merging them.

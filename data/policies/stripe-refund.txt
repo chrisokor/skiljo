@@ -1,0 +1,75 @@
+Stripe Subscription Policy — Fees, Overages, and Cancellation Refunds
+
+Source: https://stripe.com/legal/subscription-policy
+Retrieved: 2026-08-10
+Note: the task brief's suggested source (stripe.com/guides/payments-
+regulations-by-country) is a jurisdiction guide, not a refund policy
+document. This excerpt instead uses Stripe's own Subscription Policy,
+which is the document named in docs/POLICY_CORPUS.md entry #1 as the
+prototype customer policy for Skiljo — it combines a flat subscription fee
+with metered overage charges and states an explicit non-refund position.
+Quoted verbatim from the published policy.
+
+Section 2 — Minimum Commitment
+
+"Each Subscription Plan requires a monthly or annual commitment. After you
+enroll, you are responsible for Subscription Service Fees and any
+additional Fees incurred for the full term, even if you schedule a
+cancellation before your Subscription Plan ends."
+
+The commitment survives a scheduled cancellation: fees keep accruing for
+the full term regardless of when the cancellation is scheduled.
+
+Section 4 — Cancel a Subscription
+
+"Either you or Stripe may cancel your Subscription Plan at any time. Any
+cancellation will take effect at the end of your then-current Subscription
+Plan term."
+
+Cancellation is always deferred to term-end; there is no described path to
+an immediate cancellation with a partial-period refund.
+
+Section 6 — Subscription Fees and Overage Fees
+
+"A Subscription Service Fee covers usage up to the entitlement limit for
+your Subscription Plan during your current term...If usage exceeds your
+entitlement, overage Fees will apply for this excess usage."
+
+Entitlements are usage caps bundled into the flat fee; usage beyond the cap
+is billed separately as an overage, which is a distinct fee category from
+the base Subscription Service Fee.
+
+Section 8 — Charge Schedule
+
+"You will be charged your recurring Subscription Service Fee at the start
+of your Subscription Plan and again at the start of every subsequent
+billing period...You will be charged for any additional Fees, including
+overage Fees, at the end of the billing period that they were incurred or
+another cadence as communicated to you."
+
+Base fees are billed in advance; overage fees are billed in arrears, after
+the usage that generated them has already occurred.
+
+Section 12 — Refund Policy for Cancellation of Subscriptions
+
+"Fees are non-refundable, and we do not offer prorated refunds if you
+cancel before the end of your Subscription Plan term. You are responsible
+for the full Subscription Service Fees, including applicable Taxes and
+overage Fees for the entire Subscription Plan term."
+
+This is the controlling refund clause: cancellation before term-end does
+not create any refund obligation, prorated or otherwise, and it does not
+relieve the customer of overage Fees already incurred during the term.
+
+Summary of the written position
+
+Stripe's Subscription Policy states an explicit, unconditional
+non-refund position for both the flat Subscription Service Fee and any
+overage Fees, tied to a term that only ends at the originally scheduled
+renewal date regardless of when cancellation is requested. Unlike the
+Shopify pair in this corpus, no companion help-center document is included
+here describing a discretionary exception process — this file is included
+in the corpus primarily as a clean, single-document non-refund baseline
+for comparison against the Shopify (no-refund ToS vs. case-by-case help
+article) and Cloudflare (no-refund clause vs. discretionary credit
+language) pairs.

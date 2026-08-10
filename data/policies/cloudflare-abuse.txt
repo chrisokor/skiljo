@@ -1,0 +1,73 @@
+Cloudflare Self-Serve Subscription Agreement — Acceptable Use, Suspension,
+and Billing Sections
+
+Source: https://www.cloudflare.com/terms/
+Retrieved: 2026-08-10
+Note: the task brief's suggested source
+(cloudflare.com/en-gb/acceptable-use-policy/) returned HTTP 404 at
+retrieval time; Cloudflare folds its acceptable-use restrictions into the
+Self-Serve Subscription Agreement rather than publishing them as a
+standalone AUP document. This excerpt is limited to the restriction,
+suspension, and fee/credit sections of that agreement, quoted verbatim.
+This is a different Cloudflare document from the Business SLA + Billing
+Policy pair named in docs/POLICY_CORPUS.md entry #16, which is reserved
+for the held-out eval test set — no overlap with that held-out content is
+intended or expected here.
+
+Section 2.2.1 — Restrictions
+
+"You will not and you have no right to: (a) rent, lease, loan, export, or
+sell access to the Services to any third party" and "(b) interfere with,
+disrupt, alter, or modify the Services or any part thereof."
+
+Additional prohibited conduct under this section includes: "(e) introduce
+software or automated agents or scripts into the Services so as to
+produce multiple accounts" and "(j) use the Services to provide a virtual
+private network or other similar proxy services."
+
+Section 2.7 — Acceptable Use
+
+"You agree not to, and not to allow third parties to use the Services to:
+(a) falsely imply any sponsorship or association with Cloudflare" and
+"(c) distribute viruses, worms, time bombs, Trojan horses, or other
+malicious code."
+
+Section 8 — Suspension and Termination
+
+"We reserve the right to disable or limit your access to or use of the
+Service ('Suspend') or terminate your user account upon receiving any
+number of DMCA notifications" and Cloudflare "may at our sole discretion
+terminate your user account...at any time, with or without notice for any
+reason or no reason at all."
+
+Suspension and termination are both framed as unilateral, discretionary
+actions available to Cloudflare — there is no described appeal window or
+cure period attached to this section.
+
+Section 4.1 — Recurring Billing
+
+"By providing a Payment Method you are authorizing us to charge your
+Payment Method on a monthly, annual, or pay-as-you-go basis."
+
+Section 4.3 — No Refunds, With a Discretionary Exception
+
+"FEES ARE NONREFUNDABLE. YOU WILL BE BILLED IN FULL FOR THE SUBSCRIPTION
+TERM IN WHICH YOU CANCEL."
+
+Immediately following that unconditional statement, the same section
+carves out discretionary room: Cloudflare "may, in our sole discretion,
+provide a refund, discount, or credit...however the provision of Credits
+in a specific instance does not entitle you to Credits in the future."
+
+Why This Section Is the Interesting Case
+
+Section 4.3 is internally two-part: a capitalized, absolute non-refund
+statement immediately followed by a discretionary carve-out that lets
+Cloudflare grant a refund, discount, or credit anyway, while explicitly
+disclaiming that any single grant sets a precedent. This is a
+single-document version of the policy-vs-practice shape seen across the
+two Shopify documents in this corpus (shopify-tos.txt vs.
+shopify-help-center.txt) — here the absolute statement and the exception
+live in the same clause rather than in two separate documents, which is a
+useful contrast for the cross-document contradiction detector: does it
+also need to flag intra-document tension, or only inter-document tension?
