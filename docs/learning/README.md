@@ -4,6 +4,10 @@ An index of written explanations for each implementation task — what was built
 
 See `GLOSSARY.md` for a running list of concepts introduced across debriefs.
 
+## Week 6 — v1.0 completion
+
+7. [Task 7: v1.0 completion — dataset loader, CI baseline refresh, SDK parity, A6 contradiction clustering, shipping](week6-task7-v1.0-completion.md)
+
 ## Week 5 — Eval harness expansion and cross-document contradictions
 
 10. [Task 10: Eval harness integration and final cleanup](week5-task10-eval-harness-integration.md)

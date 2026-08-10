@@ -42,3 +42,12 @@ Week 5 COMPLETE: 10 tasks, 10 commits (48-56 + A3 scope), 183 Python + 2 skipped
 Task 10 (Week 5): complete (commits a6ae2f7, 69d52b9, review approved).
 Week 5 COMPLETE: 12 tasks (1-10 + scope A3), 13 commits (c868b0f..bef33ab), 184 Python + 2 skipped + 23 TypeScript tests passing.
 Critical fixes applied (dca0fc6, bef33ab) — all tests green.
+Task 2 (Week 6): complete (commit 493e95c, review approved).
+Task 6 (Week 6, A6): complete (commit bd9a872, review approved).
+Task 4 (Week 6): complete (commits 157ba36 + bb8c567 fix, review approved).
+Task 5 (Week 6): complete (commit 1427a64, review approved).
+Task 1 (Week 6): complete (commit 17c13d6, review approved).
+Tasks 1-6 (Week 6): all approved. Task 7 unblocked to ship v1.0.
+Task 3 (Week 6): complete (commit bda9919, review approved). SDK evalRuns + crossDocument resources.
+Task 7 (Week 6): complete (final v1.0 verification passed — 203 Python + 2 skipped + 27 TypeScript tests, ruff/mypy/tsc clean, no outstanding TODOs). CLAUDE.md status updated to "v1.0 complete (week 6 shipped)"; learning debrief written (docs/learning/week6-task7-v1.0-completion.md); GLOSSARY.md and README.md updated. Flagged (not silently fixed): DESIGN_DOCUMENT.md Section 12's commit-57-63 table still describes the original Render-deployment plan, not the revised eval/SDK/A6 work that actually landed as plan #57-61 — needs reconciliation before v1.05 commit numbering.
+v1.0 SHIPPED: commits 1-56 + scope additions A1-A6 complete, 203 Python + 2 skipped + 27 TypeScript tests passing, production-ready. Next: v1.05 self-serve policy consistency checker.

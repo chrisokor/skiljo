@@ -126,6 +126,14 @@ A scorer's designated "nothing to measure, so don't penalize" return value — e
 
 A short, stable label (e.g. `refund_eligibility`, `sla_credit`) assigned to a rule so that rules governing the *same* underlying business decision can be compared across different source documents, even when their wording or conditions differ. Cross-document contradiction detection aligns rules onto decision surfaces via an LLM call, then only reports a conflict when a separate, purely mechanical check also confirms the two rules prescribe different actions — the mechanical gate means a hallucinated alignment can never produce a false contradiction on its own. See [Week 5 Task 10](week5-task10-eval-harness-integration.md).
 
+## Binomial test (contradiction significance)
+
+An exact two-sided statistical test answering "is this cluster's divergence rate distinguishable from ordinary noise around the system's baseline error rate?" Implemented as pure Python (`math.comb`-based probability mass summation, mirroring `scipy.stats.binomtest`'s two-sided method) rather than adding `scipy` as a dependency for one function. A contradiction is `supported` only if the p-value is below the significance threshold *and* the cluster is large enough to give the test real statistical power. See [Week 6 Task 7](week6-task7-v1.0-completion.md).
+
+## Error envelope (API error responses)
+
+A consistent `{"error": {"code", "message", "details"}}` JSON shape applied to every API error response, regardless of which of FastAPI/Starlette's three distinct failure paths produced it: explicit `HTTPException`s, Pydantic `RequestValidationError`s, and uncaught exceptions. Each path needs its own registered exception handler since they don't share a code path internally. See [Week 6 Task 7](week6-task7-v1.0-completion.md).
+
 ## Regression gate (CI)
 
 A CI check that fails a PR when a tracked metric drops more than an allowed threshold versus a baseline value (read from `origin/main` at merge time, or a committed baseline file). Distinguishes "no baseline to compare against" (first PR introducing a metric — passes) from "compared and it dropped too far" (fails). Skiljo's regression budget per metric is documented in `DESIGN_DOCUMENT.md` Section 9 and enforced by `scripts/check_regression.py` in `.github/workflows/eval.yml`. See [Week 5 Task 10](week5-task10-eval-harness-integration.md).
