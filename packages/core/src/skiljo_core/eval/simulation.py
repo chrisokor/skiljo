@@ -27,6 +27,37 @@ from inspect_ai.scorer._scorer import TaskState
 # ---------------------------------------------------------------------------
 
 
+def _contradiction_key(contradiction: dict[str, Any]) -> str:
+    """Structural identity for a detected contradiction.
+
+    Real ``Contradiction`` output (see
+    ``skiljo_core.simulation.contradictions.Contradiction``) has no top-level
+    ``rule_id`` field. It carries an optional ``citation`` with a nested
+    ``rule_id``, but ``detect_contradictions`` never populates ``citation``
+    (it's always ``None``/absent), so that can't be relied on either.
+
+    Prefer ``citation.rule_id`` when present (future-proofing for once the
+    detector attaches citations), otherwise fall back to a structural key
+    built from ``cluster_key`` + the written/observed decision pair — the
+    same fields the detector uses to construct each ``Contradiction`` in the
+    first place.
+    """
+    citation = contradiction.get("citation") or {}
+    rule_id = citation.get("rule_id") if isinstance(citation, dict) else None
+    if rule_id:
+        return str(rule_id)
+
+    cluster_key = contradiction.get("cluster_key") or {}
+    return json.dumps(
+        {
+            "cluster_key": cluster_key,
+            "written_decision": contradiction.get("written_decision"),
+            "observed_decision": contradiction.get("observed_decision"),
+        },
+        sort_keys=True,
+    )
+
+
 def simulation_match_rate(expected: dict[str, Any], actual: dict[str, Any]) -> Score:
     """Measure percentage of tickets where the simulated decision matches
     ground truth.
@@ -72,13 +103,14 @@ def contradiction_detection_precision(expected: dict[str, Any], actual: dict[str
     Args:
         expected: Ground-truth dict with ``planted_divergence_ids`` list.
         actual:   Simulation output dict with ``contradictions`` list of
-            dicts containing ``rule_id``.
+            dicts (real ``Contradiction`` shape — see ``_contradiction_key``
+            for how each one is keyed, since there's no top-level ``rule_id``).
 
     Returns:
         Score with value in [0.0, 1.0].
     """
     planted = set(expected.get("planted_divergence_ids", []))
-    detected = set(c["rule_id"] for c in actual.get("contradictions", []))
+    detected = {_contradiction_key(c) for c in actual.get("contradictions", [])}
 
     if not detected:
         return Score(value=1.0, explanation="No contradictions detected — vacuous precision")
@@ -100,13 +132,14 @@ def contradiction_detection_recall(expected: dict[str, Any], actual: dict[str, A
     Args:
         expected: Ground-truth dict with ``planted_divergence_ids`` list.
         actual:   Simulation output dict with ``contradictions`` list of
-            dicts containing ``rule_id``.
+            dicts (real ``Contradiction`` shape — see ``_contradiction_key``
+            for how each one is keyed, since there's no top-level ``rule_id``).
 
     Returns:
         Score with value in [0.0, 1.0].
     """
     planted = set(expected.get("planted_divergence_ids", []))
-    detected = set(c["rule_id"] for c in actual.get("contradictions", []))
+    detected = {_contradiction_key(c) for c in actual.get("contradictions", [])}
 
     if not planted:
         return Score(value=1.0, explanation="No planted divergences — vacuous recall")
