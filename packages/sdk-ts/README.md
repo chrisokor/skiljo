@@ -269,6 +269,8 @@ new Skiljo(config?: ClientConfig)
 - `skills: SkillsResource` — Skill extraction and retrieval
 - `jobs: JobsResource` — Job status polling
 - `simulations: SimulationsResource` — Simulation creation and reporting
+- `evalRuns: EvalRunsResource` — Recording and listing eval harness runs
+- `crossDocument: CrossDocumentResource` — Cross-document contradiction detection
 
 #### Example
 
@@ -461,6 +463,74 @@ console.log(`Accuracy: ${report.escalation_accuracy}`);
 console.log(`Contradictions: ${report.contradictions?.length || 0}`);
 ```
 
+### EvalRunsResource
+
+Record and query eval harness run history.
+
+#### `create(run: EvalRunCreate): Promise<EvalRun>`
+
+Record the result of an eval harness run (commit SHA, dataset version, model, metrics).
+
+**Parameters:**
+- `run.commit_sha: string` — Git commit SHA the run was executed against
+- `run.dataset_version: string` — Version of the eval dataset used
+- `run.model: string` — Model identifier used for the run
+- `run.metrics: Record<string, number>` — Named metric scores (e.g. `extraction_recall`)
+
+**Returns:** `EvalRun` with generated `id` and `ran_at` timestamp
+
+**Example:**
+```typescript
+const run = await skiljo.evalRuns.create({
+  commit_sha: "abc123",
+  dataset_version: "v1",
+  model: "claude-sonnet-4-6",
+  metrics: { extraction_recall: 0.92, citation_resolution: 1.0 },
+});
+console.log(run.id, run.ran_at);
+```
+
+#### `list(filters?: EvalRunFilters): Promise<EvalRun[]>`
+
+List eval run history, most recent first.
+
+**Parameters:**
+- `filters.model?: string` — Filter by model name
+- `filters.commit_sha?: string` — Filter by commit SHA
+- `filters.limit?: number` — Max results to return
+
+**Returns:** Array of `EvalRun` objects
+
+**Example:**
+```typescript
+const runs = await skiljo.evalRuns.list({ model: "claude-sonnet-4-6", limit: 10 });
+runs.forEach((r) => console.log(r.commit_sha, r.metrics));
+```
+
+### CrossDocumentResource
+
+Detect contradictions across two or more extracted policy documents (scope A3).
+
+#### `detect(skillVersionIds: string[]): Promise<CrossDocumentContradiction[]>`
+
+Align extracted rules from multiple skill versions on the same decision surface and flag
+conflicting actions or thresholds. Requires at least 2 skill version IDs.
+
+**Parameters:**
+- `skillVersionIds: string[]` — IDs of the skill versions to compare
+
+**Returns:** Array of `CrossDocumentContradiction` objects, each with citations back into
+the source rules
+
+**Example:**
+```typescript
+const contradictions = await skiljo.crossDocument.detect([skillVersionIdA, skillVersionIdB]);
+contradictions.forEach((c) => {
+  console.log(`${c.policy_1} says ${c.action_1}, ${c.policy_2} says ${c.action_2}`);
+  console.log(c.rationale);
+});
+```
+
 ## Type Definitions
 
 ### Policy
@@ -535,6 +605,41 @@ interface SimulationResponse {
   batch_id: string;                        // The ticket batch used
   summary: SimulationReport;               // The simulation report
   created_at: string;                      // ISO timestamp
+}
+```
+
+### EvalRun
+
+```typescript
+interface EvalRun {
+  id: string;                          // Unique eval run identifier
+  commit_sha: string;                  // Git commit SHA the run was executed against
+  dataset_version: string;             // Version of the eval dataset used
+  model: string;                       // Model identifier used for the run
+  metrics: Record<string, number>;     // Named metric scores
+  ran_at: string;                      // ISO timestamp
+}
+```
+
+### CrossDocumentContradiction
+
+```typescript
+interface CrossDocumentContradiction {
+  decision_surface: string;              // The aligned decision surface both policies address
+  policy_1: string;                      // First policy's identifier
+  policy_2: string;                      // Second policy's identifier
+  action_1: string;                      // Action policy_1 takes on this surface
+  action_2: string;                      // Action policy_2 takes on this surface
+  rationale: string;                     // Why these are flagged as conflicting
+  citation_1: CrossDocumentCitation;     // Rule citation backing action_1
+  citation_2: CrossDocumentCitation;     // Rule citation backing action_2
+}
+
+interface CrossDocumentCitation {
+  policy_id: string;
+  zone: string;
+  rule_index: number;
+  action: string;
 }
 ```
 

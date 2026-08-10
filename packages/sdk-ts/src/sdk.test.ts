@@ -4,6 +4,8 @@ import type { Policy } from "./policies";
 import type { Skill, SkillVersion } from "./skills";
 import type { Job } from "./jobs";
 import type { SimulationReport, SimulationResponse } from "./simulations";
+import type { EvalRun } from "./eval-runs";
+import type { CrossDocumentContradiction } from "./cross-document";
 
 function mockFetch(data: unknown, ok = true, status = 200) {
   vi.stubGlobal(
@@ -22,12 +24,14 @@ describe("Skiljo top-level client", () => {
     vi.unstubAllGlobals();
   });
 
-  it("exposes policies, skills, jobs, and simulations resources", () => {
+  it("exposes policies, skills, jobs, simulations, evalRuns, and crossDocument resources", () => {
     const sdk = new Skiljo({ apiKey: "k" });
     expect(sdk.policies).toBeDefined();
     expect(sdk.skills).toBeDefined();
     expect(sdk.jobs).toBeDefined();
     expect(sdk.simulations).toBeDefined();
+    expect(sdk.evalRuns).toBeDefined();
+    expect(sdk.crossDocument).toBeDefined();
   });
 
   describe("policies.upload", () => {
@@ -269,6 +273,105 @@ describe("Skiljo top-level client", () => {
       await expect(sdk.simulations.getReport("sim-3")).rejects.toThrow(
         "Simulation sim-3 has no report yet (status: running)"
       );
+    });
+  });
+
+  describe("evalRuns.create", () => {
+    it("POSTs to /eval-runs and returns the created EvalRun", async () => {
+      const run: EvalRun = {
+        id: "run-1",
+        commit_sha: "abc123",
+        dataset_version: "v1",
+        model: "claude-sonnet-4-6",
+        metrics: { extraction_recall: 1.0 },
+        ran_at: "2026-01-01T00:00:00Z",
+      };
+      mockFetch(run, true, 201);
+
+      const sdk = new Skiljo({ apiKey: "k" });
+      const result = await sdk.evalRuns.create({
+        commit_sha: "abc123",
+        dataset_version: "v1",
+        model: "claude-sonnet-4-6",
+        metrics: { extraction_recall: 1.0 },
+      });
+
+      expect(result.id).toBe("run-1");
+      const [url, init] = vi.mocked(fetch).mock.calls[0];
+      expect(String(url)).toContain("/eval-runs");
+      expect(init?.method).toBe("POST");
+      const body = JSON.parse(init?.body as string);
+      expect(body).toEqual({
+        commit_sha: "abc123",
+        dataset_version: "v1",
+        model: "claude-sonnet-4-6",
+        metrics: { extraction_recall: 1.0 },
+      });
+    });
+  });
+
+  describe("evalRuns.list", () => {
+    it("GETs /eval-runs with no query string when no filters given", async () => {
+      mockFetch([]);
+
+      const sdk = new Skiljo({ apiKey: "k" });
+      await sdk.evalRuns.list();
+
+      const [url] = vi.mocked(fetch).mock.calls[0];
+      expect(String(url)).toContain("/eval-runs");
+      expect(String(url)).not.toContain("?");
+    });
+
+    it("GETs /eval-runs with model, commit_sha, and limit filters", async () => {
+      const runs: EvalRun[] = [
+        {
+          id: "run-1",
+          commit_sha: "abc123",
+          dataset_version: "v1",
+          model: "mockllm",
+          metrics: { extraction_recall: 1.0 },
+          ran_at: "2026-01-01T00:00:00Z",
+        },
+      ];
+      mockFetch(runs);
+
+      const sdk = new Skiljo({ apiKey: "k" });
+      const result = await sdk.evalRuns.list({ model: "mockllm", commit_sha: "abc123", limit: 10 });
+
+      expect(result).toHaveLength(1);
+      const [url] = vi.mocked(fetch).mock.calls[0];
+      expect(String(url)).toContain("model=mockllm");
+      expect(String(url)).toContain("commit_sha=abc123");
+      expect(String(url)).toContain("limit=10");
+    });
+  });
+
+  describe("crossDocument.detect", () => {
+    it("POSTs to /cross-document-contradictions and returns contradictions", async () => {
+      const contradictions: CrossDocumentContradiction[] = [
+        {
+          decision_surface: "refund_eligibility",
+          policy_1: "pol-1",
+          policy_2: "pol-2",
+          action_1: "deny",
+          action_2: "approve",
+          rationale: "Contradictory actions on the same decision surface",
+          citation_1: { policy_id: "pol-1", zone: "deterministic", rule_index: 0, action: "deny" },
+          citation_2: { policy_id: "pol-2", zone: "deterministic", rule_index: 1, action: "approve" },
+        },
+      ];
+      mockFetch(contradictions);
+
+      const sdk = new Skiljo({ apiKey: "k" });
+      const result = await sdk.crossDocument.detect(["sv-1", "sv-2"]);
+
+      expect(result).toHaveLength(1);
+      expect(result[0].rationale).toBeDefined();
+      const [url, init] = vi.mocked(fetch).mock.calls[0];
+      expect(String(url)).toContain("/cross-document-contradictions");
+      expect(init?.method).toBe("POST");
+      const body = JSON.parse(init?.body as string);
+      expect(body).toEqual({ skill_version_ids: ["sv-1", "sv-2"] });
     });
   });
 });
