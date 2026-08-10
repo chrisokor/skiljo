@@ -17,6 +17,8 @@ from inspect_ai import Task, task
 from inspect_ai.scorer import Score, Scorer, Target, mean, scorer
 from inspect_ai.solver import TaskState
 
+from .dataset_loader import load_extraction_dataset
+
 
 # ---------------------------------------------------------------------------
 # Standalone scorer logic (pure Python, testable without Inspect machinery)
@@ -173,19 +175,22 @@ def citation_scorer() -> Scorer:
 
 
 @task(name="extract")
-def ExtractionEval() -> Task:
+def ExtractionEval(split: str = "train") -> Task:
     """Extraction pipeline eval: rule recall and citation resolution.
 
-    Uses labeled examples from ``data/eval/train/`` (policy text + expected
-    skill spec YAML).  In the full harness the solver runs the extraction
-    pipeline and populates ``state.metadata["actual_spec"]`` so the scorers
-    can evaluate it.
-
-    ``dataset=None`` makes Inspect supply a single dummy sample so the task
-    can be imported and instantiated without real eval data on disk.
+    Uses labeled examples from ``data/eval/{split}/`` (policy text + expected
+    skill spec YAML), loaded via ``load_extraction_dataset`` (plan #57) --
+    real Inspect ``Sample``s now, not the single vacuous dummy sample
+    ``dataset=None`` used to supply. In the full harness a solver still needs
+    to run the extraction pipeline per sample and populate
+    ``state.metadata["actual_spec"]`` so ``recall_scorer`` has something
+    non-empty to compare against real ``expected`` rules -- see
+    ``dataset_loader.py``'s module docstring for what that means for
+    ``extraction_recall`` today (genuinely low/zero, not vacuously 1.0,
+    until that solver lands).
     """
     return Task(
-        dataset=None,  # populated by the eval runner with real samples
+        dataset=list(load_extraction_dataset(split=split)),
         scorer=[recall_scorer(), citation_scorer()],
         name="extract",
     )

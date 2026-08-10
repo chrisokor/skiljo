@@ -21,6 +21,8 @@ from inspect_ai import Task, task
 from inspect_ai.scorer import Score, Scorer, Target, mean, scorer
 from inspect_ai.solver import TaskState
 
+from .dataset_loader import load_extraction_dataset
+
 
 # ---------------------------------------------------------------------------
 # Standalone scorer logic (pure Python, testable without Inspect machinery)
@@ -223,19 +225,25 @@ def contradiction_recall_scorer() -> Scorer:
 
 
 @task(name="simulate")
-def SimulationEval() -> Task:
+def SimulationEval(split: str = "train") -> Task:
     """Simulation eval: match rate and contradiction detection precision/recall.
 
-    Uses labeled examples from ``data/eval/train/`` (skill spec + tickets +
-    shadow-policy ground truth decisions and planted divergence IDs). In the
-    full harness the solver runs the simulation engine and populates
-    ``state.metadata["actual_result"]`` so the scorers can evaluate it.
-
-    ``dataset=None`` makes Inspect supply a single dummy sample so the task
-    can be imported and instantiated without real eval data on disk.
+    Reuses ``load_extraction_dataset`` (plan #57) -- there is no separate
+    ticket-level simulation ground truth (shadow-policy decisions, planted
+    divergence IDs) in ``data/eval/{split}/`` yet, only policy text + a
+    hand-labeled ``Skill`` spec per example. Wiring this dataset activates
+    the real 30/15-example corpus size for this suite (rather than the single
+    dummy sample ``dataset=None`` used to supply), but every ``Sample``'s
+    target JSON has no ``results``/``planted_divergence_ids`` keys, so
+    ``match_rate_scorer``/``contradiction_precision_scorer``/
+    ``contradiction_recall_scorer`` keep hitting their vacuous-1.0 fallback
+    paths until ticket-level simulation ground truth is added to the eval
+    corpus. In the full harness a solver would also need to run the
+    simulation engine per sample and populate
+    ``state.metadata["actual_result"]``.
     """
     return Task(
-        dataset=None,  # populated by the eval runner with real samples
+        dataset=list(load_extraction_dataset(split=split)),
         scorer=[
             match_rate_scorer(),
             contradiction_precision_scorer(),

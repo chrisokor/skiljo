@@ -22,6 +22,8 @@ from inspect_ai import Task, task
 from inspect_ai.scorer import Score, Scorer, Target, mean, scorer
 from inspect_ai.solver import TaskState
 
+from .dataset_loader import load_extraction_dataset
+
 
 # ---------------------------------------------------------------------------
 # Standalone scorer logic (pure Python, testable without Inspect machinery)
@@ -90,20 +92,20 @@ def e2e_accuracy_scorer() -> Scorer:
 
 
 @task(name="e2e")
-def E2EEval() -> Task:
+def E2EEval(split: str = "train") -> Task:
     """End-to-end pipeline eval: full extraction + simulation accuracy.
 
-    Uses labeled examples pairing raw policy text with a ground-truth
-    end-to-end accuracy figure computed by running the extracted skill's
-    predicted decisions against the shadow-policy ground truth. In the full
-    harness the solver runs extraction then simulation and populates
-    ``state.metadata["actual_e2e"]`` so the scorer can evaluate it.
-
-    ``dataset=None`` makes Inspect supply a single dummy sample so the task
-    can be imported and instantiated without real eval data on disk.
+    Reuses ``load_extraction_dataset`` (plan #57), which pairs raw policy
+    text with a ``expected_e2e_accuracy`` figure read from each example's
+    ``ground_truth_e2e_accuracy`` field -- a field no real ``*.skill.yaml``
+    currently sets, so it defaults to ``0.0`` for every real example today
+    (see ``dataset_loader.py``'s module docstring). In the full harness the
+    solver would run extraction then simulation and populate
+    ``state.metadata["actual_e2e"]`` so the scorer can evaluate it against a
+    real, non-default ``expected_e2e_accuracy``.
     """
     return Task(
-        dataset=None,  # populated by the eval runner with real samples
+        dataset=list(load_extraction_dataset(split=split)),
         scorer=[e2e_accuracy_scorer()],
         name="e2e",
     )
