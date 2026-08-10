@@ -386,6 +386,10 @@ POST   /tickets/import                  # Import a ticket batch from CSV (A4)
 POST   /simulations                     # Start a simulation run (async)
 GET    /simulations/{id}                # Get simulation status + summary
 GET    /simulations/{id}/report         # Get full SimulationReport
+GET    /simulations/{id}/report.html    # Get rendered HTML report (A2)
+POST   /cross-document-contradictions   # Detect cross-document policy conflicts (A3)
+POST   /eval-runs                       # Record an eval run's metrics
+GET    /eval-runs                       # List eval run history (filter by model/commit_sha)
 GET    /jobs/{id}                       # Poll a background job's status
 ```
 
@@ -1143,6 +1147,10 @@ Prompt versioning as first-class artifacts. Currently prompts are versioned via 
 | POST | `/simulations` | Start simulation job | Bearer |
 | GET | `/simulations/{id}` | Get simulation status | Bearer |
 | GET | `/simulations/{id}/report` | Get full report | Bearer |
+| GET | `/simulations/{id}/report.html` | Get rendered HTML report (A2) | Bearer |
+| POST | `/cross-document-contradictions` | Detect cross-document policy conflicts (A3) | Bearer |
+| POST | `/eval-runs` | Record an eval run's metrics (commit_sha, dataset_version, model, metrics) | Bearer |
+| GET | `/eval-runs` | List eval run history, filterable by `model`/`commit_sha` | Bearer |
 | GET | `/jobs/{id}` | Poll a background job | Bearer |
 
 All requests use `Authorization: Bearer <API_KEY>`. Errors use `{"error": {"code", "message", "details"}}`.

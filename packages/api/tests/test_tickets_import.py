@@ -65,7 +65,7 @@ def test_import_non_csv_extension_returns_400() -> None:
         files={"file": ("tickets.json", io.BytesIO(b"{}"), "application/json")},
     )
     assert response.status_code == 400
-    assert "CSV" in response.json()["detail"]
+    assert "CSV" in response.json()["error"]["message"]
 
 
 def test_import_missing_required_column_refund_amount_returns_400_with_row_errors() -> None:
@@ -85,10 +85,10 @@ def test_import_missing_required_column_refund_amount_returns_400_with_row_error
     )
     assert response.status_code == 400
     data = response.json()
-    detail = data["detail"]
-    assert "errors" in detail
-    assert len(detail["errors"]) == 1
-    assert detail["errors"][0]["row"] == 2
+    details = data["error"]["details"]
+    assert "errors" in details
+    assert len(details["errors"]) == 1
+    assert details["errors"][0]["row"] == 2
 
 
 def test_import_invalid_refund_amount_not_a_number_returns_400_with_row_errors() -> None:
@@ -100,9 +100,9 @@ def test_import_invalid_refund_amount_not_a_number_returns_400_with_row_errors()
     )
     assert response.status_code == 400
     data = response.json()
-    detail = data["detail"]
-    assert "errors" in detail
-    assert detail["errors"][0]["row"] == 2
+    details = data["error"]["details"]
+    assert "errors" in details
+    assert details["errors"][0]["row"] == 2
 
 
 def test_import_partial_errors_returns_count_of_valid_rows() -> None:
@@ -136,9 +136,9 @@ def test_import_all_rows_invalid_returns_400() -> None:
     )
     assert response.status_code == 400
     data = response.json()
-    detail = data["detail"]
-    assert "errors" in detail
-    assert len(detail["errors"]) == 2
+    details = data["error"]["details"]
+    assert "errors" in details
+    assert len(details["errors"]) == 2
 
 
 def test_import_fraud_flags_parsed_as_json_list() -> None:

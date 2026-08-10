@@ -20,7 +20,7 @@ from typing import Any
 
 from inspect_ai import Task, task
 from inspect_ai.scorer import Score, Scorer, Target, mean, scorer
-from inspect_ai.scorer._scorer import TaskState
+from inspect_ai.solver import TaskState
 
 
 # ---------------------------------------------------------------------------
