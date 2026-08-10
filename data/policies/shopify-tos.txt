@@ -1,12 +1,11 @@
-Shopify Terms of Service — Payment, Fees, and Termination Sections
+Shopify Terms of Service — Payment of Fees (Excerpt)
+
+[This file contains an excerpt only: the "no refunds" clause from Section 5
+(Payment of Fees and Taxes) of Shopify's Terms of Service. Full document
+reserved for data/eval/test/06_shopify_subscription_contradiction.]
 
 Source: https://www.shopify.com/legal/terms
 Retrieved: 2026-08-10
-Excerpt scope: Section 5 (Payment of Fees and Taxes) and Section 9.3 (POS
-Services), limited to refund, credit, and billing-on-termination language.
-Quoted verbatim from the published Terms of Service; section numbers refer
-to Shopify's own numbering at the time of retrieval and may shift when
-Shopify revises the document.
 
 Section 5 — Payment of Fees and Taxes
 
@@ -18,59 +17,8 @@ This is stated as a general, unconditional position and is not qualified
 anywhere in Section 5 by an exception process, a review window, or a
 customer-support escalation path.
 
-Subscription Billing
-
-"Subscription Fees are paid in advance and will be billed in 30 day
-intervals."
-
-Because Fees are paid in advance of the period they cover, a mid-cycle
-cancellation does not by itself create an overpayment to be returned; the
-Terms treat the advance payment as fully earned once billed.
-
-Non-Refundable Upon Termination
-
-"Unless otherwise provided in the Terms of Service, you will not be
-entitled to any refunds of any Fees, pro rata or otherwise."
-
-This clause explicitly forecloses pro-rata refunds on early termination,
-whether the termination is initiated by the merchant or by Shopify.
-
-Outstanding Balance Due
-
-"Any outstanding balance owed to Shopify for your use of the Services
-through the effective date of such termination will immediately become
-due and payable in full."
-
-Termination accelerates any unpaid balance rather than pausing or waiving
-it — the obligation to pay survives account closure.
-
-Final Invoice
-
-"If there are any outstanding Fees owed by you at the date of termination
-of the Service, you will receive one final invoice via email."
-
-The final invoice is administrative (it documents what is owed) and is not
-described as a mechanism for requesting a refund or credit.
-
-Section 9.3 — POS Services
-
-No Refunds for Certain Equipment
-
-"Returns and refunds are not available for the Chip & Swipe Reader, Swipe
-(Audio Jack) and physical gift cards."
-
-This extends the no-refund position from subscription Fees to specific
-categories of hardware and stored-value instruments, with no case-by-case
-exception language attached.
-
-Summary of the written position
-
-Read together, Section 5 and Section 9.3 state an absolute, unqualified
-no-refund policy for both subscription Fees and the enumerated hardware
-categories. No time window, support-escalation path, or "case-by-case"
-review process appears anywhere in these sections of the Terms of Service.
 This is the document to contrast against Shopify's own Help Center refund
 article (see shopify-help-center.txt in this corpus), which describes a
-support-reviewed, time-windowed exception process that Section 5 does not
-mention. That gap is the corpus's flagship intra-vendor
-policy-vs-practice contradiction (see docs/POLICY_CORPUS.md, entry #12).
+support-reviewed, case-by-case exception process that this clause does not
+mention. That gap is the corpus's flagship intra-vendor policy-vs-practice
+contradiction (see docs/POLICY_CORPUS.md, entry #12).

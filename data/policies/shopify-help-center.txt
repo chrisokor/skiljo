@@ -1,86 +1,30 @@
-Shopify Help Center — Refund Policy for Subscriptions
+Shopify Help Center — Refund Policy for Subscriptions (Excerpt)
+
+[This file contains an excerpt only: the "case-by-case review" clause from
+Shopify's Help Center refund article for subscriptions. Full document
+reserved for data/eval/test/06_shopify_subscription_contradiction.]
 
 Source: https://help.shopify.com/en/manual/your-account/manage-billing/refund-policy-subscriptions
 Retrieved: 2026-08-10
-Excerpt scope: the full refund-eligibility guidance for Shopify plan
-subscriptions, quoted verbatim from the published help article.
-
-Core Policy Statement
-
-"Shopify plans are generally non-refundable as stated in section 5.10 of
-the Shopify Terms of Service."
-
-Note the internal cross-reference: this article points back to the Terms
-of Service as the governing document, but the numbering it cites (5.10)
-does not match the Section 5 language captured in shopify-tos.txt in this
-corpus, which is itself a minor drift signal worth flagging independently
-of the main contradiction below.
 
 Case-by-Case Review Path
 
 "If you believe you've been charged in error or have a special situation,
-then you can contact Shopify Support to have your case reviewed."
+then you can contact Shopify Support to have your case reviewed. Refund
+requests are reviewed on a case-by-case basis by Shopify Support."
 
 Unlike the Terms of Service, which states no exception process at all,
 this article establishes a live escalation path: a merchant can contact
-Support and have a human reviewer consider the request.
-
-Eligibility Time Windows
-
-The article specifies concrete consideration periods, in the merchant's
-favor, during which a refund request will be looked at:
-
-"Within 7 days of invoice issue date" — for monthly subscriptions.
-
-"Within 30 days of invoice issue date" — for annual subscriptions and for
-the first invoice issued after a trial period ends.
-
-"Within 14 days of invoice issue date" — for payments made via SEPA Direct
-Debit.
-
-These are affirmative windows during which Shopify Support will consider a
-request — they do not appear anywhere in the Terms of Service excerpt.
-
-Important Caveat on the Windows
-
-"Meeting these time windows doesn't guarantee a refund. Refund requests
-are reviewed on a case-by-case basis by Shopify Support."
-
-This caveat keeps the final decision discretionary, but it does not negate
-the existence of the review process itself — a process the Terms of
-Service does not describe or reference.
-
-What Is Not Eligible
-
-The article states that the following are "generally not eligible" for
-refund consideration:
-
-"Plan downgrades."
-
-"Requests outside of time windows."
-
-"Unused services" — because "not using your Shopify store during your
-billing period doesn't automatically qualify you for a refund."
-
-Theme Purchases
-
-"Theme purchases from the Shopify Theme Store are final sale and
-non-refundable."
-
-This item is consistent with the Terms of Service's absolute no-refund
-stance and is not part of the contradiction — it is included here because
-it is the one line in this article that squarely matches the ToS position
-rather than diverging from it.
+Support and have a human reviewer consider the request, on a discretionary,
+case-by-case basis.
 
 Why This Pairs With shopify-tos.txt
 
 The Terms of Service (shopify-tos.txt) states, without qualification, that
-"Shopify does not provide refunds" and that merchants "will not be
-entitled to any refunds of any Fees, pro rata or otherwise." This help
-article instead documents a support-mediated, time-windowed, case-by-case
-exception process for exactly the same subscription Fees. The two
-documents describe materially different customer experiences for the same
-decision surface (can a merchant get a subscription fee refunded), which
-is the acceptance case named in docs/POLICY_CORPUS.md entry #12 and in
-CLAUDE.md's description of commit A3 (cross-document contradiction
-detection).
+"Shopify does not provide refunds." This help article instead documents a
+support-mediated, case-by-case exception process for the same subscription
+fees. The two documents describe materially different customer experiences
+for the same decision surface (can a merchant get a subscription fee
+refunded), which is the acceptance case named in docs/POLICY_CORPUS.md
+entry #12 and in CLAUDE.md's description of commit A3 (cross-document
+contradiction detection).
