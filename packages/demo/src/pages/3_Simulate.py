@@ -12,6 +12,7 @@ from api_client import (
     create_simulation,
     get_job,
     get_simulation,
+    get_simulation_report_html,
     get_skill_versions,
     list_skills,
     list_ticket_batches,
@@ -173,6 +174,19 @@ if st.button("Run Simulation", type="primary"):
         st.dataframe(table_rows, use_container_width=True)
     else:
         st.info("No per-ticket results available.")
+
+    st.subheader("Report")
+    try:
+        report_html = get_simulation_report_html(str(sim_id))
+    except Exception as exc:
+        st.warning(f"Simulation completed, but the HTML report could not be loaded: {exc}")
+    else:
+        st.download_button(
+            "Download HTML report",
+            data=report_html,
+            file_name=f"skiljo_simulation_{sim_id}.html",
+            mime="text/html",
+        )
 
 st.divider()
 st.markdown("[Cross-Document Detection](./Cross_Document)")

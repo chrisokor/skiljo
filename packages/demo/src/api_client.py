@@ -124,6 +124,17 @@ def get_simulation(sim_id: str) -> dict:
     return resp.json()
 
 
+def get_simulation_report_html(sim_id: str) -> str:
+    """Fetch the standalone HTML report for a completed simulation."""
+    resp = requests.get(
+        f"{API_BASE}/simulations/{sim_id}/report.html",
+        headers=get_headers(),
+        timeout=30,
+    )
+    resp.raise_for_status()
+    return resp.text
+
+
 def detect_cross_document_contradictions(skill_version_ids: list[str]) -> list[dict]:
     """Return contradictions found across approved skill versions."""
     resp = requests.post(

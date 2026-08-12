@@ -31,6 +31,23 @@ def test_detect_cross_document_contradictions_posts_selected_version_ids(
     response.raise_for_status.assert_called_once_with()
 
 
+def test_get_simulation_report_html_fetches_report_endpoint(monkeypatch) -> None:
+    response = Mock()
+    response.text = "<!doctype html><title>Skiljo report</title>"
+    get = Mock(return_value=response)
+    monkeypatch.setattr(api_client.requests, "get", get)
+
+    result = api_client.get_simulation_report_html("simulation-1")
+
+    assert result == "<!doctype html><title>Skiljo report</title>"
+    get.assert_called_once_with(
+        f"{api_client.API_BASE}/simulations/simulation-1/report.html",
+        headers=api_client.get_headers(),
+        timeout=30,
+    )
+    response.raise_for_status.assert_called_once_with()
+
+
 def test_cross_document_page_limits_second_selection_to_a_different_skill(monkeypatch) -> None:
     skills = [
         {"id": "skill-1", "name": "Terms of Service"},
