@@ -2,7 +2,7 @@ import asyncio
 import os
 import uuid
 from datetime import UTC, datetime
-from typing import Any
+from typing import Any, Protocol, Sequence
 
 from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException
 from fastapi.responses import HTMLResponse
@@ -13,10 +13,19 @@ from skiljo_api.dependencies import get_llm_client, verify_api_key
 from skiljo_core.db.models import Job, SimulationResult, SimulationRun, SkillVersion
 from skiljo_core.db.session import SessionLocal
 from skiljo_core.llm.base import LLMClient
-from skiljo_core.schemas.simulation_report_schema import SimulationReport
+from skiljo_core.schemas.simulation_report_schema import (
+    Citation as ReportCitation,
+    Contradiction as ReportContradiction,
+    EstimatedFinancialImpact,
+    SimulationReport,
+)
+from skiljo_core.schemas.rule_schema import Citation as SourceCitation
 from skiljo_core.schemas.skill_schema import Skill
 from skiljo_core.schemas.ticket_schema import Ticket
-from skiljo_core.simulation.contradictions import detect_contradictions
+from skiljo_core.simulation.contradictions import (
+    Contradiction as DetectedContradiction,
+    detect_contradictions,
+)
 from skiljo_core.simulation.cross_document import (
     CrossDocumentContradiction,
     PolicyDocument,
@@ -38,6 +47,67 @@ class SimulationRequest(BaseModel):
 class SimulationResponse(BaseModel):
     job_id: uuid.UUID
     status: str
+
+
+class _CitedRule(Protocol):
+    action: str
+    citation: SourceCitation
+
+
+def _report_citation_for_decision(
+    skill: Skill, skill_version_id: uuid.UUID, decision: str
+) -> ReportCitation | None:
+    """Return the source citation for the first skill rule that produced a decision."""
+    def find_citation(zone_name: str, rules: Sequence[_CitedRule]) -> ReportCitation | None:
+        for index, rule in enumerate(rules):
+            if rule.action == decision:
+                return ReportCitation(
+                    policy_id=str(skill_version_id),
+                    rule_id=f"{zone_name}[{index}]",
+                    span_start=rule.citation.span.start,
+                    span_end=rule.citation.span.end,
+                    quoted_text=rule.citation.quoted_text,
+                )
+        return None
+
+    for zone_name, rules in (
+        ("deterministic", skill.decision_zones.deterministic),
+        ("llm_assisted", skill.decision_zones.llm_assisted),
+        ("human_only", skill.decision_zones.human_only),
+    ):
+        citation = find_citation(zone_name, rules)
+        if citation is not None:
+            return citation
+    return None
+
+
+def _report_contradictions(
+    skill: Skill, skill_version_id: uuid.UUID, contradictions: list[DetectedContradiction]
+) -> list[ReportContradiction]:
+    """Convert detector output to the persisted public report contract."""
+    return [
+        ReportContradiction(
+            cluster_key=contradiction.cluster_key,
+            written_decision=contradiction.written_decision,
+            observed_decision=contradiction.observed_decision,
+            frequency=contradiction.frequency,
+            ticket_count=contradiction.ticket_count,
+            affected_ticket_ids=contradiction.affected_ticket_ids,
+            citation=_report_citation_for_decision(
+                skill, skill_version_id, contradiction.written_decision
+            ),
+            estimated_financial_impact=(
+                EstimatedFinancialImpact(
+                    divergent_ticket_count=contradiction.estimated_financial_impact.divergent_ticket_count,
+                    average_refund_amount=contradiction.estimated_financial_impact.average_refund_amount,
+                    estimated_impact_usd=contradiction.estimated_financial_impact.estimated_impact_usd,
+                )
+                if contradiction.estimated_financial_impact is not None
+                else None
+            ),
+        )
+        for contradiction in contradictions
+    ]
 
 
 def _run_simulation_job(
@@ -71,7 +141,14 @@ def _run_simulation_job(
             results = asyncio.run(simulate_batch(skill, tickets, llm_client))
             report = compute_report(skill_version_id, results, tickets)
             contradictions = detect_contradictions(results, tickets)
-            report = report.model_copy(update={"contradiction_count": len(contradictions)})
+            report = report.model_copy(
+                update={
+                    "contradiction_count": len(contradictions),
+                    "contradictions": _report_contradictions(
+                        skill, skill_version_id, contradictions
+                    ),
+                }
+            )
 
             ticket_map = {str(t.ticket_id): t for t in tickets}
             for r in results:
@@ -182,9 +259,23 @@ def get_simulation_report_html(sim_id: uuid.UUID) -> str:
         if run.status != "completed" or run.summary is None:
             raise HTTPException(status_code=409, detail="simulation not yet completed")
         report = SimulationReport.model_validate(run.summary)
+        skill_version = session.get(SkillVersion, run.skill_version_id)
+        skill = Skill.model_validate(skill_version.spec) if skill_version is not None else None
 
     template = _jinja_env.get_template("report.html")
-    return template.render(report=report)
+    extracted_rule_count = (
+        len(skill.decision_zones.deterministic)
+        + len(skill.decision_zones.llm_assisted)
+        + len(skill.decision_zones.human_only)
+        if skill is not None
+        else None
+    )
+    return template.render(
+        report=report,
+        skill_name=skill.skill_name if skill is not None else "Unavailable",
+        extracted_rule_count=extracted_rule_count,
+        generated_at=run.completed_at,
+    )
 
 
 class CrossDocumentContradictionRequest(BaseModel):
