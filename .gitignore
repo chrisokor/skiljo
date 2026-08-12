@@ -24,3 +24,4 @@ eval-results.json
 
 # Claude Code worktrees
 .claude/worktrees/
+.worktrees/
