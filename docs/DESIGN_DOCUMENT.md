@@ -471,7 +471,15 @@ This matters for two reasons. It's the highest-value output per unit of customer
 
 The SimulationReport and the contradiction findings compile to a rendered artifact — a standalone HTML document (print-friendly for PDF) with the summary metrics, the contradiction list with citations and evidence, and a per-ticket appendix. The BRD identifies this report as the first sellable deliverable; the system treats it accordingly, as a first-class output rather than a JSON payload someone else must make presentable.
 
-Rendering is a Jinja2 template over the report data — deliberately boring technology. No charting library in v1; tables and typography carry it. The Streamlit demo links to the rendered artifact, and the API exposes it at `GET /simulations/{id}/report.html`.
+Rendering is a Jinja2 template over the report data — deliberately boring technology. No charting library in v1; tables and typography carry it. The Streamlit demo links to the rendered artifact.
+
+#### `GET /simulations/{id}/report.html`
+
+Returns the standalone diagnostic report for a completed simulation.
+
+- **Response:** `200 text/html; charset=utf-8` with a complete printable HTML document. CSS is inlined and the document has no external resources.
+- **Content:** executive summary, contradiction evidence and citations, automation and ROI analysis, and a per-ticket appendix.
+- **Errors:** `404` when the simulation does not exist; `409` when it has not completed.
 
 ## 6. Key design decisions
 

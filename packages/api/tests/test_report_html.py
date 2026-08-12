@@ -219,6 +219,11 @@ def test_get_report_html_contains_key_sections() -> None:
         html_resp = client.get(f"/simulations/{sim_id}/report.html")
         assert html_resp.status_code == 200
         body = html_resp.text
+        assert body.lstrip().lower().startswith("<!doctype html>")
+        assert "<style>" in body
+        assert "@media print" in body
+        assert "http://" not in body
+        assert "https://" not in body
 
         # Executive summary section
         assert "Executive Summary" in body
