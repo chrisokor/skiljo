@@ -125,6 +125,13 @@ The module in `packages/core/src/skiljo_core/simulation/` that routes each ticke
 
 An `asyncio.Semaphore` with a fixed bound (e.g., 5) that limits the number of concurrent LLM API calls during batch simulation. Without a semaphore, 100 tickets could fire 100 concurrent LLM calls, overwhelming the Anthropic API rate limit. The semaphore ensures at most N calls are active at once, preventing a thundering herd. See [Week 3 Task 2](week3-task2-simulation-engine.md).
 
+## Streamlit multipage navigation
+
+Streamlit automatically discovers Python scripts placed in a `pages/` directory
+beside an entrypoint and uses numeric filename prefixes for their navigation
+order. This lets a demo add a screen without a separate route registry. See
+[Week 7 Task 6](week7-task6-cross-document-ui.md).
+
 ## Golden fixture test
 
 A test pattern where data is pre-generated, version-controlled, and loaded from files (rather than generated fresh in each test run). Golden fixture tests trade test independence for stability and regression detection — they catch behavioral changes in integration scenarios. Useful for complex workflows (like end-to-end simulation) where unit tests alone can't verify the full pipeline. See [Week 3 Task 8](week3-task8-golden-tests.md).
