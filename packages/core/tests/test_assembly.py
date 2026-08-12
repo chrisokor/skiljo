@@ -1,8 +1,54 @@
+import pytest
+
+from skiljo_core.extraction.citation_validator import validate_citation
 from skiljo_core.testing import FakeLLMClient, TEST_CITATION
 
 from skiljo_core.extraction.assembly import assemble_skill
-from skiljo_core.schemas.rule_schema import Condition, ConditionOrPredicate, DeterministicRule, Operator, Predicate
+from skiljo_core.schemas.rule_schema import (
+    Citation,
+    Condition,
+    ConditionOrPredicate,
+    DeterministicRule,
+    Operator,
+    Predicate,
+    Span,
+)
 from skiljo_core.schemas.skill_schema import DecisionZones, Input, Skill, Type
+
+
+def test_validate_citation_success() -> None:
+    source = "We offer refunds within 30 days of purchase."
+    citation = Citation(
+        span=Span(start=9, end=31), quoted_text="refunds within 30 days"
+    )
+
+    assert validate_citation(citation, source) is True
+
+
+def test_validate_citation_rejects_out_of_bounds_span() -> None:
+    source = "We offer refunds within 30 days."
+    citation = Citation(span=Span(start=20, end=100), quoted_text="...")
+
+    with pytest.raises(ValueError, match="out of bounds"):
+        validate_citation(citation, source)
+
+
+def test_validate_citation_rejects_start_not_before_end() -> None:
+    source = "We offer refunds within 30 days."
+    citation = Citation(span=Span(start=12, end=12), quoted_text="")
+
+    with pytest.raises(ValueError, match=r"start \(12\) >= end \(12\)"):
+        validate_citation(citation, source)
+
+
+def test_validate_citation_rejects_text_mismatch() -> None:
+    source = "We offer refunds within 30 days of purchase."
+    citation = Citation(
+        span=Span(start=9, end=31), quoted_text="credits within 60 days"
+    )
+
+    with pytest.raises(ValueError, match="quoted_text mismatch"):
+        validate_citation(citation, source)
 
 
 def _decision_zones() -> DecisionZones:

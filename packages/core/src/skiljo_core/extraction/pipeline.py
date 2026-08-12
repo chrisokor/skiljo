@@ -1,5 +1,6 @@
 from skiljo_core import config
 from skiljo_core.extraction.assembly import assemble_skill
+from skiljo_core.extraction.citation_validator import validate_citation
 from skiljo_core.extraction.rules import extract_rules
 from skiljo_core.extraction.segmentation import segment_policy
 from skiljo_core.extraction.zones import classify_rules
@@ -18,7 +19,10 @@ def run_extraction_pipeline(
     segments = segment_policy(llm_client, policy_text, model=model)
     candidate_rules: list[DeterministicRule] = []
     for segment in segments:
-        candidate_rules.extend(extract_rules(llm_client, segment, model=model))
+        rules = extract_rules(llm_client, segment, model=model)
+        for rule in rules:
+            validate_citation(rule.citation, segment.text)
+        candidate_rules.extend(rules)
     decision_zones = classify_rules(llm_client, candidate_rules, model=model)
     return assemble_skill(
         llm_client,

@@ -61,7 +61,7 @@ def test_classify_rules_buckets_into_decision_zones() -> None:
     assert len(decision_zones.llm_assisted) == 1
     assert decision_zones.llm_assisted[0].action == "goodwill_exception"
     assert decision_zones.llm_assisted[0].requires_human_approval is True
-    assert decision_zones.llm_assisted[0].citation.quoted_text == "r"
+    assert decision_zones.llm_assisted[0].citation == rules[1].citation
     assert len(decision_zones.human_only) == 1
     assert decision_zones.human_only[0].action == "escalate_fraud_dispute"
-    assert decision_zones.human_only[0].citation.quoted_text == "r"
+    assert decision_zones.human_only[0].citation == rules[2].citation
