@@ -50,9 +50,10 @@ def test_extract_rules_returns_expected_condition_structure() -> None:
 def test_rule_extraction_prompt_requires_section_relative_citations() -> None:
     """Pass 2 tells the model to return exact, section-relative citations."""
     assert "character offsets" in RULE_EXTRACTION_PROMPT_V1
+    assert "zero-based" in RULE_EXTRACTION_PROMPT_V1
     assert "SECTION TEXT" in RULE_EXTRACTION_PROMPT_V1
     assert "quoted_text" in RULE_EXTRACTION_PROMPT_V1
-    assert "source[start:end]" in RULE_EXTRACTION_PROMPT_V1
+    assert "SECTION TEXT[start:end]" in RULE_EXTRACTION_PROMPT_V1
 
 
 def test_extract_rules_preserves_section_relative_citation() -> None:

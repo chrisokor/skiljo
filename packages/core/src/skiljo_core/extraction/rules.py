@@ -14,9 +14,10 @@ For each distinct rule you find, produce:
   - span: character offsets (start, end) pointing to the exact evidence in the source
   - quoted_text: a verbatim excerpt from the source document
 
-CRITICAL: The span offsets must be character positions within the SECTION TEXT
-provided below. `start` is where the evidence begins, `end` is exclusive, and
-`quoted_text` must equal the exact substring `source[start:end]`.
+CRITICAL: The span offsets must be zero-based character positions within the
+SECTION TEXT provided below. `start` is where the evidence begins, `end` is
+exclusive, and `quoted_text` must equal the exact substring
+`SECTION TEXT[start:end]`.
 
 SECTION TEXT:
 ---
