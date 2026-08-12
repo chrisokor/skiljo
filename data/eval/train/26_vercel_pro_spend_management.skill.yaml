@@ -47,8 +47,8 @@ decision_zones:
       action: pause_usage_until_next_billing_cycle
       citation:
         span:
-          start: 29
-          end: 232
-        quoted_text: "Your Pro plan includes a $20 monthly usage credit applied automatically to\non-demand overage charges. Once the included credit is exhausted, additional\nusage is billed at standard per-unit overage rates."
+          start: 401
+          end: 716
+        quoted_text: "Spend management: By default, a Spend Management cap of $200/month is\napplied to on-demand overage charges. Once cumulative overage charges reach\nthe configured cap, further resource usage that would incur additional\ncharges is paused until the next billing cycle unless the account owner\nraises or removes the cap."
   llm_assisted: []
   human_only: []

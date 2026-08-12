@@ -43,3 +43,13 @@ complete rule dictionaries, so no loader implementation change was needed.
   resulting 146 source citations.
 - `packages/core/src/skiljo_core/extraction/citation_validator.py` provides
   the shared span-and-quote mechanical check.
+
+## Review Fixes
+
+Offset validation alone cannot establish that a citation supports a rule. A
+small reviewed-evidence override list now covers the known paraphrased and
+configuration-sensitive rules. In validation mode, the helper compares those
+persisted citations with their exact approved excerpts, catching a future
+replacement with a merely in-bounds but irrelevant span. This deliberately
+targets known high-risk cases rather than adding broad or subjective NLP
+relevance scoring.

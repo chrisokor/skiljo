@@ -51,9 +51,9 @@ decision_zones:
       action: restore_access_immediately
       citation:
         span:
-          start: 316
-          end: 559
-        quoted_text: "If your Subscription remains suspended for 30 consecutive days or more due to\nnon-payment, we may terminate your Subscription. Upon termination for\nnon-payment, any outstanding fees remain due and no refund is issued for the\nterminated period."
+          start: 561
+          end: 860
+        quoted_text: "Reinstatement: If you bring your account current within the 30-day suspension\nwindow, access is restored immediately upon successful payment. No late fee\nis assessed for the first payment failure in a rolling 12-month period; a 1.5%\nmonthly late fee applies to any subsequent failure in that window."
     - condition:
         all:
           - field: is_first_failure_in_12_months
@@ -65,8 +65,8 @@ decision_zones:
       action: assess_late_fee_1_5_percent_per_month
       citation:
         span:
-          start: 0
-          end: 50
-        quoted_text: "Stripe Subscription Suspension and Payment Failure"
+          start: 561
+          end: 860
+        quoted_text: "Reinstatement: If you bring your account current within the 30-day suspension\nwindow, access is restored immediately upon successful payment. No late fee\nis assessed for the first payment failure in a rolling 12-month period; a 1.5%\nmonthly late fee applies to any subsequent failure in that window."
   llm_assisted: []
   human_only: []

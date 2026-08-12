@@ -10,7 +10,14 @@ describe("generated zod schemas", () => {
       inputs: [{ name: "refund_amount", type: "number" }],
       decision_zones: {
         deterministic: [
-          { condition: { all: [{ field: "purchase_days_ago", op: "lte", value: 30 }] }, action: "approve_refund" },
+          {
+            condition: { all: [{ field: "purchase_days_ago", op: "lte", value: 30 }] },
+            action: "approve_refund",
+            citation: {
+              span: { start: 0, end: 17 },
+              quoted_text: "Refunds within 30",
+            },
+          },
         ],
         llm_assisted: [],
         human_only: [],

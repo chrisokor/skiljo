@@ -41,9 +41,10 @@ IGNORED_TERMS = {
     "the",
 }
 
-# Literal action/predicate overlap cannot rank these paraphrased rules. Each
-# override is the narrowest full policy paragraph that supports the rule.
-EVIDENCE_OVERRIDES = {
+# Literal action/predicate overlap cannot rank these paraphrased rules. This
+# small review list also protects persisted citations: validation checks that a
+# listed rule still uses its exact reviewed source excerpt.
+REVIEWED_EVIDENCE_OVERRIDES = {
     (
         "train",
         "09_stripe_subscription_policy.skill.yaml",
@@ -54,13 +55,87 @@ EVIDENCE_OVERRIDES = {
     ),
     (
         "train",
-        "19_github_tos_payments.skill.yaml",
+        "22_stripe_subscription_suspension.skill.yaml",
+        3,
+    ): (
+        "Reinstatement: If you bring your account current within the 30-day suspension\n"
+        "window, access is restored immediately upon successful payment. No late fee\n"
+        "is assessed for the first payment failure in a rolling 12-month period; a 1.5%\n"
+        "monthly late fee applies to any subsequent failure in that window."
+    ),
+    (
+        "train",
+        "22_stripe_subscription_suspension.skill.yaml",
+        4,
+    ): (
+        "Reinstatement: If you bring your account current within the 30-day suspension\n"
+        "window, access is restored immediately upon successful payment. No late fee\n"
+        "is assessed for the first payment failure in a rolling 12-month period; a 1.5%\n"
+        "monthly late fee applies to any subsequent failure in that window."
+    ),
+    (
+        "train",
+        "26_vercel_pro_spend_management.skill.yaml",
+        3,
+    ): (
+        "Spend management: By default, a Spend Management cap of $200/month is\n"
+        "applied to on-demand overage charges. Once cumulative overage charges reach\n"
+        "the configured cap, further resource usage that would incur additional\n"
+        "charges is paused until the next billing cycle unless the account owner\n"
+        "raises or removes the cap."
+    ),
+    (
+        "train",
+        "28_google_cloud_compute_zone_config.skill.yaml",
         1,
     ): (
-        "User agrees to pay the fees in full, up front without deduction or setoff of any kind, "
-        "in U.S. Dollars. User must pay the fees within thirty (30) days of the GitHub invoice "
-        "date. Amounts payable under this Agreement are non-refundable, except as otherwise "
-        "provided in this Agreement."
+        "Instances in Multiple Zones: If your Covered Instances are configured to run\n"
+        "in multiple zones in more than one region, and the monthly uptime percentage\n"
+        "falls below 99.99% but at or above 99.0%, you receive a 10% credit. Below\n"
+        "99.0% but at or above 95.0%, a 25% credit. Below 95.0%, a 50% credit."
+    ),
+    (
+        "train",
+        "28_google_cloud_compute_zone_config.skill.yaml",
+        2,
+    ): (
+        "Single Zone or Single Instance: If your Covered Instances are configured to\n"
+        "run as a single instance or within a single zone, the monthly uptime\n"
+        "percentage must fall below 99.5% but at or above 99.0% for a 10% credit,\n"
+        "below 99.0% but at or above 95.0% for a 25% credit, and below 95.0% for a 50%\n"
+        "credit."
+    ),
+    (
+        "train",
+        "28_google_cloud_compute_zone_config.skill.yaml",
+        3,
+    ): (
+        "Instances in Multiple Zones: If your Covered Instances are configured to run\n"
+        "in multiple zones in more than one region, and the monthly uptime percentage\n"
+        "falls below 99.99% but at or above 99.0%, you receive a 10% credit. Below\n"
+        "99.0% but at or above 95.0%, a 25% credit. Below 95.0%, a 50% credit.\n\n"
+        "Single Zone or Single Instance: If your Covered Instances are configured to\n"
+        "run as a single instance or within a single zone, the monthly uptime\n"
+        "percentage must fall below 99.5% but at or above 99.0% for a 10% credit,\n"
+        "below 99.0% but at or above 95.0% for a 25% credit, and below 95.0% for a 50%\n"
+        "credit."
+    ),
+    (
+        "train",
+        "28_google_cloud_compute_zone_config.skill.yaml",
+        4,
+    ): (
+        "Instances in Multiple Zones: If your Covered Instances are configured to run\n"
+        "in multiple zones in more than one region, and the monthly uptime percentage\n"
+        "falls below 99.99% but at or above 99.0%, you receive a 10% credit. Below\n"
+        "99.0% but at or above 95.0%, a 25% credit. Below 95.0%, a 50% credit.\n\n"
+        "Single Zone or Single Instance: If your Covered Instances are configured to\n"
+        "run as a single instance or within a single zone, the monthly uptime\n"
+        "percentage must fall below 99.5% but at or above 99.0% for a 10% credit,\n"
+        "below 99.0% but at or above 95.0% for a 25% credit, and below 95.0% for a 50%\n"
+        "credit.\n\n"
+        "In no event will total credits for any billing month exceed 50% of the\n"
+        "amount payable for that month, regardless of configuration."
     ),
     (
         "train",
@@ -113,6 +188,18 @@ def _best_paragraph(
     if not candidates:
         raise ValueError("Policy contains no citeable text")
     return max(candidates, key=lambda candidate: candidate[3])
+
+
+def _reviewed_citation(quote: str, policy_text: str) -> Citation:
+    """Build a validated citation from a unique reviewed source excerpt."""
+    start = policy_text.find(quote)
+    if start < 0:
+        raise ValueError(f"Configured citation override was not found: {quote!r}")
+    citation = Citation.model_validate(
+        {"span": {"start": start, "end": start + len(quote)}, "quoted_text": quote}
+    )
+    validate_citation(citation, policy_text)
+    return citation
 
 
 def _rules(skill: dict[str, Any]) -> list[dict[str, Any]]:
@@ -177,14 +264,20 @@ def add_citations(split: str, write: bool) -> tuple[int, list[str]]:
         if any(existing_citations):
             if not all(existing_citations):
                 raise ValueError(f"{skill_file} has only some rule citations")
-            for existing_citation in existing_citations:
-                validate_citation(Citation.model_validate(existing_citation), policy_text)
+            for index, existing_citation in enumerate(existing_citations, start=1):
+                citation = Citation.model_validate(existing_citation)
+                validate_citation(citation, policy_text)
+                override = REVIEWED_EVIDENCE_OVERRIDES.get((split, skill_file.name, index))
+                if override is not None and citation != _reviewed_citation(override, policy_text):
+                    raise ValueError(
+                        f"{skill_file.name} rule {index} does not match its reviewed evidence override"
+                    )
             print(f"{skill_file.name}: validated {len(rules)} existing citations")
             continue
 
         citations: list[Citation] = []
         for index, rule in enumerate(rules, start=1):
-            override = EVIDENCE_OVERRIDES.get((split, skill_file.name, index))
+            override = REVIEWED_EVIDENCE_OVERRIDES.get((split, skill_file.name, index))
             start, end, quote, score = _best_paragraph(rule, policy_text, override)
             citation = Citation.model_validate(
                 {"span": {"start": start, "end": end}, "quoted_text": quote}

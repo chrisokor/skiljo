@@ -5,27 +5,10 @@ inputs:
   - name: request_type
     type: string
     description: "partial_month, downgrade, unused_months, other"
-  - name: legal_refund_required
-    type: boolean
-    description: "True if applicable law mandates a refund regardless of policy"
 decision_zones:
   deterministic:
     - condition:
-        all:
-          - field: legal_refund_required
-            op: eq
-            value: true
-      action: approve_statutory_refund
-      citation:
-        span:
-          start: 733
-          end: 1016
-        quoted_text: "User agrees to pay the fees in full, up front without deduction or setoff of any kind, in U.S. Dollars. User must pay the fees within thirty (30) days of the GitHub invoice date. Amounts payable under this Agreement are non-refundable, except as otherwise provided in this Agreement."
-    - condition:
-        all:
-          - field: legal_refund_required
-            op: eq
-            value: false
+        all: []
       action: deny_refund_no_exceptions
       citation:
         span:

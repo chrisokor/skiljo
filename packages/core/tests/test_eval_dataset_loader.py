@@ -64,6 +64,89 @@ def test_load_extraction_dataset_rules_have_valid_citations(split: str) -> None:
             assert validate_citation(citation, ex.policy_text) is True
 
 
+@pytest.mark.parametrize(
+    ("policy_title", "action", "configuration", "evidence_fragments"),
+    [
+        (
+            "Stripe Subscription Suspension and Payment Failure",
+            "restore_access_immediately",
+            None,
+            ("Reinstatement:", "access is restored immediately"),
+        ),
+        (
+            "Stripe Subscription Suspension and Payment Failure",
+            "assess_late_fee_1_5_percent_per_month",
+            None,
+            ("Reinstatement:", "1.5%", "subsequent failure"),
+        ),
+        (
+            "Vercel Pro Spend Management",
+            "pause_usage_until_next_billing_cycle",
+            None,
+            ("Spend management:", "$200/month", "paused until the next billing cycle"),
+        ),
+        (
+            "Google Cloud Compute Engine SLA",
+            "apply_10_percent_credit",
+            "multi_zone",
+            ("Instances in Multiple Zones:", "below 99.99%", "10% credit"),
+        ),
+        (
+            "Google Cloud Compute Engine SLA",
+            "apply_10_percent_credit",
+            "single_zone",
+            ("Single Zone or Single Instance:", "below 99.5%", "10% credit"),
+        ),
+        (
+            "Google Cloud Compute Engine SLA",
+            "apply_25_percent_credit",
+            "multi_zone",
+            ("Instances in Multiple Zones:", "Single Zone or Single Instance:", "25% credit"),
+        ),
+        (
+            "Google Cloud Compute Engine SLA",
+            "apply_50_percent_credit_capped_at_50_percent_of_monthly_bill",
+            "multi_zone",
+            ("Instances in Multiple Zones:", "Single Zone or Single Instance:", "exceed 50%"),
+        ),
+    ],
+)
+def test_reviewed_eval_rules_cite_their_policy_evidence(
+    policy_title: str,
+    action: str,
+    configuration: str | None,
+    evidence_fragments: tuple[str, ...],
+) -> None:
+    """Reviewed rules retain citations that establish the policy action."""
+    dataset = load_extraction_dataset(split="train")
+    example = next(ex for ex in dataset.examples if ex.policy_text.startswith(policy_title))
+
+    rules = [rule for rule in example.expected_rules if rule["action"] == action]
+    if configuration is not None:
+        rules = [
+            rule
+            for rule in rules
+            if {"field": "instance_configuration", "op": "in", "value": ["multi_zone", "single_zone"]}
+            in rule["condition"]["all"]
+            or {"field": "instance_configuration", "op": "eq", "value": configuration}
+            in rule["condition"]["all"]
+        ]
+
+    assert len(rules) == 1
+    citation = Citation.model_validate(rules[0]["citation"])
+    assert all(fragment in citation.quoted_text for fragment in evidence_fragments)
+
+
+def test_github_payment_ground_truth_does_not_invent_statutory_refund_exception() -> None:
+    """The absolute no-refunds policy provides no source for a legal override."""
+    dataset = load_extraction_dataset(split="train")
+    example = next(
+        ex for ex in dataset.examples if ex.policy_text.startswith("GitHub Terms of Service")
+    )
+
+    assert all(rule["action"] != "approve_statutory_refund" for rule in example.expected_rules)
+
+
 def test_extraction_dataset_implements_inspect_protocol() -> None:
     dataset = ExtractionDataset(examples=[])
     assert hasattr(dataset, "__iter__")
