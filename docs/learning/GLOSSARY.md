@@ -8,7 +8,7 @@ A grouping of tickets by (amount_band, customer_segment) dimensions, used by the
 
 ## Contradiction (planted divergence detection)
 
-A record of systematic divergence between the skill's decision and ground-truth outcomes, identified by the contradiction detector. Each contradiction captures: the cluster it occurred in, the divergence rate, the most common (written, observed) decision pair, ticket count, and affected ticket IDs. Contradictions are measurable against planted divergences in the shadow policy — a good detector recovers planted patterns with high recall. See [Week 3 Task 5](week3-task5-contradiction-detection.md).
+A record of systematic divergence between the skill's decision and ground-truth outcomes, identified by the contradiction detector. Each contradiction captures the cluster it occurred in and one representative (written, observed) decision pair; its frequency, ticket count, affected IDs, and financial impact all describe that same pair. Contradictions are measurable against planted divergences in the shadow policy. See [Week 3 Task 5](week3-task5-contradiction-detection.md) and the [final fix wave](week7-task9-final-fix-wave.md).
 
 ## Cache key (LLM response cache)
 
@@ -40,6 +40,14 @@ See [Week 7 Task 5](week7-task5-html-report-rendering.md).
 ## FastAPI `HTTPException`
 
 FastAPI's idiomatic way to abort a request with an HTTP error. `raise HTTPException(status_code=404, detail="...")` is caught by FastAPI's exception handler and converted to the appropriate HTTP response with a JSON body `{"detail": "..."}`. See [Task 9](week2-task9-jobs-endpoint.md).
+
+## Execution provenance
+
+The exact identity of the rule or fallback path that produced a simulation
+decision. Output text is not provenance because deterministic rules, LLM
+recommendations, and default escalation can emit the same string. A report may
+attach source evidence only when this identity is carried through the result
+contract. See the [final fix wave](week7-task9-final-fix-wave.md).
 
 ## FastAPI `BackgroundTasks`
 
@@ -88,6 +96,14 @@ A deliberately introduced divergence between the written policy and reality, use
 ## Predicate DSL (Domain-Specific Language for conditions)
 
 A constrained, table-driven language for expressing ticket-matching rules: `Predicate(field, op, value)` where `op` is one of 11 operators (`eq`, `neq`, `lt`, `lte`, `gt`, `gte`, `in`, `not_in`, `contains`, `empty`, `not_empty`). Predicates are composed into `Condition` objects with `all` (AND) and `any` (OR) operators, supporting arbitrary nesting. Evaluated deterministically by `evaluate_predicate()` and `evaluate_condition()` — no LLM, no `eval()`, safe to run on untrusted data. See [Week 3 Task 3](week3-task3-rule-evaluator.md).
+
+## Predicate overlap guard
+
+A conservative precondition for cross-document conflict acceptance. Candidate
+rules must share at least one predicate field, and pure conjunctions are
+rejected when equality values or numeric intervals are provably disjoint. OR
+trees remain undecided rather than being treated as solved. See the [final fix
+wave](week7-task9-final-fix-wave.md).
 
 ## `Protocol` (structural typing)
 
@@ -152,7 +168,7 @@ A scorer's designated "nothing to measure, so don't penalize" return value — e
 
 ## Decision surface (cross-document contradiction detection)
 
-A short, stable label (e.g. `refund_eligibility`, `sla_credit`) assigned to a rule so that rules governing the *same* underlying business decision can be compared across different source documents, even when their wording or conditions differ. Cross-document contradiction detection aligns rules onto decision surfaces via an LLM call, then only reports a conflict when a separate, purely mechanical check also confirms the two rules prescribe different actions — the mechanical gate means a hallucinated alignment can never produce a false contradiction on its own. See [Week 5 Task 10](week5-task10-eval-harness-integration.md).
+A short, stable label (e.g. `refund_eligibility`, `sla_credit`) assigned to a rule so that rules governing the *same* underlying business decision can be compared across different source documents, even when their wording or conditions differ. Cross-document contradiction detection aligns rules onto decision surfaces via an LLM call, then applies mechanical action and predicate-overlap guards before asking the LLM for a focused conflict check. The guards reject obvious false candidates but are intentionally not a complete constraint solver. See [Week 5 Task 10](week5-task10-eval-harness-integration.md) and the [final fix wave](week7-task9-final-fix-wave.md).
 
 ## Binomial test (contradiction significance)
 

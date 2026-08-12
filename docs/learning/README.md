@@ -11,6 +11,7 @@ See `GLOSSARY.md` for a running list of concepts introduced across debriefs.
 6. [Task 6: Cross-document contradiction UI](week7-task6-cross-document-ui.md)
 7. [Task 7: Consistency checker workflow](week7-task7-consistency-checker-workflow.md)
 8. [Task 8: Integration testing and final polish](week7-task8-integration-testing-final-polish.md)
+9. [Task 9: Final review fix wave](week7-task9-final-fix-wave.md)
 
 ## Week 6 — v1.0 completion
 
