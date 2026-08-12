@@ -122,3 +122,15 @@ def get_simulation(sim_id: str) -> dict:
     )
     resp.raise_for_status()
     return resp.json()
+
+
+def detect_cross_document_contradictions(skill_version_ids: list[str]) -> list[dict]:
+    """Return contradictions found across approved skill versions."""
+    resp = requests.post(
+        f"{API_BASE}/cross-document-contradictions",
+        json={"skill_version_ids": skill_version_ids},
+        headers=get_headers(),
+        timeout=60,
+    )
+    resp.raise_for_status()
+    return resp.json()
