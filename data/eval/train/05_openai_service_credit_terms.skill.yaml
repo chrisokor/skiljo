@@ -35,9 +35,9 @@ decision_zones:
       action: deny_transfer_or_sale_prohibited
       citation:
         span:
-          start: 759
-          end: 1017
-        quoted_text: "If OpenAI determines that credits were used in violation of these terms \u2014 including any attempted unauthorized transfer, sale, or gifting \u2014 OpenAI may, in its sole discretion, revoke the applicable credits and terminate the associated account without refund."
+          start: 560
+          end: 730
+        quoted_text: "Credits are non-transferable. You may not sell, gift, sublicense, assign, or otherwise transfer credits to any other individual or entity. Any attempted transfer is void."
     - condition:
         all:
           - field: days_since_purchase
@@ -63,9 +63,9 @@ decision_zones:
       action: deny_refund_credits_already_used
       citation:
         span:
-          start: 759
-          end: 1017
-        quoted_text: "If OpenAI determines that credits were used in violation of these terms \u2014 including any attempted unauthorized transfer, sale, or gifting \u2014 OpenAI may, in its sole discretion, revoke the applicable credits and terminate the associated account without refund."
+          start: 197
+          end: 376
+        quoted_text: "All OpenAI API service credits are non-refundable except where required by applicable law. Once purchased, credits cannot be exchanged for cash or any other form of consideration."
   llm_assisted: []
   human_only:
     - condition:

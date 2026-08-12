@@ -76,9 +76,9 @@ decision_zones:
       action: issue_credit_10_percent_capped_at_50_percent_monthly_bill
       citation:
         span:
-          start: 1082
+          start: 390
           end: 1398
-        quoted_text: "To receive a Service Credit, you must submit a request within 30 days of the incident. Claims submitted after 30 days will not be eligible for credit. Requests must be submitted through the Google Cloud Console support portal and must include the relevant resource IDs, timestamps, and a description of the incident."
+        quoted_text: "Instances in Multiple Zones:\n- Less than 99.99% but greater than or equal to 99.0%: 10% credit of monthly charges\n- Less than 99.0% but greater than or equal to 95.0%: 25% credit of monthly charges\n- Less than 95.0%: 50% credit of monthly charges\n\nSingle Instance:\n- Less than 99.5% but greater than or equal to 99.0%: 10% credit of monthly charges\n- Less than 99.0% but greater than or equal to 95.0%: 25% credit of monthly charges\n- Less than 95.0%: 50% credit of monthly charges\n\nService Credit Cap\n\nIn no event will the total service credits issued in any single billing month exceed 50% of the amounts paid or payable by you for Compute Engine in that month.\n\nClaim Notification Window\n\nTo receive a Service Credit, you must submit a request within 30 days of the incident. Claims submitted after 30 days will not be eligible for credit. Requests must be submitted through the Google Cloud Console support portal and must include the relevant resource IDs, timestamps, and a description of the incident."
     - condition:
         all:
           - field: claim_submitted_via_support_portal
@@ -102,9 +102,9 @@ decision_zones:
       action: issue_credit_25_percent_capped_at_50_percent_monthly_bill
       citation:
         span:
-          start: 1082
+          start: 390
           end: 1398
-        quoted_text: "To receive a Service Credit, you must submit a request within 30 days of the incident. Claims submitted after 30 days will not be eligible for credit. Requests must be submitted through the Google Cloud Console support portal and must include the relevant resource IDs, timestamps, and a description of the incident."
+        quoted_text: "Instances in Multiple Zones:\n- Less than 99.99% but greater than or equal to 99.0%: 10% credit of monthly charges\n- Less than 99.0% but greater than or equal to 95.0%: 25% credit of monthly charges\n- Less than 95.0%: 50% credit of monthly charges\n\nSingle Instance:\n- Less than 99.5% but greater than or equal to 99.0%: 10% credit of monthly charges\n- Less than 99.0% but greater than or equal to 95.0%: 25% credit of monthly charges\n- Less than 95.0%: 50% credit of monthly charges\n\nService Credit Cap\n\nIn no event will the total service credits issued in any single billing month exceed 50% of the amounts paid or payable by you for Compute Engine in that month.\n\nClaim Notification Window\n\nTo receive a Service Credit, you must submit a request within 30 days of the incident. Claims submitted after 30 days will not be eligible for credit. Requests must be submitted through the Google Cloud Console support portal and must include the relevant resource IDs, timestamps, and a description of the incident."
     - condition:
         all:
           - field: claim_submitted_via_support_portal
@@ -125,9 +125,9 @@ decision_zones:
       action: issue_credit_50_percent_capped_at_50_percent_monthly_bill
       citation:
         span:
-          start: 1082
+          start: 390
           end: 1398
-        quoted_text: "To receive a Service Credit, you must submit a request within 30 days of the incident. Claims submitted after 30 days will not be eligible for credit. Requests must be submitted through the Google Cloud Console support portal and must include the relevant resource IDs, timestamps, and a description of the incident."
+        quoted_text: "Instances in Multiple Zones:\n- Less than 99.99% but greater than or equal to 99.0%: 10% credit of monthly charges\n- Less than 99.0% but greater than or equal to 95.0%: 25% credit of monthly charges\n- Less than 95.0%: 50% credit of monthly charges\n\nSingle Instance:\n- Less than 99.5% but greater than or equal to 99.0%: 10% credit of monthly charges\n- Less than 99.0% but greater than or equal to 95.0%: 25% credit of monthly charges\n- Less than 95.0%: 50% credit of monthly charges\n\nService Credit Cap\n\nIn no event will the total service credits issued in any single billing month exceed 50% of the amounts paid or payable by you for Compute Engine in that month.\n\nClaim Notification Window\n\nTo receive a Service Credit, you must submit a request within 30 days of the incident. Claims submitted after 30 days will not be eligible for credit. Requests must be submitted through the Google Cloud Console support portal and must include the relevant resource IDs, timestamps, and a description of the incident."
     - condition:
         all:
           - field: claim_submitted_via_support_portal
@@ -151,9 +151,9 @@ decision_zones:
       action: issue_credit_10_percent_capped_at_50_percent_monthly_bill
       citation:
         span:
-          start: 1082
+          start: 638
           end: 1398
-        quoted_text: "To receive a Service Credit, you must submit a request within 30 days of the incident. Claims submitted after 30 days will not be eligible for credit. Requests must be submitted through the Google Cloud Console support portal and must include the relevant resource IDs, timestamps, and a description of the incident."
+        quoted_text: "Single Instance:\n- Less than 99.5% but greater than or equal to 99.0%: 10% credit of monthly charges\n- Less than 99.0% but greater than or equal to 95.0%: 25% credit of monthly charges\n- Less than 95.0%: 50% credit of monthly charges\n\nService Credit Cap\n\nIn no event will the total service credits issued in any single billing month exceed 50% of the amounts paid or payable by you for Compute Engine in that month.\n\nClaim Notification Window\n\nTo receive a Service Credit, you must submit a request within 30 days of the incident. Claims submitted after 30 days will not be eligible for credit. Requests must be submitted through the Google Cloud Console support portal and must include the relevant resource IDs, timestamps, and a description of the incident."
     - condition:
         all:
           - field: claim_submitted_via_support_portal
@@ -177,9 +177,9 @@ decision_zones:
       action: issue_credit_25_percent_capped_at_50_percent_monthly_bill
       citation:
         span:
-          start: 1082
+          start: 638
           end: 1398
-        quoted_text: "To receive a Service Credit, you must submit a request within 30 days of the incident. Claims submitted after 30 days will not be eligible for credit. Requests must be submitted through the Google Cloud Console support portal and must include the relevant resource IDs, timestamps, and a description of the incident."
+        quoted_text: "Single Instance:\n- Less than 99.5% but greater than or equal to 99.0%: 10% credit of monthly charges\n- Less than 99.0% but greater than or equal to 95.0%: 25% credit of monthly charges\n- Less than 95.0%: 50% credit of monthly charges\n\nService Credit Cap\n\nIn no event will the total service credits issued in any single billing month exceed 50% of the amounts paid or payable by you for Compute Engine in that month.\n\nClaim Notification Window\n\nTo receive a Service Credit, you must submit a request within 30 days of the incident. Claims submitted after 30 days will not be eligible for credit. Requests must be submitted through the Google Cloud Console support portal and must include the relevant resource IDs, timestamps, and a description of the incident."
     - condition:
         all:
           - field: claim_submitted_via_support_portal
@@ -200,8 +200,8 @@ decision_zones:
       action: issue_credit_50_percent_capped_at_50_percent_monthly_bill
       citation:
         span:
-          start: 1082
+          start: 638
           end: 1398
-        quoted_text: "To receive a Service Credit, you must submit a request within 30 days of the incident. Claims submitted after 30 days will not be eligible for credit. Requests must be submitted through the Google Cloud Console support portal and must include the relevant resource IDs, timestamps, and a description of the incident."
+        quoted_text: "Single Instance:\n- Less than 99.5% but greater than or equal to 99.0%: 10% credit of monthly charges\n- Less than 99.0% but greater than or equal to 95.0%: 25% credit of monthly charges\n- Less than 95.0%: 50% credit of monthly charges\n\nService Credit Cap\n\nIn no event will the total service credits issued in any single billing month exceed 50% of the amounts paid or payable by you for Compute Engine in that month.\n\nClaim Notification Window\n\nTo receive a Service Credit, you must submit a request within 30 days of the incident. Claims submitted after 30 days will not be eligible for credit. Requests must be submitted through the Google Cloud Console support portal and must include the relevant resource IDs, timestamps, and a description of the incident."
   llm_assisted: []
   human_only: []

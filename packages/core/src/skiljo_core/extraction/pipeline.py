@@ -48,15 +48,22 @@ def run_extraction_pipeline(
 ) -> Skill:
     segments = segment_policy(llm_client, policy_text, model=model)
     candidate_rules: list[DeterministicRule] = []
+    invalid_citation_errors: list[str] = []
     for segment in segments:
         segment_start = _find_segment_start(segment.text, policy_text)
         rules = extract_rules(llm_client, segment, model=model)
         for rule in rules:
-            candidate_rules.append(
-                _to_document_relative_rule(
-                    rule, segment.text, segment_start, policy_text
+            try:
+                candidate_rules.append(
+                    _to_document_relative_rule(
+                        rule, segment.text, segment_start, policy_text
+                    )
                 )
-            )
+            except ValueError as exc:
+                invalid_citation_errors.append(f"{rule.action}: {exc}")
+    if not candidate_rules:
+        details = "; ".join(invalid_citation_errors) or "no rules were extracted"
+        raise ValueError(f"Extraction produced no candidate rules with valid citations: {details}")
     decision_zones = classify_rules(llm_client, candidate_rules, model=model)
     return assemble_skill(
         llm_client,

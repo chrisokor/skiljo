@@ -58,9 +58,9 @@ decision_zones:
       action: deduct_overage_from_monthly_credit_then_charge_on_demand
       citation:
         span:
-          start: 740
-          end: 841
-        quoted_text: "Included Infrastructure Allocations (per month):\n- 1 TB Fast Data Transfer\n- 10,000,000 Edge Requests"
+          start: 843
+          end: 1116
+        quoted_text: "Credit and Allocation Cascade Logic:\n1. Included allocations are consumed first (no charge).\n2. After included allocations are exhausted, usage is charged against the $20 monthly credit.\n3. After the monthly credit is exhausted, usage is billed on-demand at per-unit rates."
     - condition:
         all:
           - field: monthly_credit_consumed_usd
@@ -69,9 +69,9 @@ decision_zones:
       action: send_75_percent_credit_usage_notification
       citation:
         span:
-          start: 843
-          end: 1116
-        quoted_text: "Credit and Allocation Cascade Logic:\n1. Included allocations are consumed first (no charge).\n2. After included allocations are exhausted, usage is charged against the $20 monthly credit.\n3. After the monthly credit is exhausted, usage is billed on-demand at per-unit rates."
+          start: 1340
+          end: 1585
+        quoted_text: "You will receive automatic notifications when your usage has reached 75% of your monthly credit. Once you exceed the monthly credit, Vercel switches your team to on-demand usage and you will receive daily and weekly summary emails of your usage."
     - condition:
         all:
           - field: on_demand_spend_usd
@@ -90,8 +90,8 @@ decision_zones:
       action: charge_enabled_add_ons_at_published_rates
       citation:
         span:
-          start: 843
-          end: 1116
-        quoted_text: "Credit and Allocation Cascade Logic:\n1. Included allocations are consumed first (no charge).\n2. After included allocations are exhausted, usage is charged against the $20 monthly credit.\n3. After the monthly credit is exhausted, usage is billed on-demand at per-unit rates."
+          start: 1841
+          end: 2247
+        quoted_text: "The following features are available as add-ons:\n- SAML Single Sign-On: $300/month\n- HIPAA BAA: $350/month\n- Advanced Deployment Protection: $150/month\n- Flags Explorer: $250/month\n- Observability Plus: $1.20 per 1 million events\n- Preview Deployment Suffix: $100/month\n- Static IPs: $100/month per project, plus Private Data Transfer\n- Web Analytics Plus: $10/month\n- Speed Insights: $10/month per project"
   llm_assisted: []
   human_only: []

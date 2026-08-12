@@ -34,6 +34,24 @@ def _skill(action: str, zone: str = "deterministic") -> Skill:
     )
 
 
+def _skill_with_condition(action: str, condition: Condition) -> Skill:
+    return Skill(
+        skill_name="process_refund_request",
+        version=1,
+        trigger="customer_requests_refund",
+        inputs=[],
+        decision_zones=DecisionZones(
+            deterministic=[
+                DeterministicRule(
+                    condition=condition, action=action, citation=TEST_CITATION
+                )
+            ],
+            llm_assisted=[],
+            human_only=[],
+        ),
+    )
+
+
 def test_detects_refund_policy_conflict() -> None:
     """Shopify ToS ("no refunds") vs help-center ("case-by-case review")."""
     tos = PolicyDocument(policy_id="shopify_tos", skill=_skill("deny_refund_no_refunds_policy", "deterministic"))
@@ -144,6 +162,138 @@ def test_mechanical_check_skips_identical_actions_without_llm_call() -> None:
     assert contradictions == []
     conflict_check_calls = [c for c in fake_client.calls if c["prompt_version"] == "cross_document_conflict_v1"]
     assert conflict_check_calls == []
+
+
+def test_mechanical_check_rejects_rules_without_overlapping_predicate_fields() -> None:
+    days_condition = Condition(
+        all=[
+            ConditionOrPredicate(
+                root=Predicate(field="days_since_purchase", op=Operator.lte, value=30)
+            )
+        ]
+    )
+    segment_condition = Condition(
+        all=[
+            ConditionOrPredicate(
+                root=Predicate(field="customer_segment", op=Operator.eq, value="vip")
+            )
+        ]
+    )
+    doc_a = PolicyDocument(
+        policy_id="policy_a", skill=_skill_with_condition("approve_refund", days_condition)
+    )
+    doc_b = PolicyDocument(
+        policy_id="policy_b", skill=_skill_with_condition("deny_refund", segment_condition)
+    )
+    fake_client = FakeLLMClient(
+        [
+            DecisionSurfaceClassification(decision_surface="refund_eligibility"),
+            DecisionSurfaceClassification(decision_surface="refund_eligibility"),
+        ]
+    )
+
+    assert detect_cross_document_contradictions([doc_a, doc_b], fake_client) == []
+    assert all(
+        call["prompt_version"] != "cross_document_conflict_v1"
+        for call in fake_client.calls
+    )
+
+
+def test_mechanical_check_rejects_disjoint_equality_predicates() -> None:
+    monthly = Condition(
+        all=[
+            ConditionOrPredicate(
+                root=Predicate(field="billing_cadence", op=Operator.eq, value="monthly")
+            )
+        ]
+    )
+    annual = Condition(
+        all=[
+            ConditionOrPredicate(
+                root=Predicate(field="billing_cadence", op=Operator.eq, value="annual")
+            )
+        ]
+    )
+    doc_a = PolicyDocument(
+        policy_id="policy_a", skill=_skill_with_condition("approve_refund", monthly)
+    )
+    doc_b = PolicyDocument(
+        policy_id="policy_b", skill=_skill_with_condition("deny_refund", annual)
+    )
+    fake_client = FakeLLMClient(
+        [
+            DecisionSurfaceClassification(decision_surface="refund_eligibility"),
+            DecisionSurfaceClassification(decision_surface="refund_eligibility"),
+        ]
+    )
+
+    assert detect_cross_document_contradictions([doc_a, doc_b], fake_client) == []
+
+
+def test_mechanical_check_rejects_disjoint_numeric_thresholds() -> None:
+    recent = Condition(
+        all=[
+            ConditionOrPredicate(
+                root=Predicate(field="days_since_purchase", op=Operator.lt, value=30)
+            )
+        ]
+    )
+    old = Condition(
+        all=[
+            ConditionOrPredicate(
+                root=Predicate(field="days_since_purchase", op=Operator.gt, value=90)
+            )
+        ]
+    )
+    doc_a = PolicyDocument(
+        policy_id="policy_a", skill=_skill_with_condition("approve_refund", recent)
+    )
+    doc_b = PolicyDocument(
+        policy_id="policy_b", skill=_skill_with_condition("deny_refund", old)
+    )
+    fake_client = FakeLLMClient(
+        [
+            DecisionSurfaceClassification(decision_surface="refund_eligibility"),
+            DecisionSurfaceClassification(decision_surface="refund_eligibility"),
+        ]
+    )
+
+    assert detect_cross_document_contradictions([doc_a, doc_b], fake_client) == []
+
+
+def test_mechanical_check_treats_equivalent_numeric_equalities_as_overlapping() -> None:
+    integer_amount = Condition(
+        all=[
+            ConditionOrPredicate(
+                root=Predicate(field="refund_amount", op=Operator.eq, value=1)
+            )
+        ]
+    )
+    float_amount = Condition(
+        all=[
+            ConditionOrPredicate(
+                root=Predicate(field="refund_amount", op=Operator.eq, value=1.0)
+            )
+        ]
+    )
+    doc_a = PolicyDocument(
+        policy_id="policy_a",
+        skill=_skill_with_condition("approve_refund", integer_amount),
+    )
+    doc_b = PolicyDocument(
+        policy_id="policy_b", skill=_skill_with_condition("deny_refund", float_amount)
+    )
+    fake_client = FakeLLMClient(
+        [
+            DecisionSurfaceClassification(decision_surface="refund_eligibility"),
+            DecisionSurfaceClassification(decision_surface="refund_eligibility"),
+            ConflictCheck(is_conflict=True, rationale="same amount, different action"),
+        ]
+    )
+
+    contradictions = detect_cross_document_contradictions([doc_a, doc_b], fake_client)
+
+    assert len(contradictions) == 1
 
 
 def test_ignores_pairs_within_the_same_document() -> None:

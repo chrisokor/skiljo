@@ -1,10 +1,19 @@
+import json
+from pathlib import Path
+
 import pytest
 
 from skiljo_core.schemas.rule_schema import Condition, ConditionOrPredicate, Operator, Predicate
 from skiljo_core.schemas.skill_schema import DecisionZones, Input, Skill, Type
 from skiljo_core.schemas.rule_schema import DeterministicRule, LLMAssistedRule, HumanOnlyRule
 from skiljo_core.simulation.generator import DivergenceSpec, generate_ticket_batch
+from skiljo_core.extraction.citation_validator import validate_citation
 from skiljo_core.testing import TEST_CITATION
+
+
+SYNTHETIC_FIXTURE_DIR = (
+    Path(__file__).resolve().parents[3] / "data" / "synthetic_tickets" / "refund_v1"
+)
 
 
 def _base_skill() -> Skill:
@@ -136,3 +145,18 @@ def test_planted_divergences_present_at_expected_rate() -> None:
     rate = len(approved) / len(matching)
     # With 500 tickets and 0.5 frequency, rate should be ~50% ± 20% (generous tolerance)
     assert 0.30 <= rate <= 0.70, f"expected ~50% divergence rate, got {rate:.2f}"
+
+
+def test_refund_v1_fixture_citations_resolve_against_source_policy() -> None:
+    source_text = (SYNTHETIC_FIXTURE_DIR / "policy.txt").read_text()
+    skill = Skill.model_validate(
+        json.loads((SYNTHETIC_FIXTURE_DIR / "skill.json").read_text())
+    )
+
+    rules = [
+        *skill.decision_zones.deterministic,
+        *skill.decision_zones.llm_assisted,
+        *skill.decision_zones.human_only,
+    ]
+    assert len(rules) == 4
+    assert all(validate_citation(rule.citation, source_text) for rule in rules)

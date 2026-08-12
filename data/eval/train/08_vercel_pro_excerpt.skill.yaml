@@ -30,9 +30,9 @@ decision_zones:
       action: charge_platform_fee_only
       citation:
         span:
-          start: 291
-          end: 400
-        quoted_text: "Each month, you have the following included allocations:\n- 1 TB Fast Data Transfer\n- 10,000,000 Edge Requests"
+          start: 1160
+          end: 1357
+        quoted_text: "The Pro platform fee is $20/month, which includes 1 deploying team seat and the $20/month usage credit. Additional deploying seats (Owner or Member roles) are $20/month each. Viewer seats are free."
     - condition:
         all:
           - field: monthly_credit_consumed_usd
@@ -55,9 +55,9 @@ decision_zones:
       action: apply_monthly_credit_then_charge_on_demand
       citation:
         span:
-          start: 291
-          end: 400
-        quoted_text: "Each month, you have the following included allocations:\n- 1 TB Fast Data Transfer\n- 10,000,000 Edge Requests"
+          start: 85
+          end: 537
+        quoted_text: "Every Pro plan includes $20 in monthly credit. This credit applies to all managed infrastructure billable resources after their respective included allocations are exceeded.\n\nIncluded Infrastructure Usage\n\nEach month, you have the following included allocations:\n- 1 TB Fast Data Transfer\n- 10,000,000 Edge Requests\n\nOnce you exceed these included allocations, Vercel will charge usage against your monthly credit before switching to on-demand billing."
     - condition:
         all:
           - field: additional_seats
@@ -66,8 +66,8 @@ decision_zones:
       action: charge_additional_seats_at_20_per_seat
       citation:
         span:
-          start: 1024
-          end: 1144
-        quoted_text: "By default, Vercel enables spend management notifications for new customers at a spend amount of $200 per billing cycle."
+          start: 1160
+          end: 1357
+        quoted_text: "The Pro platform fee is $20/month, which includes 1 deploying team seat and the $20/month usage credit. Additional deploying seats (Owner or Member roles) are $20/month each. Viewer seats are free."
   llm_assisted: []
   human_only: []

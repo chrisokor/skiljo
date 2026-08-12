@@ -16,9 +16,9 @@ decision_zones:
       action: deny_refund_tos_no_exceptions
       citation:
         span:
-          start: 0
-          end: 40
-        quoted_text: "GitHub Copilot \u2014 Operational Refund Flow"
+          start: 42
+          end: 231
+        quoted_text: "GitHub's Terms of Service state that there are no refunds or credits for\npartial months of service, downgrade refunds, or refunds for unused months\nwith an open account, with no exceptions."
   llm_assisted: []
   human_only:
     - condition:
@@ -33,6 +33,6 @@ decision_zones:
 
       citation:
         span:
-          start: 42
-          end: 231
-        quoted_text: "GitHub's Terms of Service state that there are no refunds or credits for\npartial months of service, downgrade refunds, or refunds for unused months\nwith an open account, with no exceptions."
+          start: 233
+          end: 528
+        quoted_text: "Separately, GitHub's published support flow for Copilot subscriptions\ndescribes a 30-day refund window for an unused Copilot subscription, handled\ncase-by-case through the support Virtual Agent. Support agents evaluate each\nrequest individually against usage data before approving or denying it."

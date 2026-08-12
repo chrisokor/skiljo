@@ -20,7 +20,10 @@
           ]
         },
         "action": "approve_refund",
-        "citation": {"span": {"start": 0, "end": 1}, "quoted_text": "x"}
+        "citation": {
+          "span": {"start": 15, "end": 113},
+          "quoted_text": "Refunds of $100 or less are approved when requested within 30 days and no fraud flags are present."
+        }
       },
       {
         "condition": {
@@ -29,7 +32,10 @@
           ]
         },
         "action": "escalate_to_finance",
-        "citation": {"span": {"start": 0, "end": 1}, "quoted_text": "x"}
+        "citation": {
+          "span": {"start": 115, "end": 162},
+          "quoted_text": "Refunds over $500 must be escalated to Finance."
+        }
       }
     ],
     "llm_assisted": [
@@ -41,7 +47,10 @@
         },
         "action": "draft_recommendation",
         "requires_human_approval": true,
-        "citation": {"span": {"start": 0, "end": 1}, "quoted_text": "x"}
+        "citation": {
+          "span": {"start": 164, "end": 234},
+          "quoted_text": "Goodwill requests require a drafted recommendation and human approval."
+        }
       }
     ],
     "human_only": [
@@ -52,7 +61,10 @@
           ]
         },
         "action": "escalate_to_fraud_team",
-        "citation": {"span": {"start": 0, "end": 1}, "quoted_text": "x"}
+        "citation": {
+          "span": {"start": 236, "end": 297},
+          "quoted_text": "Tickets with fraud flags must be escalated to the fraud team."
+        }
       }
     ]
   }

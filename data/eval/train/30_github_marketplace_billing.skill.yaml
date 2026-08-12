@@ -29,8 +29,8 @@ decision_zones:
       action: apply_plan_immediately_and_charge_prorated_difference
       citation:
         span:
-          start: 28
-          end: 409
-        quoted_text: "If you downgrade or cancel a Marketplace app's paid plan, no refund or credit\nis issued for the unused portion of the current billing cycle. Your current\nplan, and any features or usage limits associated with it, remains active\nuntil the end of the billing cycle in which you downgraded or canceled; the\nnew (lower or free) plan takes effect at the start of the next billing cycle."
+          start: 411
+          end: 579
+        quoted_text: "Upgrades to a higher Marketplace plan take effect immediately, and the\nprorated difference for the remainder of the current cycle is charged at the\ntime of the upgrade."
   llm_assisted: []
   human_only: []

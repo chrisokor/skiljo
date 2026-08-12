@@ -31,8 +31,8 @@ decision_zones:
       action: deny_refund_all_fees_nonrefundable
       citation:
         span:
-          start: 62
-          end: 373
-        quoted_text: "Some features available through Vercel are provided by third parties\n(\"Non-Vercel Services\"). If a Non-Vercel Service you have paid for through\nVercel ceases to be offered, Vercel will issue a prorated refund for the\nunused portion of fees attributable to that Non-Vercel Service for the\ncurrent billing period."
+          start: 375
+          end: 551
+        quoted_text: "This refund right applies only to Non-Vercel Services; it does not extend to\ncore Vercel platform features, which remain governed by the standard\nall-fees-nonrefundable policy."
   llm_assisted: []
   human_only: []

@@ -2,7 +2,7 @@ import asyncio
 import os
 import uuid
 from datetime import UTC, datetime
-from typing import Any, Protocol, Sequence
+from typing import Any
 
 from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException
 from fastapi.responses import HTMLResponse
@@ -14,12 +14,10 @@ from skiljo_core.db.models import Job, SimulationResult, SimulationRun, SkillVer
 from skiljo_core.db.session import SessionLocal
 from skiljo_core.llm.base import LLMClient
 from skiljo_core.schemas.simulation_report_schema import (
-    Citation as ReportCitation,
     Contradiction as ReportContradiction,
     EstimatedFinancialImpact,
     SimulationReport,
 )
-from skiljo_core.schemas.rule_schema import Citation as SourceCitation
 from skiljo_core.schemas.skill_schema import Skill
 from skiljo_core.schemas.ticket_schema import Ticket
 from skiljo_core.simulation.contradictions import (
@@ -49,44 +47,15 @@ class SimulationResponse(BaseModel):
     status: str
 
 
-class _CitedRule(Protocol):
-    action: str
-    citation: SourceCitation
-
-
-def _report_citation_for_decision(
-    skill: Skill, skill_version_id: uuid.UUID, decision: str
-) -> ReportCitation | None:
-    """Return a citation only when one rule unambiguously produced a decision."""
-    candidates: list[ReportCitation] = []
-
-    def collect_citations(zone_name: str, rules: Sequence[_CitedRule]) -> None:
-        for index, rule in enumerate(rules):
-            if rule.action == decision:
-                candidates.append(
-                    ReportCitation(
-                        policy_id=str(skill_version_id),
-                        rule_id=f"{zone_name}[{index}]",
-                        span_start=rule.citation.span.start,
-                        span_end=rule.citation.span.end,
-                        quoted_text=rule.citation.quoted_text,
-                    )
-                )
-
-    for zone_name, rules in (
-        ("deterministic", skill.decision_zones.deterministic),
-        ("llm_assisted", skill.decision_zones.llm_assisted),
-        ("human_only", skill.decision_zones.human_only),
-    ):
-        collect_citations(zone_name, rules)
-
-    return candidates[0] if len(candidates) == 1 else None
-
-
 def _report_contradictions(
-    skill: Skill, skill_version_id: uuid.UUID, contradictions: list[DetectedContradiction]
+    contradictions: list[DetectedContradiction],
 ) -> list[ReportContradiction]:
-    """Convert detector output to the persisted public report contract."""
+    """Convert detector output without inventing rule execution provenance.
+
+    Simulation Result does not currently carry an executed rule identity. An
+    action string can also come from an LLM recommendation or the default
+    escalation path, so it is not sufficient evidence for a source citation.
+    """
     return [
         ReportContradiction(
             cluster_key=contradiction.cluster_key,
@@ -95,9 +64,7 @@ def _report_contradictions(
             frequency=contradiction.frequency,
             ticket_count=contradiction.ticket_count,
             affected_ticket_ids=contradiction.affected_ticket_ids,
-            citation=_report_citation_for_decision(
-                skill, skill_version_id, contradiction.written_decision
-            ),
+            citation=None,
             estimated_financial_impact=(
                 EstimatedFinancialImpact(
                     divergent_ticket_count=contradiction.estimated_financial_impact.divergent_ticket_count,
@@ -146,9 +113,7 @@ def _run_simulation_job(
             report = report.model_copy(
                 update={
                     "contradiction_count": len(contradictions),
-                    "contradictions": _report_contradictions(
-                        skill, skill_version_id, contradictions
-                    ),
+                    "contradictions": _report_contradictions(contradictions),
                 }
             )
 

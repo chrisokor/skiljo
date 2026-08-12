@@ -26,9 +26,9 @@ decision_zones:
       action: deny_refund_plans_nonrefundable_per_tos
       citation:
         span:
-          start: 730
-          end: 1052
-        quoted_text: "Eligibility windows for case-by-case review:\n- Monthly subscriptions: within 7 days of invoice issue\n- First invoice after trial: within 30 days of invoice issue\n- Annual subscriptions: within 30 days of invoice issue\n- SEPA Direct Debit: within 14 days of invoice issue\n- Brazil merchants: within 90 days of invoice issue"
+          start: 258
+          end: 402
+        quoted_text: "Shopify plans are generally non-refundable as stated in Shopify's Terms of Service. Shopify does not provide refunds for subscription fees paid."
   llm_assisted: []
   human_only:
     - condition:
@@ -68,6 +68,6 @@ decision_zones:
 
       citation:
         span:
-          start: 730
-          end: 1052
-        quoted_text: "Eligibility windows for case-by-case review:\n- Monthly subscriptions: within 7 days of invoice issue\n- First invoice after trial: within 30 days of invoice issue\n- Annual subscriptions: within 30 days of invoice issue\n- SEPA Direct Debit: within 14 days of invoice issue\n- Brazil merchants: within 90 days of invoice issue"
+          start: 516
+          end: 1182
+        quoted_text: "If you believe you have been charged in error or have a special situation, then you can contact Shopify Support to have your case reviewed. Refund requests are reviewed on a case-by-case basis by Shopify Support.\n\nEligibility windows for case-by-case review:\n- Monthly subscriptions: within 7 days of invoice issue\n- First invoice after trial: within 30 days of invoice issue\n- Annual subscriptions: within 30 days of invoice issue\n- SEPA Direct Debit: within 14 days of invoice issue\n- Brazil merchants: within 90 days of invoice issue\n\nMeeting these time windows does not guarantee a refund. Refund requests are reviewed on a case-by-case basis by Shopify Support."

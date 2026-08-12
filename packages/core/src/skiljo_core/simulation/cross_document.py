@@ -32,7 +32,14 @@ from pydantic import BaseModel
 
 from skiljo_core import config
 from skiljo_core.llm.base import LLMClient
-from skiljo_core.schemas.rule_schema import Condition, DeterministicRule, HumanOnlyRule, LLMAssistedRule
+from skiljo_core.schemas.rule_schema import (
+    Condition,
+    DeterministicRule,
+    HumanOnlyRule,
+    LLMAssistedRule,
+    Operator,
+    Predicate,
+)
 from skiljo_core.schemas.skill_schema import Skill
 
 AnyRule = DeterministicRule | LLMAssistedRule | HumanOnlyRule
@@ -140,6 +147,114 @@ def _rule_refs(policy: PolicyDocument) -> list[RuleRef]:
     return refs
 
 
+def _predicate_fields(condition: Condition) -> set[str]:
+    fields: set[str] = set()
+    for clauses in (condition.all, condition.any):
+        for clause in clauses or []:
+            if isinstance(clause.root, Predicate):
+                fields.add(clause.root.field)
+            else:
+                fields.update(_predicate_fields(clause.root))
+    return fields
+
+
+def _conjunctive_predicates(condition: Condition) -> list[Predicate] | None:
+    """Flatten pure conjunctions; return None when an OR requires real solving."""
+    if condition.any is not None:
+        return None
+    predicates: list[Predicate] = []
+    for clause in condition.all or []:
+        if isinstance(clause.root, Predicate):
+            predicates.append(clause.root)
+            continue
+        nested = _conjunctive_predicates(clause.root)
+        if nested is None:
+            return None
+        predicates.extend(nested)
+    return predicates
+
+
+def _same_value(left: object, right: object) -> bool:
+    if isinstance(left, bool) or isinstance(right, bool):
+        return type(left) is type(right) and left == right
+    return left == right
+
+
+def _numeric_interval_is_empty(predicates: list[Predicate]) -> bool:
+    lower: tuple[float, bool] | None = None
+    upper: tuple[float, bool] | None = None
+
+    def update_lower(value: float, inclusive: bool) -> None:
+        nonlocal lower
+        if lower is None or value > lower[0]:
+            lower = (value, inclusive)
+        elif value == lower[0]:
+            lower = (value, lower[1] and inclusive)
+
+    def update_upper(value: float, inclusive: bool) -> None:
+        nonlocal upper
+        if upper is None or value < upper[0]:
+            upper = (value, inclusive)
+        elif value == upper[0]:
+            upper = (value, upper[1] and inclusive)
+
+    for predicate in predicates:
+        value = predicate.value
+        if isinstance(value, bool) or not isinstance(value, (int, float)):
+            continue
+        numeric_value = float(value)
+        if predicate.op == Operator.gt:
+            update_lower(numeric_value, False)
+        elif predicate.op == Operator.gte:
+            update_lower(numeric_value, True)
+        elif predicate.op == Operator.lt:
+            update_upper(numeric_value, False)
+        elif predicate.op == Operator.lte:
+            update_upper(numeric_value, True)
+        elif predicate.op == Operator.eq:
+            update_lower(numeric_value, True)
+            update_upper(numeric_value, True)
+
+    if lower is None or upper is None:
+        return False
+    if lower[0] > upper[0]:
+        return True
+    return lower[0] == upper[0] and not (lower[1] and upper[1])
+
+
+def _field_constraints_are_disjoint(
+    predicates_a: list[Predicate], predicates_b: list[Predicate]
+) -> bool:
+    equalities_a = [p.value for p in predicates_a if p.op == Operator.eq]
+    equalities_b = [p.value for p in predicates_b if p.op == Operator.eq]
+    if equalities_a and equalities_b and not any(
+        _same_value(left, right)
+        for left in equalities_a
+        for right in equalities_b
+    ):
+        return True
+
+    return _numeric_interval_is_empty([*predicates_a, *predicates_b])
+
+
+def _conditions_may_overlap(condition_a: Condition, condition_b: Condition) -> bool:
+    shared_fields = _predicate_fields(condition_a) & _predicate_fields(condition_b)
+    if not shared_fields:
+        return False
+
+    predicates_a = _conjunctive_predicates(condition_a)
+    predicates_b = _conjunctive_predicates(condition_b)
+    if predicates_a is None or predicates_b is None:
+        return True
+
+    for field_name in shared_fields:
+        field_predicates_a = [p for p in predicates_a if p.field == field_name]
+        field_predicates_b = [p for p in predicates_b if p.field == field_name]
+        if _field_constraints_are_disjoint(field_predicates_a, field_predicates_b):
+            return False
+    return True
+
+
 def _assign_decision_surface(llm_client: LLMClient, ref: RuleRef, model: str) -> str:
     prompt = DECISION_SURFACE_PROMPT_V1.format(
         action=ref.action,
@@ -199,10 +314,10 @@ def detect_cross_document_contradictions(
     LLM-assisted. A candidate pair is only ever reported as a contradiction
     when both of the following hold:
 
-    1. Mechanical check: the two rules' action strings actually differ.
-       Identical actions can never be a contradiction, so this is checked
-       before spending an LLM call, and rules from the *same* document are
-       never paired (same-document divergence is a different problem,
+    1. Mechanical checks: actions differ, predicate fields overlap, and simple
+       conjunctions are not provably disjoint equality/numeric ranges. These
+       are checked before spending a conflict-verification LLM call. Rules
+       from the *same* document are never paired (same-document divergence is
        handled by ``skiljo_core.simulation.contradictions``).
     2. LLM confirmation: a second, focused LLM call is asked whether the
        two rules truly conflict (as opposed to merely covering different
@@ -228,6 +343,8 @@ def detect_cross_document_contradictions(
                 if ref_a.policy_id == ref_b.policy_id:
                     continue
                 if ref_a.action == ref_b.action:
+                    continue
+                if not _conditions_may_overlap(ref_a.condition, ref_b.condition):
                     continue
                 check = _check_conflict(llm_client, ref_a, ref_b, surface, model)
                 if not check.is_conflict:

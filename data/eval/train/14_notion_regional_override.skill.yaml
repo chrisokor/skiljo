@@ -45,9 +45,9 @@ decision_zones:
       action: approve_refund
       citation:
         span:
-          start: 436
-          end: 775
-        quoted_text: "If you are located in the European Union or United Kingdom, you are entitled to a refund within 14 days of your most recent payment, regardless of your billing cadence (monthly or annual). This right is provided under applicable EU and UK consumer protection law and supersedes the standard windows above where they offer a shorter period."
+          start: 76
+          end: 408
+        quoted_text: "If you signed up for a paid Notion subscription by mistake, you can contact us in the app or email to request a refund within the applicable window:\n- Monthly billing plan: refund request must be submitted within 3 days of the invoice date.\n- Annual billing plan: refund request must be submitted within 30 days of the invoice date."
     - condition:
         all:
           - field: customer_region
@@ -62,9 +62,9 @@ decision_zones:
       action: approve_refund
       citation:
         span:
-          start: 436
-          end: 775
-        quoted_text: "If you are located in the European Union or United Kingdom, you are entitled to a refund within 14 days of your most recent payment, regardless of your billing cadence (monthly or annual). This right is provided under applicable EU and UK consumer protection law and supersedes the standard windows above where they offer a shorter period."
+          start: 76
+          end: 408
+        quoted_text: "If you signed up for a paid Notion subscription by mistake, you can contact us in the app or email to request a refund within the applicable window:\n- Monthly billing plan: refund request must be submitted within 3 days of the invoice date.\n- Annual billing plan: refund request must be submitted within 30 days of the invoice date."
     - condition:
         all:
           - field: is_accidental_member_addition
@@ -76,9 +76,9 @@ decision_zones:
       action: approve_prorated_seat_refund
       citation:
         span:
-          start: 436
-          end: 775
-        quoted_text: "If you are located in the European Union or United Kingdom, you are entitled to a refund within 14 days of your most recent payment, regardless of your billing cadence (monthly or annual). This right is provided under applicable EU and UK consumer protection law and supersedes the standard windows above where they offer a shorter period."
+          start: 804
+          end: 968
+        quoted_text: "If you were invoiced for members who were accidentally added to your workspace, we can refund the prorated charges if you reach out within three days of the charge."
     - condition:
         all:
           - field: credits_unused

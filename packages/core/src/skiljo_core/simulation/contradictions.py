@@ -107,8 +107,7 @@ def _build_contradiction(
     time_window: str | None = None,
 ) -> Contradiction | None:
     diverged = [(r, t) for r, t, _, _ in items if r.decision != t.ground_truth_decision]
-    rate = len(diverged) / len(items)
-    if rate <= threshold:
+    if not diverged:
         return None
 
     # Most common (written, observed) pair among divergent items.
@@ -116,16 +115,24 @@ def _build_contradiction(
         (r.decision, t.ground_truth_decision) for r, t in diverged
     )
     (written, observed) = pair_counts.most_common(1)[0][0]
+    representative_items = [
+        (result, ticket)
+        for result, ticket in diverged
+        if result.decision == written and ticket.ground_truth_decision == observed
+    ]
+    rate = len(representative_items) / len(items)
+    if rate <= threshold:
+        return None
 
-    # Financial impact from divergent cluster tickets.
-    divergent_amounts = [t.refund_amount for _, t in diverged]
+    # Metrics and evidence describe the selected decision pair only.
+    divergent_amounts = [ticket.refund_amount for _, ticket in representative_items]
     avg_amount = (
         sum(divergent_amounts) / len(divergent_amounts) if divergent_amounts else 0.0
     )
     financial_impact = FinancialImpact(
-        divergent_ticket_count=len(diverged),
+        divergent_ticket_count=len(representative_items),
         average_refund_amount=avg_amount,
-        estimated_impact_usd=avg_amount * len(diverged),
+        estimated_impact_usd=avg_amount * len(representative_items),
     )
 
     cluster_key: dict[str, Any] = {"amount_band": amount_band, "customer_segment": segment}
@@ -138,17 +145,17 @@ def _build_contradiction(
     # resolved at fine granularity, otherwise the dominant value among the
     # diverged tickets in the coarse fallback cluster.
     descriptive_reason = reason if reason is not None else _mode(
-        [_reason_category(t.refund_reason) for _, t in diverged]
+        [_reason_category(ticket.refund_reason) for _, ticket in representative_items]
     )
     descriptive_time_window = time_window if time_window is not None else _mode(
-        [_time_window(t.purchase_days_ago) for _, t in diverged]
+        [_time_window(ticket.purchase_days_ago) for _, ticket in representative_items]
     )
 
     stats = binomial_test_contradiction(
         {
             "cluster_size": len(items),
             "frequency": rate,
-            "divergence_count": len(diverged),
+            "divergence_count": len(representative_items),
             "base_error_rate": base_error_rate,
             "min_cluster_size": significance_min_cluster_size,
         }
@@ -159,8 +166,8 @@ def _build_contradiction(
         written_decision=written,
         observed_decision=observed,
         frequency=rate,
-        ticket_count=len(items),
-        affected_ticket_ids=[str(r.ticket_id) for r, _ in diverged],
+        ticket_count=len(representative_items),
+        affected_ticket_ids=[str(result.ticket_id) for result, _ in representative_items],
         estimated_financial_impact=financial_impact,
         reason=descriptive_reason,
         time_window=descriptive_time_window,

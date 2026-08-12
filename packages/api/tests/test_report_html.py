@@ -129,6 +129,53 @@ def _seed_skill_with_ambiguous_action() -> uuid.UUID:
         return version_row.id
 
 
+def _seed_skill_with_unexecuted_unique_escalation_action() -> uuid.UUID:
+    """Insert a rule whose action equals the default fallback but never matches."""
+    spec = SkillSchema(
+        skill_name="unexecuted_escalation_policy",
+        version=1,
+        trigger="customer_requests_refund",
+        inputs=[Input(name="refund_amount", type=Type.number)],
+        decision_zones=DecisionZones(
+            deterministic=[
+                DeterministicRule(
+                    condition=Condition(
+                        all=[
+                            ConditionOrPredicate(
+                                root=Predicate(
+                                    field="refund_amount", op=Operator.lt, value=0.0
+                                )
+                            )
+                        ]
+                    ),
+                    action="escalate_to_human",
+                    citation=RuleCitation(
+                        span=Span(start=0, end=25),
+                        quoted_text="unexecuted fallback rule",
+                    ),
+                )
+            ],
+            llm_assisted=[],
+            human_only=[],
+        ),
+    )
+    with SessionLocal() as session:
+        skill_row = Skill(name="unexecuted_escalation_policy")
+        session.add(skill_row)
+        session.flush()
+        version_row = SkillVersion(
+            skill_id=skill_row.id,
+            version_number=1,
+            spec=spec.model_dump(mode="json"),
+            status="approved",
+        )
+        session.add(version_row)
+        session.flush()
+        skill_row.current_version_id = version_row.id
+        session.commit()
+        return version_row.id
+
+
 def _tickets_payload(count: int = 5, ground_truth_decision: str = "approve_refund") -> list[dict]:
     tickets = []
     for i in range(count):
@@ -345,8 +392,8 @@ def test_get_report_html_renders_diagnostic_evidence_and_roi() -> None:
     assert "VIP exception applied" in body
 
 
-def test_completed_simulation_report_preserves_contradiction_citation() -> None:
-    """Detector output is persisted with the cited source rule for the HTML report."""
+def test_completed_simulation_report_omits_unproven_contradiction_citation() -> None:
+    """Decision text alone is insufficient provenance for a report citation."""
     _clean()
     _, version_id = _seed_approved_skill()
     app.dependency_overrides[get_llm_client] = lambda: FakeLLMClient([])
@@ -369,7 +416,7 @@ def test_completed_simulation_report_preserves_contradiction_citation() -> None:
         report = client.get(f"/simulations/{sim_id}/report").json()
 
         assert report["contradiction_count"] == 1
-        assert report["contradictions"][0]["citation"]["quoted_text"] == "x"
+        assert report["contradictions"][0]["citation"] is None
     finally:
         app.dependency_overrides.clear()
 
@@ -401,5 +448,36 @@ def test_ambiguous_action_contradiction_omits_citation() -> None:
         assert report["contradictions"][0]["citation"] is None
         assert "first rule" not in html
         assert "second rule" not in html
+    finally:
+        app.dependency_overrides.clear()
+
+
+def test_unique_but_unexecuted_action_contradiction_omits_citation() -> None:
+    """A default fallback matching one rule action must not inherit that rule's citation."""
+    _clean()
+    version_id = _seed_skill_with_unexecuted_unique_escalation_action()
+    app.dependency_overrides[get_llm_client] = lambda: FakeLLMClient([])
+    client = TestClient(app)
+    try:
+        response = client.post(
+            "/simulations",
+            json={
+                "skill_version_id": str(version_id),
+                "tickets": _tickets_payload(5, ground_truth_decision="approve_refund"),
+            },
+        )
+        job_id = uuid.UUID(response.json()["job_id"])
+        with SessionLocal() as session:
+            job = session.get(Job, job_id)
+            assert job is not None
+            assert job.status == "completed", f"Job failed: {job.error}"
+            sim_id = job.result_ref
+
+        report = client.get(f"/simulations/{sim_id}/report").json()
+        html = client.get(f"/simulations/{sim_id}/report.html").text
+
+        assert report["contradictions"][0]["written_decision"] == "escalate_to_human"
+        assert report["contradictions"][0]["citation"] is None
+        assert "unexecuted fallback rule" not in html
     finally:
         app.dependency_overrides.clear()

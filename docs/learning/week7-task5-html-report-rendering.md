@@ -5,15 +5,17 @@
 `GET /simulations/{sim_id}/report.html` now renders a standalone, print-friendly
 policy consistency report from the persisted `SimulationReport`. The existing
 authenticated simulations router remains the sole endpoint owner. The report
-includes an executive summary, contradiction evidence with source citations and
-financial impact, ROI estimates, automation candidates, an explicit limitation
-for exception classifications not represented by the current contract, and a
-per-ticket evidence appendix.
+includes an executive summary, contradiction evidence, optional source
+citations, financial impact, ROI estimates, automation candidates, an explicit
+limitation for exception classifications not represented by the current
+contract, and a per-ticket evidence appendix.
 
-The simulation background job now converts detected contradictions into the
-existing report schema before persisting the run summary. That conversion carries
-the matching extracted-rule citation forward, including the mechanically
-validated character offsets and quoted source text.
+The simulation background job converts detected contradictions into the
+existing report schema before persisting the run summary. The current simulation
+result contract does not identify the executed rule, so this conversion leaves
+the optional citation empty instead of inferring provenance from an action
+string. The renderer still supports citations when a future producer supplies
+proven rule identity and source evidence.
 
 ## Non-obvious concepts
 
@@ -28,11 +30,11 @@ could drift from the JSON report.
 
 ### Citation provenance in diagnostic output
 
-Contradictions need to show the policy text that produced the written decision.
-The report conversion resolves the first skill rule whose action matches the
-detected written decision and copies its citation span and quote into the public
-report record. When an LLM-assisted decision has no matching rule action, the
-report omits a citation instead of fabricating one.
+Contradictions should show policy text only when the executed source rule is
+known. A decision string is insufficient: the same text can come from a rule,
+an LLM recommendation, or the default escalation path. Until `Result` carries
+exact rule identity, simulation jobs persist `citation: null`; explicitly cited
+stored reports continue to render their evidence.
 
 ### Honest unavailable metrics
 
@@ -68,13 +70,11 @@ new page.
 `make lint typecheck test` passed: Ruff clean, mypy clean, 232 Python tests
 passed with 2 skipped, and 27 SDK tests passed.
 
-## Review fix: ambiguous rule actions
+## Review fix: execution provenance
 
-The first implementation selected the first rule whose `action` matched a
-contradiction's written decision. That was unsafe because actions such as
-`approve_refund` can occur in multiple rules. The resolver now gathers matches
-across every decision zone and emits a citation only when exactly one rule has
-that action. The regression test creates two matching rules with distinct source
-quotes and verifies that both the persisted report and rendered HTML omit the
-citation. This is intentionally conservative: the detector does not currently
-preserve matched rule identity, so a more specific citation cannot be justified.
+The first implementation selected a rule whose `action` matched a
+contradiction's written decision. Even a globally unique action is unsafe: an
+unexecuted rule can share the default fallback's text, and an LLM recommendation
+can repeat a rule action. The conversion now omits every simulation-derived
+contradiction citation until exact rule identity exists. Regressions cover both
+duplicate actions and a unique-but-unexecuted action collision.

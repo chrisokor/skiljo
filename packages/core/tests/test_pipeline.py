@@ -138,13 +138,71 @@ def test_pipeline_rejects_citation_not_valid_for_its_segment_text() -> None:
         ]
     )
 
-    with pytest.raises(ValueError, match="quoted_text mismatch"):
+    with pytest.raises(ValueError, match="no candidate rules with valid citations"):
         run_extraction_pipeline(
             fake_client,
             policy_text=segment_text,
             skill_name="process_refund_request",
             trigger="customer_requests_refund",
         )
+
+
+def test_pipeline_drops_invalid_candidate_when_valid_rule_remains() -> None:
+    segment_text = "Refunds under $100 are approved. Claims after 30 days are denied."
+    fake_client = FakeLLMClient(
+        [
+            SegmentationResult(
+                segments=[Segment(segment_type="thresholds", text=segment_text)]
+            ),
+            CandidateRuleList(
+                rules=[
+                    DeterministicRule(
+                        condition=Condition(
+                            all=[
+                                ConditionOrPredicate(
+                                    root=Predicate(
+                                        field="refund_amount", op=Operator.lt, value=100
+                                    )
+                                )
+                            ]
+                        ),
+                        action="approve_refund",
+                        citation=Citation(
+                            span=Span(start=0, end=7), quoted_text="Refunds"
+                        ),
+                    ),
+                    DeterministicRule(
+                        condition=Condition(
+                            all=[
+                                ConditionOrPredicate(
+                                    root=Predicate(
+                                        field="purchase_days_ago", op=Operator.gt, value=30
+                                    )
+                                )
+                            ]
+                        ),
+                        action="deny_refund",
+                        citation=Citation(
+                            span=Span(start=33, end=39), quoted_text="Credits"
+                        ),
+                    ),
+                ]
+            ),
+            ZoneClassification(zone="deterministic"),
+        ]
+    )
+
+    skill = run_extraction_pipeline(
+        fake_client,
+        policy_text=segment_text,
+        skill_name="process_refund_request",
+        trigger="customer_requests_refund",
+    )
+
+    assert [rule.action for rule in skill.decision_zones.deterministic] == [
+        "approve_refund"
+    ]
+    assert len(fake_client.calls) == 3
 
 
 def test_pipeline_rejects_segment_text_not_resolvable_in_policy() -> None:

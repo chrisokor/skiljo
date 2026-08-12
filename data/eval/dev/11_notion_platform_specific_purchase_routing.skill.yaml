@@ -29,8 +29,8 @@ decision_zones:
       action: route_to_notion_support_standard_refund_windows
       citation:
         span:
-          start: 0
-          end: 57
-        quoted_text: "Notion Refund Policy \u2014 Platform-Specific Purchase Routing"
+          start: 328
+          end: 506
+        quoted_text: "Purchases made online at notion.so or via Google Pay on Android should be\ndirected to Notion support at support@notion.so, and are handled under\nNotion's standard refund windows."
   llm_assisted: []
   human_only: []

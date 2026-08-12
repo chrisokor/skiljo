@@ -48,8 +48,8 @@ decision_zones:
       action: waive_late_fee_on_disputed_portion_pending_resolution
       citation:
         span:
-          start: 300
-          end: 563
-        quoted_text: "Invoices are due within 30 days of receipt (Net 30). Any amount not paid\nwithin 30 days of the due date is subject to a late fee of 1.5% per month, or\nthe maximum rate permitted by applicable law, whichever is lower, accruing\nfrom the due date until paid in full."
+          start: 565
+          end: 779
+        quoted_text: "If a customer disputes a portion of an invoice in good faith, the customer\nmust pay the undisputed portion by the due date; the disputed portion is not\nsubject to a late fee while the dispute is pending resolution."
   llm_assisted: []
   human_only: []

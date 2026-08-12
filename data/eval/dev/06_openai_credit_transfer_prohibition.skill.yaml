@@ -16,9 +16,9 @@ decision_zones:
       action: expire_credits_no_refund
       citation:
         span:
-          start: 52
-          end: 334
-        quoted_text: "Service Credits may not be sold, transferred, or gifted to any other account\nor individual. Any attempt to transfer, sell, or gift Service Credits may\nresult in revocation of the credits without refund, and OpenAI may, at its\ndiscretion, suspend or terminate the associated account."
+          start: 336
+          end: 457
+        quoted_text: "Service Credits expire one year from the date of purchase and are\nnon-refundable at all times, including upon expiration."
   llm_assisted:
     - condition:
         all:

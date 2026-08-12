@@ -60,8 +60,8 @@ decision_zones:
       action: assess_late_fee_and_suspend
       citation:
         span:
-          start: 83
-          end: 225
-        quoted_text: "Customers must maintain sufficient funds to cover fees. Twilio may suspend services if the account lacks funds or the payment method declines."
+          start: 1086
+          end: 1465
+        quoted_text: "If you fail to pay the Fees and remedy such failure within fifteen (15) days of the date Twilio provides you with written notice of the same, then Twilio may:\n(i) assess, and you will pay, a late fee of the lesser of 1.5% per month or the maximum amount allowable by law; and\n(ii) suspend the provision of the Services to all of your accounts until the Fees due are paid in full."
   llm_assisted: []
   human_only: []

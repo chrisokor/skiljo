@@ -37,8 +37,8 @@ decision_zones:
       action: apply_plan_immediately_no_proration
       citation:
         span:
-          start: 34
-          end: 174
-        quoted_text: "When you change your Subscription Plan, the timing of the change and any\nassociated charge or credit depends on the direction of the change."
+          start: 729
+          end: 850
+        quoted_text: "Same-price changes (e.g., switching between plans of equal price): the change\ntakes effect immediately with no proration."
   llm_assisted: []
   human_only: []

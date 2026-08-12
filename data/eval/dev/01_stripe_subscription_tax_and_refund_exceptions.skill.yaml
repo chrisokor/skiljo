@@ -34,7 +34,7 @@ decision_zones:
       citation:
         span:
           start: 51
-          end: 275
-        quoted_text: "All Subscription fees are exclusive of applicable taxes, which are added to\neach invoice based on your billing address. Subscription fees are\nnon-refundable and non-cancelable once paid, except as required by\napplicable law."
+          end: 568
+        quoted_text: "All Subscription fees are exclusive of applicable taxes, which are added to\neach invoice based on your billing address. Subscription fees are\nnon-refundable and non-cancelable once paid, except as required by\napplicable law.\n\nNotwithstanding the foregoing, if Stripe discontinues a Subscription Plan\nfeature you were actively using and paying for, and no reasonably comparable\nreplacement is offered, you are entitled to a prorated refund of fees paid\nfor that feature for the remainder of the current billing period."
   llm_assisted: []
   human_only: []

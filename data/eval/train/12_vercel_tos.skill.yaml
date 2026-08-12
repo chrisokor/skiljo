@@ -43,9 +43,9 @@ decision_zones:
       action: deny_refund_all_fees_nonrefundable
       citation:
         span:
-          start: 0
-          end: 54
-        quoted_text: "Vercel Terms of Service \u2014 Payment and Billing Sections"
+          start: 811
+          end: 895
+        quoted_text: "All fees are non-refundable, except as expressly stated otherwise in this Agreement."
     - condition:
         all:
           - field: non_vercel_service_discontinued
@@ -54,9 +54,9 @@ decision_zones:
       action: issue_prorated_refund_for_discontinued_service
       citation:
         span:
-          start: 91
-          end: 603
-        quoted_text: "Vercel will automatically charge your credit card or other payment method on record with Vercel (\"payment method\") in connection with the use of the Services:\n(i) in advance of each self-service subscription term, for the self-service subscription enabled and any additional Services added;\n(ii) in arrears, at any point during the self-service subscription term, for any Services used or added during the prior self-service subscription term;\n(iii) immediately for any Services that are not recurring in nature."
+          start: 1405
+          end: 1619
+        quoted_text: "If Vercel ceases to offer a service that is not a core Vercel-branded service, Vercel may provide a pro-rated refund for any prepaid fees attributable to the discontinued service for the period following cessation."
   llm_assisted:
     - condition:
         all:

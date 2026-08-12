@@ -28,8 +28,8 @@ decision_zones:
       action: suspend_account_until_paid_in_full
       citation:
         span:
-          start: 51
-          end: 247
-        quoted_text: "Payment is due within 15 days of the invoice date. Invoices unpaid after this\n15-day grace period accrue a late fee of the lesser of 1.5% per month or the\nmaximum rate permitted by applicable law."
+          start: 249
+          end: 461
+        quoted_text: "If an invoice remains unpaid for 45 days past the invoice date, Twilio may\nsuspend the account's ability to send messages or make calls until the\noutstanding balance, including accrued late fees, is paid in full."
   llm_assisted: []
   human_only: []

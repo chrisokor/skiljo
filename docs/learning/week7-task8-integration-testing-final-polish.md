@@ -11,9 +11,10 @@ pipeline converts it from section-relative to document-relative offsets.
 The report endpoint suite now also checks the product delivery contract: the
 response is a complete HTML document with inline CSS and print rules, with no
 external HTTP resources. Existing tests already covered report retrieval,
-not-found and incomplete-run errors, diagnostic evidence, citation persistence,
-and the demo API client's authenticated report fetch, so this task extends
-those tests instead of duplicating them.
+not-found and incomplete-run errors, diagnostic evidence, optional citation
+rendering, conservative omission without rule provenance, and the demo API
+client's authenticated report fetch, so this task extends those tests instead
+of duplicating them.
 
 The design document now records the `GET /simulations/{id}/report.html`
 response, content, and error behavior in the report-rendering section.

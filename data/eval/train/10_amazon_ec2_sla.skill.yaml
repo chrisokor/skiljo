@@ -52,9 +52,9 @@ decision_zones:
       action: issue_credit_10_percent
       citation:
         span:
-          start: 1094
-          end: 1491
-        quoted_text: "To receive a Service Credit for SLA violations (other than the automatic instance credit), you must submit a claim by opening a case in the AWS Support Center. Your claim must:\n- Include \"Amazon Compute SLA Credit Request\" in the subject line\n- Specify the dates and times of the unavailability incident\n- Identify the affected AWS region and Availability Zone\n- List the affected EC2 resource IDs"
+          start: 236
+          end: 1590
+        quoted_text: "Region-Level Credit Tiers:\n- Less than 99.99% but equal to or greater than 99.0%: 10% credit of monthly charges\n- Less than 99.0% but equal to or greater than 95.0%: 30% credit of monthly charges\n- Less than 95.0%: 100% credit of monthly charges\n\nInstance-Level SLA\n\nIndividual EC2 instances receive an Instance-Level Uptime Percentage of at least 99.5%.\n\nInstance-Level Credit Tiers:\n- Less than 99.5% but equal to or greater than 99.0%: 10% credit of monthly charges\n- Less than 99.0% but equal to or greater than 95.0%: 30% credit of monthly charges\n- Less than 95.0%: 100% credit of monthly charges\n\nAutomatic Instance Credit\n\nAWS will not charge you for any Single EC2 Instance that is Unavailable for more than six consecutive minutes within a clock-hour. This credit is applied automatically without requiring a claim submission.\n\nClaim Requirements\n\nTo receive a Service Credit for SLA violations (other than the automatic instance credit), you must submit a claim by opening a case in the AWS Support Center. Your claim must:\n- Include \"Amazon Compute SLA Credit Request\" in the subject line\n- Specify the dates and times of the unavailability incident\n- Identify the affected AWS region and Availability Zone\n- List the affected EC2 resource IDs\n\nClaims must be received by the end of the second billing cycle after which the incident occurred."
     - condition:
         all:
           - field: claim_subject_includes_compute_sla_credit_request
@@ -75,9 +75,9 @@ decision_zones:
       action: issue_credit_30_percent
       citation:
         span:
-          start: 1094
-          end: 1491
-        quoted_text: "To receive a Service Credit for SLA violations (other than the automatic instance credit), you must submit a claim by opening a case in the AWS Support Center. Your claim must:\n- Include \"Amazon Compute SLA Credit Request\" in the subject line\n- Specify the dates and times of the unavailability incident\n- Identify the affected AWS region and Availability Zone\n- List the affected EC2 resource IDs"
+          start: 236
+          end: 1590
+        quoted_text: "Region-Level Credit Tiers:\n- Less than 99.99% but equal to or greater than 99.0%: 10% credit of monthly charges\n- Less than 99.0% but equal to or greater than 95.0%: 30% credit of monthly charges\n- Less than 95.0%: 100% credit of monthly charges\n\nInstance-Level SLA\n\nIndividual EC2 instances receive an Instance-Level Uptime Percentage of at least 99.5%.\n\nInstance-Level Credit Tiers:\n- Less than 99.5% but equal to or greater than 99.0%: 10% credit of monthly charges\n- Less than 99.0% but equal to or greater than 95.0%: 30% credit of monthly charges\n- Less than 95.0%: 100% credit of monthly charges\n\nAutomatic Instance Credit\n\nAWS will not charge you for any Single EC2 Instance that is Unavailable for more than six consecutive minutes within a clock-hour. This credit is applied automatically without requiring a claim submission.\n\nClaim Requirements\n\nTo receive a Service Credit for SLA violations (other than the automatic instance credit), you must submit a claim by opening a case in the AWS Support Center. Your claim must:\n- Include \"Amazon Compute SLA Credit Request\" in the subject line\n- Specify the dates and times of the unavailability incident\n- Identify the affected AWS region and Availability Zone\n- List the affected EC2 resource IDs\n\nClaims must be received by the end of the second billing cycle after which the incident occurred."
     - condition:
         all:
           - field: claim_subject_includes_compute_sla_credit_request
@@ -95,9 +95,9 @@ decision_zones:
       action: issue_credit_100_percent
       citation:
         span:
-          start: 1094
-          end: 1491
-        quoted_text: "To receive a Service Credit for SLA violations (other than the automatic instance credit), you must submit a claim by opening a case in the AWS Support Center. Your claim must:\n- Include \"Amazon Compute SLA Credit Request\" in the subject line\n- Specify the dates and times of the unavailability incident\n- Identify the affected AWS region and Availability Zone\n- List the affected EC2 resource IDs"
+          start: 236
+          end: 1590
+        quoted_text: "Region-Level Credit Tiers:\n- Less than 99.99% but equal to or greater than 99.0%: 10% credit of monthly charges\n- Less than 99.0% but equal to or greater than 95.0%: 30% credit of monthly charges\n- Less than 95.0%: 100% credit of monthly charges\n\nInstance-Level SLA\n\nIndividual EC2 instances receive an Instance-Level Uptime Percentage of at least 99.5%.\n\nInstance-Level Credit Tiers:\n- Less than 99.5% but equal to or greater than 99.0%: 10% credit of monthly charges\n- Less than 99.0% but equal to or greater than 95.0%: 30% credit of monthly charges\n- Less than 95.0%: 100% credit of monthly charges\n\nAutomatic Instance Credit\n\nAWS will not charge you for any Single EC2 Instance that is Unavailable for more than six consecutive minutes within a clock-hour. This credit is applied automatically without requiring a claim submission.\n\nClaim Requirements\n\nTo receive a Service Credit for SLA violations (other than the automatic instance credit), you must submit a claim by opening a case in the AWS Support Center. Your claim must:\n- Include \"Amazon Compute SLA Credit Request\" in the subject line\n- Specify the dates and times of the unavailability incident\n- Identify the affected AWS region and Availability Zone\n- List the affected EC2 resource IDs\n\nClaims must be received by the end of the second billing cycle after which the incident occurred."
   llm_assisted: []
   human_only:
     - condition:

@@ -30,9 +30,9 @@ decision_zones:
       action: apply_overage_against_remaining_usage_credit
       citation:
         span:
-          start: 47
-          end: 222
-        quoted_text: "Your Pro plan includes a base allocation of 1TB of Fast Data Transfer and 10\nmillion Edge Requests per month. Usage within the included allocation incurs\nno additional charge."
+          start: 224
+          end: 521
+        quoted_text: "Usage beyond the included allocation cascades to the monthly usage credit:\noverage is first covered by your remaining $20 usage credit at standard\nper-unit rates. Once the usage credit is exhausted, any further overage is\nbilled directly at the standard per-unit overage rate on your next invoice."
     - condition:
         all:
           - field: usage_within_included_allocation
@@ -44,8 +44,8 @@ decision_zones:
       action: bill_overage_directly_at_standard_rate
       citation:
         span:
-          start: 47
-          end: 222
-        quoted_text: "Your Pro plan includes a base allocation of 1TB of Fast Data Transfer and 10\nmillion Edge Requests per month. Usage within the included allocation incurs\nno additional charge."
+          start: 224
+          end: 521
+        quoted_text: "Usage beyond the included allocation cascades to the monthly usage credit:\noverage is first covered by your remaining $20 usage credit at standard\nper-unit rates. Once the usage credit is exhausted, any further overage is\nbilled directly at the standard per-unit overage rate on your next invoice."
   llm_assisted: []
   human_only: []

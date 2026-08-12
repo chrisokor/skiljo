@@ -34,9 +34,9 @@ decision_zones:
       action: issue_credit_10_percent
       citation:
         span:
-          start: 416
+          start: 175
           end: 863
-        quoted_text: "Claim Requirements:\nTo receive a Service Credit, customers must submit a request through AWS Support within two billing cycles of the incident. The claim must include \"SLA Credit Request\" in the subject line, along with the specific billing cycle, affected region, monthly uptime percentage documentation, and request logs showing error details from the outage period. Claims submitted after this deadline will not be eligible for Service Credits."
+        quoted_text: "Service Credit Tiers:\n- Less than 99.9% but greater than or equal to 99.0%: 10% credit of monthly charges\n- Less than 99.0% but greater than or equal to 95.0%: 25% credit of monthly charges\n- Less than 95.0%: 100% credit of monthly charges\n\nClaim Requirements:\nTo receive a Service Credit, customers must submit a request through AWS Support within two billing cycles of the incident. The claim must include \"SLA Credit Request\" in the subject line, along with the specific billing cycle, affected region, monthly uptime percentage documentation, and request logs showing error details from the outage period. Claims submitted after this deadline will not be eligible for Service Credits."
     - condition:
         all:
           - field: claim_includes_sla_credit_request_subject
@@ -57,9 +57,9 @@ decision_zones:
       action: issue_credit_25_percent
       citation:
         span:
-          start: 416
+          start: 175
           end: 863
-        quoted_text: "Claim Requirements:\nTo receive a Service Credit, customers must submit a request through AWS Support within two billing cycles of the incident. The claim must include \"SLA Credit Request\" in the subject line, along with the specific billing cycle, affected region, monthly uptime percentage documentation, and request logs showing error details from the outage period. Claims submitted after this deadline will not be eligible for Service Credits."
+        quoted_text: "Service Credit Tiers:\n- Less than 99.9% but greater than or equal to 99.0%: 10% credit of monthly charges\n- Less than 99.0% but greater than or equal to 95.0%: 25% credit of monthly charges\n- Less than 95.0%: 100% credit of monthly charges\n\nClaim Requirements:\nTo receive a Service Credit, customers must submit a request through AWS Support within two billing cycles of the incident. The claim must include \"SLA Credit Request\" in the subject line, along with the specific billing cycle, affected region, monthly uptime percentage documentation, and request logs showing error details from the outage period. Claims submitted after this deadline will not be eligible for Service Credits."
     - condition:
         all:
           - field: claim_includes_sla_credit_request_subject
@@ -77,9 +77,9 @@ decision_zones:
       action: issue_credit_100_percent
       citation:
         span:
-          start: 416
+          start: 175
           end: 863
-        quoted_text: "Claim Requirements:\nTo receive a Service Credit, customers must submit a request through AWS Support within two billing cycles of the incident. The claim must include \"SLA Credit Request\" in the subject line, along with the specific billing cycle, affected region, monthly uptime percentage documentation, and request logs showing error details from the outage period. Claims submitted after this deadline will not be eligible for Service Credits."
+        quoted_text: "Service Credit Tiers:\n- Less than 99.9% but greater than or equal to 99.0%: 10% credit of monthly charges\n- Less than 99.0% but greater than or equal to 95.0%: 25% credit of monthly charges\n- Less than 95.0%: 100% credit of monthly charges\n\nClaim Requirements:\nTo receive a Service Credit, customers must submit a request through AWS Support within two billing cycles of the incident. The claim must include \"SLA Credit Request\" in the subject line, along with the specific billing cycle, affected region, monthly uptime percentage documentation, and request logs showing error details from the outage period. Claims submitted after this deadline will not be eligible for Service Credits."
   llm_assisted: []
   human_only:
     - condition:

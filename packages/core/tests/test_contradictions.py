@@ -116,6 +116,33 @@ def test_financial_impact_average_amount_is_mean_of_diverged_tickets() -> None:
     assert fi.estimated_impact_usd == 150.0 * 3
 
 
+def test_mixed_divergence_metrics_describe_only_representative_pair() -> None:
+    """Pair-specific evidence must not be combined with other divergence outcomes."""
+    approve_tickets = [_ticket(110.0 + i * 10, "vip", "approve_refund") for i in range(3)]
+    escalate_tickets = [_ticket(180.0, "vip", "escalate_to_human") for _ in range(2)]
+    matching_ticket = _ticket(150.0, "vip", "deny_refund")
+    tickets = [*approve_tickets, *escalate_tickets, matching_ticket]
+    results = [_result(ticket, "deny_refund") for ticket in tickets]
+
+    contradictions = detect_contradictions(
+        results, tickets, threshold=0.05, min_cluster_size=3
+    )
+
+    assert len(contradictions) == 1
+    contradiction = contradictions[0]
+    assert contradiction.written_decision == "deny_refund"
+    assert contradiction.observed_decision == "approve_refund"
+    assert contradiction.frequency == 0.5
+    assert contradiction.ticket_count == 3
+    assert contradiction.affected_ticket_ids == [
+        str(ticket.ticket_id) for ticket in approve_tickets
+    ]
+    assert contradiction.estimated_financial_impact is not None
+    assert contradiction.estimated_financial_impact.divergent_ticket_count == 3
+    assert contradiction.estimated_financial_impact.average_refund_amount == 120.0
+    assert contradiction.estimated_financial_impact.estimated_impact_usd == 360.0
+
+
 def test_citation_defaults_to_none() -> None:
     """citation is None by default (populated by callers with skill_version info)."""
     vip_tickets = [_ticket(150.0, "vip", "approve_refund") for _ in range(5)]
