@@ -26,6 +26,11 @@ decision_zones:
             op: lte
             value: 14
       action: approve_statutory_14_day_refund
+      citation:
+        span:
+          start: 436
+          end: 775
+        quoted_text: "If you are located in the European Union or United Kingdom, you are entitled to a refund within 14 days of your most recent payment, regardless of your billing cadence (monthly or annual). This right is provided under applicable EU and UK consumer protection law and supersedes the standard windows above where they offer a shorter period."
     - condition:
         all:
           - field: customer_region
@@ -38,6 +43,11 @@ decision_zones:
             op: lte
             value: 3
       action: approve_refund
+      citation:
+        span:
+          start: 436
+          end: 775
+        quoted_text: "If you are located in the European Union or United Kingdom, you are entitled to a refund within 14 days of your most recent payment, regardless of your billing cadence (monthly or annual). This right is provided under applicable EU and UK consumer protection law and supersedes the standard windows above where they offer a shorter period."
     - condition:
         all:
           - field: customer_region
@@ -50,6 +60,11 @@ decision_zones:
             op: lte
             value: 30
       action: approve_refund
+      citation:
+        span:
+          start: 436
+          end: 775
+        quoted_text: "If you are located in the European Union or United Kingdom, you are entitled to a refund within 14 days of your most recent payment, regardless of your billing cadence (monthly or annual). This right is provided under applicable EU and UK consumer protection law and supersedes the standard windows above where they offer a shorter period."
     - condition:
         all:
           - field: is_accidental_member_addition
@@ -59,11 +74,21 @@ decision_zones:
             op: lte
             value: 3
       action: approve_prorated_seat_refund
+      citation:
+        span:
+          start: 436
+          end: 775
+        quoted_text: "If you are located in the European Union or United Kingdom, you are entitled to a refund within 14 days of your most recent payment, regardless of your billing cadence (monthly or annual). This right is provided under applicable EU and UK consumer protection law and supersedes the standard windows above where they offer a shorter period."
     - condition:
         all:
           - field: credits_unused
             op: eq
             value: true
       action: approve_credits_refund
+      citation:
+        span:
+          start: 986
+          end: 1204
+        quoted_text: "You can request a refund for any additional Notion credits you have purchased as long as they have not been used. Once any portion of purchased credits have been used, those credits are no longer eligible for a refund."
   llm_assisted: []
   human_only: []

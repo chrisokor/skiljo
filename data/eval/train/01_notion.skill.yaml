@@ -38,6 +38,11 @@ decision_zones:
                 op: lte
                 value: 30
       action: approve_refund
+      citation:
+        span:
+          start: 322
+          end: 553
+        quoted_text: "EU/UK consumers: If you are located in the European Union or United Kingdom, you are entitled to a refund within 14 days of your most recent payment, regardless of billing cadence, as required by applicable consumer protection law."
     - condition:
         all:
           - field: is_accidental_member_addition
@@ -47,5 +52,10 @@ decision_zones:
             op: lte
             value: 3
       action: approve_seat_refund
+      citation:
+        span:
+          start: 555
+          end: 746
+        quoted_text: "Accidental member charges: If you were invoiced for members who were accidentally added to your workspace, we can refund the prorated charges if you reach out within three days of the charge."
   llm_assisted: []
   human_only: []

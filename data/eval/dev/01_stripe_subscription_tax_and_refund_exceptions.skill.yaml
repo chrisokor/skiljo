@@ -17,6 +17,11 @@ decision_zones:
             op: eq
             value: false
       action: deny_refund_fees_nonrefundable
+      citation:
+        span:
+          start: 51
+          end: 275
+        quoted_text: "All Subscription fees are exclusive of applicable taxes, which are added to\neach invoice based on your billing address. Subscription fees are\nnon-refundable and non-cancelable once paid, except as required by\napplicable law."
     - condition:
         any:
           - field: required_by_law
@@ -26,5 +31,10 @@ decision_zones:
             op: eq
             value: true
       action: issue_prorated_refund
+      citation:
+        span:
+          start: 51
+          end: 275
+        quoted_text: "All Subscription fees are exclusive of applicable taxes, which are added to\neach invoice based on your billing address. Subscription fees are\nnon-refundable and non-cancelable once paid, except as required by\napplicable law."
   llm_assisted: []
   human_only: []

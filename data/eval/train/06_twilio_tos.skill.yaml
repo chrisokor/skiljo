@@ -30,6 +30,11 @@ decision_zones:
             op: eq
             value: true
       action: accept_dispute_for_review
+      citation:
+        span:
+          start: 712
+          end: 1055
+        quoted_text: "You will notify Twilio in writing within sixty (60) days of the date Twilio bills you for any Fees that you wish to dispute. Disputes submitted after sixty (60) days will not be eligible for review. During a pending dispute, you may withhold the disputed amount provided you act reasonably and cooperate diligently to resolve the disagreement."
     - condition:
         all:
           - field: event_type
@@ -39,6 +44,11 @@ decision_zones:
             op: gt
             value: 60
       action: reject_dispute_outside_window
+      citation:
+        span:
+          start: 712
+          end: 1055
+        quoted_text: "You will notify Twilio in writing within sixty (60) days of the date Twilio bills you for any Fees that you wish to dispute. Disputes submitted after sixty (60) days will not be eligible for review. During a pending dispute, you may withhold the disputed amount provided you act reasonably and cooperate diligently to resolve the disagreement."
     - condition:
         all:
           - field: event_type
@@ -48,5 +58,10 @@ decision_zones:
             op: gt
             value: 15
       action: assess_late_fee_and_suspend
+      citation:
+        span:
+          start: 83
+          end: 225
+        quoted_text: "Customers must maintain sufficient funds to cover fees. Twilio may suspend services if the account lacks funds or the payment method declines."
   llm_assisted: []
   human_only: []

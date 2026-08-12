@@ -13,6 +13,11 @@ decision_zones:
             op: eq
             value: network_fee_or_penalty_incurred
       action: debit_linked_bank_account_recovery_authorization
+      citation:
+        span:
+          start: 0
+          end: 70
+        quoted_text: "Square Payment Terms \u2014 Reserve Withholding and Recovery Authorizations"
   llm_assisted:
     - condition:
         all:
@@ -20,5 +25,10 @@ decision_zones:
             op: eq
             value: elevated_chargeback_risk_detected
       action: evaluate_and_withhold_settlement_reserve
+      citation:
+        span:
+          start: 72
+          end: 310
+        quoted_text: "If Square determines, in its discretion, that a merchant account presents an\nelevated risk of chargebacks, refunds, or other liabilities, Square may\nwithhold a reserve from the merchant's settlement funds until the risk\nperiod has passed."
       requires_human_approval: true
   human_only: []

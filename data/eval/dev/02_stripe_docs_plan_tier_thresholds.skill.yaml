@@ -18,6 +18,11 @@ decision_zones:
             op: gt
             value: 250000
       action: bill_marginal_overage_rate_and_notify_upgrade
+      citation:
+        span:
+          start: 47
+          end: 435
+        quoted_text: "The Foundations, Expansion, and Scale plans differ in included payment\nvolume before overage pricing applies. Foundations includes up to $250,000 in\nannual payment volume; Expansion includes up to $5,000,000; Scale includes up\nto $50,000,000. Payment volume processed above your plan's included amount is\nbilled at your plan's marginal overage rate for the remainder of the annual\nperiod."
     - condition:
         all:
           - field: plan_tier
@@ -27,6 +32,11 @@ decision_zones:
             op: gt
             value: 5000000
       action: bill_marginal_overage_rate_and_notify_upgrade
+      citation:
+        span:
+          start: 47
+          end: 435
+        quoted_text: "The Foundations, Expansion, and Scale plans differ in included payment\nvolume before overage pricing applies. Foundations includes up to $250,000 in\nannual payment volume; Expansion includes up to $5,000,000; Scale includes up\nto $50,000,000. Payment volume processed above your plan's included amount is\nbilled at your plan's marginal overage rate for the remainder of the annual\nperiod."
     - condition:
         all:
           - field: plan_tier
@@ -36,5 +46,10 @@ decision_zones:
             op: gt
             value: 50000000
       action: bill_marginal_overage_rate_and_notify_upgrade
+      citation:
+        span:
+          start: 47
+          end: 435
+        quoted_text: "The Foundations, Expansion, and Scale plans differ in included payment\nvolume before overage pricing applies. Foundations includes up to $250,000 in\nannual payment volume; Expansion includes up to $5,000,000; Scale includes up\nto $50,000,000. Payment volume processed above your plan's included amount is\nbilled at your plan's marginal overage rate for the remainder of the annual\nperiod."
   llm_assisted: []
   human_only: []

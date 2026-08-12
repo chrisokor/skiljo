@@ -14,6 +14,11 @@ decision_zones:
             op: eq
             value: true
       action: deny_transfer_credits_not_transferable
+      citation:
+        span:
+          start: 51
+          end: 297
+        quoted_text: "Service Credits are calculated as a percentage of the total charges for S3\nusage in the affected billing cycle, and any Service Credit amount below\n$1 USD will not be issued. Service Credits may not be transferred or applied\nto any other account."
     - condition:
         all:
           - field: is_transfer_request
@@ -23,6 +28,11 @@ decision_zones:
             op: lt
             value: 1
       action: withhold_credit_below_minimum
+      citation:
+        span:
+          start: 51
+          end: 297
+        quoted_text: "Service Credits are calculated as a percentage of the total charges for S3\nusage in the affected billing cycle, and any Service Credit amount below\n$1 USD will not be issued. Service Credits may not be transferred or applied\nto any other account."
     - condition:
         all:
           - field: is_transfer_request
@@ -32,5 +42,10 @@ decision_zones:
             op: gte
             value: 1
       action: issue_service_credit
+      citation:
+        span:
+          start: 51
+          end: 297
+        quoted_text: "Service Credits are calculated as a percentage of the total charges for S3\nusage in the affected billing cycle, and any Service Credit amount below\n$1 USD will not be issued. Service Credits may not be transferred or applied\nto any other account."
   llm_assisted: []
   human_only: []

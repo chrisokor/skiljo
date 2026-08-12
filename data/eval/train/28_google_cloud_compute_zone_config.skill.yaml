@@ -21,6 +21,11 @@ decision_zones:
             op: gte
             value: 99.0
       action: apply_10_percent_credit
+      citation:
+        span:
+          start: 448
+          end: 751
+        quoted_text: "Single Zone or Single Instance: If your Covered Instances are configured to\nrun as a single instance or within a single zone, the monthly uptime\npercentage must fall below 99.5% but at or above 99.0% for a 10% credit,\nbelow 99.0% but at or above 95.0% for a 25% credit, and below 95.0% for a 50%\ncredit."
     - condition:
         all:
           - field: instance_configuration
@@ -33,6 +38,11 @@ decision_zones:
             op: gte
             value: 99.0
       action: apply_10_percent_credit
+      citation:
+        span:
+          start: 448
+          end: 751
+        quoted_text: "Single Zone or Single Instance: If your Covered Instances are configured to\nrun as a single instance or within a single zone, the monthly uptime\npercentage must fall below 99.5% but at or above 99.0% for a 10% credit,\nbelow 99.0% but at or above 95.0% for a 25% credit, and below 95.0% for a 50%\ncredit."
     - condition:
         all:
           - field: monthly_uptime_percentage
@@ -42,11 +52,21 @@ decision_zones:
             op: gte
             value: 95.0
       action: apply_25_percent_credit
+      citation:
+        span:
+          start: 149
+          end: 446
+        quoted_text: "Instances in Multiple Zones: If your Covered Instances are configured to run\nin multiple zones in more than one region, and the monthly uptime percentage\nfalls below 99.99% but at or above 99.0%, you receive a 10% credit. Below\n99.0% but at or above 95.0%, a 25% credit. Below 95.0%, a 50% credit."
     - condition:
         all:
           - field: monthly_uptime_percentage
             op: lt
             value: 95.0
       action: apply_50_percent_credit_capped_at_50_percent_of_monthly_bill
+      citation:
+        span:
+          start: 149
+          end: 446
+        quoted_text: "Instances in Multiple Zones: If your Covered Instances are configured to run\nin multiple zones in more than one region, and the monthly uptime percentage\nfalls below 99.99% but at or above 99.0%, you receive a 10% credit. Below\n99.0% but at or above 95.0%, a 25% credit. Below 95.0%, a 50% credit."
   llm_assisted: []
   human_only: []

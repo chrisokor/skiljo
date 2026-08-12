@@ -14,6 +14,14 @@ A record of systematic divergence between the skill's decision and ground-truth 
 
 A `sha256` hex digest over the string `"{provider}|{model}|{prompt_version}|{prompt_text}"`. Changing any of the four components produces a completely different key, so a prompt edit automatically busts the cache for that prompt while leaving all other cached entries intact. Temperature-0 calls only — non-deterministic calls are never keyed or stored. See [Week 3 Task 1](week3-task1-llm-cache.md).
 
+## Character-offset citation
+
+A source reference composed of a half-open `[start, end)` character span and
+the exact `quoted_text` found at that span. It is mechanically valid only when
+the source document satisfies `source_text[start:end] == quoted_text`, which
+makes provenance reproducible rather than dependent on subjective review. See
+[Week 7 Task 4](week7-task4-eval-citations.md).
+
 ## `session.merge()` (SQLAlchemy upsert)
 
 `Session.merge(instance)` issues a SELECT on the primary key, then INSERT if absent or UPDATE if present. Unlike `session.add()`, it doesn't raise `IntegrityError` on a duplicate primary key, making it the right tool for idempotent writes where the primary key is a content-addressed hash. See [Week 3 Task 1](week3-task1-llm-cache.md).

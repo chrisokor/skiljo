@@ -40,6 +40,11 @@ decision_zones:
             op: gte
             value: 99.0
       action: issue_credit_10_percent
+      citation:
+        span:
+          start: 228
+          end: 523
+        quoted_text: "Service Credit Tiers (S3 Standard, S3 Express One Zone, S3 Glacier variants):\n- Less than 99.9% but greater than or equal to 99.0%: 10% credit of monthly charges\n- Less than 99.0% but greater than or equal to 95.0%: 25% credit of monthly charges\n- Less than 95.0%: 100% credit of monthly charges"
     - condition:
         all:
           - field: claim_includes_sla_credit_request_subject
@@ -61,6 +66,11 @@ decision_zones:
             op: gte
             value: 95.0
       action: issue_credit_25_percent
+      citation:
+        span:
+          start: 228
+          end: 523
+        quoted_text: "Service Credit Tiers (S3 Standard, S3 Express One Zone, S3 Glacier variants):\n- Less than 99.9% but greater than or equal to 99.0%: 10% credit of monthly charges\n- Less than 99.0% but greater than or equal to 95.0%: 25% credit of monthly charges\n- Less than 95.0%: 100% credit of monthly charges"
     - condition:
         all:
           - field: claim_includes_sla_credit_request_subject
@@ -79,6 +89,11 @@ decision_zones:
             op: lt
             value: 95.0
       action: issue_credit_100_percent
+      citation:
+        span:
+          start: 228
+          end: 523
+        quoted_text: "Service Credit Tiers (S3 Standard, S3 Express One Zone, S3 Glacier variants):\n- Less than 99.9% but greater than or equal to 99.0%: 10% credit of monthly charges\n- Less than 99.0% but greater than or equal to 95.0%: 25% credit of monthly charges\n- Less than 95.0%: 100% credit of monthly charges"
     - condition:
         all:
           - field: claim_includes_sla_credit_request_subject
@@ -100,6 +115,11 @@ decision_zones:
             op: gte
             value: 98.0
       action: issue_credit_10_percent
+      citation:
+        span:
+          start: 525
+          end: 851
+        quoted_text: "Service Credit Tiers (S3 Intelligent-Tiering, S3 Standard-IA, S3 One Zone-IA, S3 Glacier Instant Retrieval):\n- Less than 99.0% but greater than or equal to 98.0%: 10% credit of monthly charges\n- Less than 98.0% but greater than or equal to 95.0%: 25% credit of monthly charges\n- Less than 95.0%: 100% credit of monthly charges"
     - condition:
         all:
           - field: claim_includes_sla_credit_request_subject
@@ -121,6 +141,11 @@ decision_zones:
             op: gte
             value: 95.0
       action: issue_credit_25_percent
+      citation:
+        span:
+          start: 525
+          end: 851
+        quoted_text: "Service Credit Tiers (S3 Intelligent-Tiering, S3 Standard-IA, S3 One Zone-IA, S3 Glacier Instant Retrieval):\n- Less than 99.0% but greater than or equal to 98.0%: 10% credit of monthly charges\n- Less than 98.0% but greater than or equal to 95.0%: 25% credit of monthly charges\n- Less than 95.0%: 100% credit of monthly charges"
     - condition:
         all:
           - field: claim_includes_sla_credit_request_subject
@@ -139,6 +164,11 @@ decision_zones:
             op: lt
             value: 95.0
       action: issue_credit_100_percent
+      citation:
+        span:
+          start: 525
+          end: 851
+        quoted_text: "Service Credit Tiers (S3 Intelligent-Tiering, S3 Standard-IA, S3 One Zone-IA, S3 Glacier Instant Retrieval):\n- Less than 99.0% but greater than or equal to 98.0%: 10% credit of monthly charges\n- Less than 98.0% but greater than or equal to 95.0%: 25% credit of monthly charges\n- Less than 95.0%: 100% credit of monthly charges"
   llm_assisted: []
   human_only:
     - condition:
@@ -153,3 +183,9 @@ decision_zones:
             op: gt
             value: 2
       action: reject_claim_missing_requirements
+
+      citation:
+        span:
+          start: 853
+          end: 1166
+        quoted_text: "Claim Requirements:\nTo receive a Service Credit, you must submit a request to AWS Support within two billing cycles of the incident. Your claim must include \"SLA Credit Request\" in the subject line, the affected AWS region, dates and times of the unavailability incidents, and request logs documenting the errors."

@@ -15,11 +15,21 @@ decision_zones:
             op: gte
             value: 99.0
       action: apply_10_percent_credit
+      citation:
+        span:
+          start: 46
+          end: 343
+        quoted_text: "If the Monthly Uptime Percentage for AWS Audit Manager is below 99.9% but at\nor above 99.0% during any billing cycle, you are eligible for a Service\nCredit of 10% of your charges for that billing cycle. If the Monthly Uptime\nPercentage is below 99.0%, you are eligible for a Service Credit of 25%."
     - condition:
         all:
           - field: monthly_uptime_percentage
             op: lt
             value: 99.0
       action: apply_25_percent_credit
+      citation:
+        span:
+          start: 46
+          end: 343
+        quoted_text: "If the Monthly Uptime Percentage for AWS Audit Manager is below 99.9% but at\nor above 99.0% during any billing cycle, you are eligible for a Service\nCredit of 10% of your charges for that billing cycle. If the Monthly Uptime\nPercentage is below 99.0%, you are eligible for a Service Credit of 25%."
   llm_assisted: []
   human_only: []

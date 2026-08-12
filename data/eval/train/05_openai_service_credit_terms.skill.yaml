@@ -22,18 +22,33 @@ decision_zones:
             op: eq
             value: true
       action: approve_statutory_refund
+      citation:
+        span:
+          start: 197
+          end: 376
+        quoted_text: "All OpenAI API service credits are non-refundable except where required by applicable law. Once purchased, credits cannot be exchanged for cash or any other form of consideration."
     - condition:
         all:
           - field: request_type
             op: in
             value: ["transfer", "sale"]
       action: deny_transfer_or_sale_prohibited
+      citation:
+        span:
+          start: 759
+          end: 1017
+        quoted_text: "If OpenAI determines that credits were used in violation of these terms \u2014 including any attempted unauthorized transfer, sale, or gifting \u2014 OpenAI may, in its sole discretion, revoke the applicable credits and terminate the associated account without refund."
     - condition:
         all:
           - field: days_since_purchase
             op: gt
             value: 365
       action: deny_credits_expired
+      citation:
+        span:
+          start: 390
+          end: 536
+        quoted_text: "Service credits expire one year from the date of purchase. Unused credits are forfeited at expiration and will not be refunded or carried forward."
     - condition:
         all:
           - field: credits_used
@@ -46,6 +61,11 @@ decision_zones:
             op: eq
             value: false
       action: deny_refund_credits_already_used
+      citation:
+        span:
+          start: 759
+          end: 1017
+        quoted_text: "If OpenAI determines that credits were used in violation of these terms \u2014 including any attempted unauthorized transfer, sale, or gifting \u2014 OpenAI may, in its sole discretion, revoke the applicable credits and terminate the associated account without refund."
   llm_assisted: []
   human_only:
     - condition:
@@ -63,3 +83,9 @@ decision_zones:
             op: eq
             value: false
       action: escalate_non_statutory_refund_for_review
+
+      citation:
+        span:
+          start: 197
+          end: 376
+        quoted_text: "All OpenAI API service credits are non-refundable except where required by applicable law. Once purchased, credits cannot be exchanged for cash or any other form of consideration."

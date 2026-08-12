@@ -24,6 +24,11 @@ decision_zones:
             op: gt
             value: 7
       action: deny_refund_plans_nonrefundable_per_tos
+      citation:
+        span:
+          start: 730
+          end: 1052
+        quoted_text: "Eligibility windows for case-by-case review:\n- Monthly subscriptions: within 7 days of invoice issue\n- First invoice after trial: within 30 days of invoice issue\n- Annual subscriptions: within 30 days of invoice issue\n- SEPA Direct Debit: within 14 days of invoice issue\n- Brazil merchants: within 90 days of invoice issue"
   llm_assisted: []
   human_only:
     - condition:
@@ -60,3 +65,9 @@ decision_zones:
             op: eq
             value: true
       action: escalate_to_shopify_support_for_case_by_case_review
+
+      citation:
+        span:
+          start: 730
+          end: 1052
+        quoted_text: "Eligibility windows for case-by-case review:\n- Monthly subscriptions: within 7 days of invoice issue\n- First invoice after trial: within 30 days of invoice issue\n- Annual subscriptions: within 30 days of invoice issue\n- SEPA Direct Debit: within 14 days of invoice issue\n- Brazil merchants: within 90 days of invoice issue"

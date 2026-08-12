@@ -21,6 +21,11 @@ decision_zones:
             op: eq
             value: false
       action: suspend_access
+      citation:
+        span:
+          start: 52
+          end: 314
+        quoted_text: "If a payment for your Subscription Plan fails, we will retry the charge\naccording to our standard retry schedule. If payment continues to fail for\nmore than 15 days after the original due date, we may suspend your access to\nthe Service until payment is received."
     - condition:
         all:
           - field: days_suspended
@@ -30,6 +35,11 @@ decision_zones:
             op: eq
             value: false
       action: terminate_subscription_no_refund
+      citation:
+        span:
+          start: 316
+          end: 559
+        quoted_text: "If your Subscription remains suspended for 30 consecutive days or more due to\nnon-payment, we may terminate your Subscription. Upon termination for\nnon-payment, any outstanding fees remain due and no refund is issued for the\nterminated period."
     - condition:
         all:
           - field: account_brought_current
@@ -39,6 +49,11 @@ decision_zones:
             op: lt
             value: 30
       action: restore_access_immediately
+      citation:
+        span:
+          start: 316
+          end: 559
+        quoted_text: "If your Subscription remains suspended for 30 consecutive days or more due to\nnon-payment, we may terminate your Subscription. Upon termination for\nnon-payment, any outstanding fees remain due and no refund is issued for the\nterminated period."
     - condition:
         all:
           - field: is_first_failure_in_12_months
@@ -48,5 +63,10 @@ decision_zones:
             op: eq
             value: true
       action: assess_late_fee_1_5_percent_per_month
+      citation:
+        span:
+          start: 0
+          end: 50
+        quoted_text: "Stripe Subscription Suspension and Payment Failure"
   llm_assisted: []
   human_only: []

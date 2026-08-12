@@ -13,6 +13,11 @@ decision_zones:
             op: eq
             value: apple_app_store
       action: redirect_to_apple_refund_process
+      citation:
+        span:
+          start: 59
+          end: 326
+        quoted_text: "Where you purchased your subscription determines how you must request a\nrefund. Purchases made through the Apple App Store must be refunded directly\nthrough Apple using Apple's own refund request process \u2014 Notion cannot issue\nrefunds for App Store purchases directly."
     - condition:
         any:
           - field: purchase_platform
@@ -22,5 +27,10 @@ decision_zones:
             op: eq
             value: google_pay
       action: route_to_notion_support_standard_refund_windows
+      citation:
+        span:
+          start: 0
+          end: 57
+        quoted_text: "Notion Refund Policy \u2014 Platform-Specific Purchase Routing"
   llm_assisted: []
   human_only: []

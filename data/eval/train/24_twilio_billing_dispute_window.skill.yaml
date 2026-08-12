@@ -12,11 +12,21 @@ decision_zones:
             op: lte
             value: 60
       action: accept_dispute_for_review
+      citation:
+        span:
+          start: 25
+          end: 242
+        quoted_text: "If you believe an invoice contains an error, you must notify Twilio in\nwriting within 60 days of the invoice date. Disputes submitted after the\n60-day window are waived, and the invoice is deemed final and undisputed."
     - condition:
         all:
           - field: days_since_invoice_date
             op: gt
             value: 60
       action: deny_dispute_invoice_final
+      citation:
+        span:
+          start: 25
+          end: 242
+        quoted_text: "If you believe an invoice contains an error, you must notify Twilio in\nwriting within 60 days of the invoice date. Disputes submitted after the\n60-day window are waived, and the invoice is deemed final and undisputed."
   llm_assisted: []
   human_only: []

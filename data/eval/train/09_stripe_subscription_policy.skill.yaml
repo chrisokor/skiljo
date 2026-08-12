@@ -25,6 +25,11 @@ decision_zones:
             op: eq
             value: true
       action: approve_statutory_refund
+      citation:
+        span:
+          start: 1622
+          end: 1804
+        quoted_text: "These terms do not limit any rights you may have under applicable law, including rights related to statutory refunds or consumer protection where required by applicable jurisdiction."
     - condition:
         all:
           - field: subscription_term_active
@@ -34,17 +39,32 @@ decision_zones:
             op: eq
             value: false
       action: deny_refund_no_prorated_refunds
+      citation:
+        span:
+          start: 540
+          end: 808
+        quoted_text: "Fees are non-refundable, and we do not offer prorated refunds if you cancel before the end of your Subscription Plan term. You remain responsible for all subscription fees for the full commitment period, including any applicable overage fees incurred during that term."
     - condition:
         all:
           - field: payment_failed
             op: eq
             value: true
       action: suspend_subscription_access
+      citation:
+        span:
+          start: 1122
+          end: 1307
+        quoted_text: "Stripe reserves the right to temporarily suspend your access to Subscription Services if payment fails or charges are disputed. Stripe may also redirect charges to your account balance."
     - condition:
         all:
           - field: plan_change_type
             op: in
             value: ["upgrade", "downgrade"]
       action: apply_plan_change_at_next_billing_period
+      citation:
+        span:
+          start: 824
+          end: 1087
+        quoted_text: "You can upgrade or downgrade your Subscription Plan, though timing varies by service. For most services, plan changes take effect at the start of your next billing period. Some services restrict downgrades below your initial plan level during the commitment term."
   llm_assisted: []
   human_only: []

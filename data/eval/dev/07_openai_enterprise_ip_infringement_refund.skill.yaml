@@ -13,5 +13,10 @@ decision_zones:
             op: eq
             value: true
       action: choose_remedy_procure_modify_or_terminate_with_refund
+      citation:
+        span:
+          start: 60
+          end: 535
+        quoted_text: "If OpenAI reasonably believes the Services are likely to become the subject\nof a third-party intellectual property infringement claim, OpenAI may, at\nits option and expense: (a) procure the right for the customer to continue\nusing the Services, (b) modify the Services to be non-infringing while\nmaintaining substantially equivalent functionality, or (c) terminate the\naffected Services and refund the customer any prepaid, unused fees for the\nterminated portion of the Term."
       requires_human_approval: true
   human_only: []

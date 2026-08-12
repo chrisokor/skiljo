@@ -22,6 +22,11 @@ decision_zones:
             op: eq
             value: termination_by_openai_convenience
       action: issue_prorated_refund_of_prepaid_unused_fees
+      citation:
+        span:
+          start: 1509
+          end: 1897
+        quoted_text: "If OpenAI terminates the Services for convenience, OpenAI will refund any prepaid fees covering the remainder of the then-current term on a pro-rated basis. If Customer terminates for cause due to a material breach by OpenAI that OpenAI fails to cure within thirty (30) days of written notice, Customer is entitled to a pro-rated refund of prepaid fees for the unused portion of the term."
     - condition:
         all:
           - field: event_type
@@ -31,18 +36,33 @@ decision_zones:
             op: eq
             value: true
       action: issue_prorated_refund_of_prepaid_unused_fees
+      citation:
+        span:
+          start: 1509
+          end: 1897
+        quoted_text: "If OpenAI terminates the Services for convenience, OpenAI will refund any prepaid fees covering the remainder of the then-current term on a pro-rated basis. If Customer terminates for cause due to a material breach by OpenAI that OpenAI fails to cure within thirty (30) days of written notice, Customer is entitled to a pro-rated refund of prepaid fees for the unused portion of the term."
     - condition:
         all:
           - field: event_type
             op: eq
             value: termination_by_openai_for_breach
       action: deny_refund_and_collect_outstanding_fees
+      citation:
+        span:
+          start: 1509
+          end: 1897
+        quoted_text: "If OpenAI terminates the Services for convenience, OpenAI will refund any prepaid fees covering the remainder of the then-current term on a pro-rated basis. If Customer terminates for cause due to a material breach by OpenAI that OpenAI fails to cure within thirty (30) days of written notice, Customer is entitled to a pro-rated refund of prepaid fees for the unused portion of the term."
     - condition:
         all:
           - field: days_overdue
             op: gt
             value: 30
       action: assess_late_fee_1_5_percent_per_month
+      citation:
+        span:
+          start: 506
+          end: 708
+        quoted_text: "If Customer fails to pay any amounts due within the applicable payment period, OpenAI may assess a late fee of 1.5% per month (or the maximum rate permitted by law, if lower) on the outstanding balance."
   llm_assisted:
     - condition:
         all:
@@ -50,5 +70,10 @@ decision_zones:
             op: eq
             value: ip_infringement_trigger
       action: evaluate_and_choose_remedy_procure_modify_or_terminate_with_refund
+      citation:
+        span:
+          start: 1024
+          end: 1477
+        quoted_text: "If OpenAI reasonably believes the Services are likely to become the subject of an intellectual property infringement claim, OpenAI may, at its option: (a) procure the right to continue providing the Services; (b) modify the Services to make them non-infringing; or (c) if neither (a) nor (b) is commercially reasonable, terminate the affected Services and refund any prepaid, unused fees for the terminated Services pro-rated to the date of termination."
       requires_human_approval: true
   human_only: []

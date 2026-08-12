@@ -27,6 +27,11 @@ decision_zones:
             op: lt
             value: 2.0
       action: approve_refund
+      citation:
+        span:
+          start: 190
+          end: 376
+        quoted_text: "Steam offers refunds for purchases within two weeks of purchase and with less than two hours of playtime. This refund offer applies to games and software applications on the Steam store."
     - condition:
         all:
           - field: product_type
@@ -42,6 +47,11 @@ decision_zones:
             op: eq
             value: false
       action: approve_refund
+      citation:
+        span:
+          start: 190
+          end: 376
+        quoted_text: "Steam offers refunds for purchases within two weeks of purchase and with less than two hours of playtime. This refund offer applies to games and software applications on the Steam store."
     - condition:
         any:
           - all:
@@ -66,5 +76,10 @@ decision_zones:
                 op: eq
                 value: true
       action: deny_refund
+      citation:
+        span:
+          start: 190
+          end: 376
+        quoted_text: "Steam offers refunds for purchases within two weeks of purchase and with less than two hours of playtime. This refund offer applies to games and software applications on the Steam store."
   llm_assisted: []
   human_only: []

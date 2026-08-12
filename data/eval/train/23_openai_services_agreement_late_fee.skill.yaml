@@ -18,6 +18,11 @@ decision_zones:
             op: gt
             value: 0
       action: charge_greater_of_usage_or_committed_minimum
+      citation:
+        span:
+          start: 62
+          end: 298
+        quoted_text: "Enterprise customers with a minimum monthly commitment must pay the greater\nof (a) actual usage fees or (b) the committed minimum, for each month of the\nTerm. Committed minimums are not refundable and cannot be applied to a future\nterm."
     - condition:
         all:
           - field: days_past_due
@@ -27,6 +32,11 @@ decision_zones:
             op: eq
             value: false
       action: assess_late_fee_1_5_percent_per_month
+      citation:
+        span:
+          start: 300
+          end: 563
+        quoted_text: "Invoices are due within 30 days of receipt (Net 30). Any amount not paid\nwithin 30 days of the due date is subject to a late fee of 1.5% per month, or\nthe maximum rate permitted by applicable law, whichever is lower, accruing\nfrom the due date until paid in full."
     - condition:
         all:
           - field: days_past_due
@@ -36,5 +46,10 @@ decision_zones:
             op: eq
             value: true
       action: waive_late_fee_on_disputed_portion_pending_resolution
+      citation:
+        span:
+          start: 300
+          end: 563
+        quoted_text: "Invoices are due within 30 days of receipt (Net 30). Any amount not paid\nwithin 30 days of the due date is subject to a late fee of 1.5% per month, or\nthe maximum rate permitted by applicable law, whichever is lower, accruing\nfrom the due date until paid in full."
   llm_assisted: []
   human_only: []

@@ -12,11 +12,21 @@ decision_zones:
             op: gt
             value: 6
       action: apply_automatic_instance_level_credit_no_claim_required
+      citation:
+        span:
+          start: 50
+          end: 409
+        quoted_text: "In addition to the region-level Service Level Agreement, EC2 provides an\nautomatic Service Credit for individual instance-level outages. If a single\ninstance is unavailable for more than six consecutive minutes (an\n\"Instance-Level Outage\"), AWS automatically applies a Service Credit to your\naccount for the affected instance's usage during the outage window."
     - condition:
         all:
           - field: outage_duration_minutes
             op: lte
             value: 6
       action: no_credit_below_six_minute_threshold
+      citation:
+        span:
+          start: 50
+          end: 409
+        quoted_text: "In addition to the region-level Service Level Agreement, EC2 provides an\nautomatic Service Credit for individual instance-level outages. If a single\ninstance is unavailable for more than six consecutive minutes (an\n\"Instance-Level Outage\"), AWS automatically applies a Service Credit to your\naccount for the affected instance's usage during the outage window."
   llm_assisted: []
   human_only: []

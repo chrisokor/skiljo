@@ -20,12 +20,22 @@ decision_zones:
             op: lt
             value: 100
       action: notify_owner_75_percent_credit_consumed
+      citation:
+        span:
+          start: 234
+          end: 399
+        quoted_text: "Notifications: Vercel notifies the account owner by email once cumulative\nusage reaches 75% of the monthly usage credit, and again when the credit is\nfully consumed."
     - condition:
         all:
           - field: credit_consumed_percentage
             op: gte
             value: 100
       action: notify_owner_credit_fully_consumed_and_bill_overage
+      citation:
+        span:
+          start: 234
+          end: 399
+        quoted_text: "Notifications: Vercel notifies the account owner by email once cumulative\nusage reaches 75% of the monthly usage credit, and again when the credit is\nfully consumed."
     - condition:
         all:
           - field: spend_cap_is_default
@@ -35,5 +45,10 @@ decision_zones:
             op: gte
             value: 200
       action: pause_usage_until_next_billing_cycle
+      citation:
+        span:
+          start: 29
+          end: 232
+        quoted_text: "Your Pro plan includes a $20 monthly usage credit applied automatically to\non-demand overage charges. Once the included credit is exhausted, additional\nusage is billed at standard per-unit overage rates."
   llm_assisted: []
   human_only: []

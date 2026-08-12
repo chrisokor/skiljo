@@ -25,6 +25,11 @@ decision_zones:
             op: lte
             value: 2
       action: accept_region_level_claim_for_review
+      citation:
+        span:
+          start: 39
+          end: 384
+        quoted_text: "EC2 offers two distinct SLA credit paths: a region-level SLA and an\ninstance-level SLA. A customer may submit a claim under the region-level SLA\nfor a Region Unavailable event, and separately may be eligible for\nautomatic instance-level credits. Credits under the two paths do not offset\none another and may both apply to the same billing cycle."
     - condition:
         any:
           - field: has_required_subject_line
@@ -37,5 +42,10 @@ decision_zones:
             op: gt
             value: 2
       action: deny_claim_missing_requirements_or_deadline
+      citation:
+        span:
+          start: 39
+          end: 384
+        quoted_text: "EC2 offers two distinct SLA credit paths: a region-level SLA and an\ninstance-level SLA. A customer may submit a claim under the region-level SLA\nfor a Region Unavailable event, and separately may be eligible for\nautomatic instance-level credits. Credits under the two paths do not offset\none another and may both apply to the same billing cycle."
   llm_assisted: []
   human_only: []

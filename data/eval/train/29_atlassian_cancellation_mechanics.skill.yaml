@@ -15,6 +15,11 @@ decision_zones:
             op: eq
             value: free
       action: deactivate_immediately
+      citation:
+        span:
+          start: 391
+          end: 541
+        quoted_text: "Free tier: If you cancel a free-tier product, deactivation is immediate upon\ncancellation \u2014 there is no grace period because no billing cycle applies."
     - condition:
         all:
           - field: plan_tier
@@ -24,6 +29,11 @@ decision_zones:
             op: lte
             value: 15
       action: allow_reactivation_within_grace_period
+      citation:
+        span:
+          start: 34
+          end: 389
+        quoted_text: "Paid subscriptions: If you cancel a paid Cloud subscription, your\nsubscription remains active through the end of the current billing cycle. A\n15-day grace period after the billing cycle ends is provided during which you\ncan reactivate without losing configuration or data; the subscription is\ndeactivated at the end of the grace period if not reactivated."
     - condition:
         all:
           - field: plan_tier
@@ -33,5 +43,10 @@ decision_zones:
             op: gt
             value: 15
       action: deactivate_grace_period_expired
+      citation:
+        span:
+          start: 34
+          end: 389
+        quoted_text: "Paid subscriptions: If you cancel a paid Cloud subscription, your\nsubscription remains active through the end of the current billing cycle. A\n15-day grace period after the billing cycle ends is provided during which you\ncan reactivate without losing configuration or data; the subscription is\ndeactivated at the end of the grace period if not reactivated."
   llm_assisted: []
   human_only: []

@@ -14,6 +14,11 @@ decision_zones:
             op: eq
             value: true
       action: no_additional_charge
+      citation:
+        span:
+          start: 47
+          end: 222
+        quoted_text: "Your Pro plan includes a base allocation of 1TB of Fast Data Transfer and 10\nmillion Edge Requests per month. Usage within the included allocation incurs\nno additional charge."
     - condition:
         all:
           - field: usage_within_included_allocation
@@ -23,6 +28,11 @@ decision_zones:
             op: gt
             value: 0
       action: apply_overage_against_remaining_usage_credit
+      citation:
+        span:
+          start: 47
+          end: 222
+        quoted_text: "Your Pro plan includes a base allocation of 1TB of Fast Data Transfer and 10\nmillion Edge Requests per month. Usage within the included allocation incurs\nno additional charge."
     - condition:
         all:
           - field: usage_within_included_allocation
@@ -32,5 +42,10 @@ decision_zones:
             op: lte
             value: 0
       action: bill_overage_directly_at_standard_rate
+      citation:
+        span:
+          start: 47
+          end: 222
+        quoted_text: "Your Pro plan includes a base allocation of 1TB of Fast Data Transfer and 10\nmillion Edge Requests per month. Usage within the included allocation incurs\nno additional charge."
   llm_assisted: []
   human_only: []

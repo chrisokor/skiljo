@@ -4,6 +4,10 @@ An index of written explanations for each implementation task — what was built
 
 See `GLOSSARY.md` for a running list of concepts introduced across debriefs.
 
+## Week 7 - Citations and v1.05 product
+
+4. [Task 4: Eval ground-truth citations](week7-task4-eval-citations.md)
+
 ## Week 6 — v1.0 completion
 
 7. [Task 7: v1.0 completion — dataset loader, CI baseline refresh, SDK parity, A6 contradiction clustering, shipping](week6-task7-v1.0-completion.md)

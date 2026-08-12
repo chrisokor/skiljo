@@ -18,11 +18,21 @@ decision_zones:
             op: eq
             value: true
       action: issue_prorated_refund_for_discontinued_service
+      citation:
+        span:
+          start: 62
+          end: 373
+        quoted_text: "Some features available through Vercel are provided by third parties\n(\"Non-Vercel Services\"). If a Non-Vercel Service you have paid for through\nVercel ceases to be offered, Vercel will issue a prorated refund for the\nunused portion of fees attributable to that Non-Vercel Service for the\ncurrent billing period."
     - condition:
         all:
           - field: service_type
             op: eq
             value: core_platform
       action: deny_refund_all_fees_nonrefundable
+      citation:
+        span:
+          start: 62
+          end: 373
+        quoted_text: "Some features available through Vercel are provided by third parties\n(\"Non-Vercel Services\"). If a Non-Vercel Service you have paid for through\nVercel ceases to be offered, Vercel will issue a prorated refund for the\nunused portion of fees attributable to that Non-Vercel Service for the\ncurrent billing period."
   llm_assisted: []
   human_only: []

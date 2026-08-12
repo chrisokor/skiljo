@@ -13,5 +13,10 @@ decision_zones:
           - field: usage_deviation_description
             op: not_empty
       action: evaluate_anomalous_use_and_decide_charge_or_suspend
+      citation:
+        span:
+          start: 22
+          end: 359
+        quoted_text: "Vercel may, in its sole discretion, identify usage on your account as\nelevated, irregular, high, or otherwise anomalous relative to your plan's\nexpected usage patterns. Vercel reserves the right to automatically charge\nyour payment method for fees accrued from anomalous use, or to suspend the\noffending resource, at its sole discretion."
       requires_human_approval: true
   human_only: []

@@ -25,6 +25,11 @@ decision_zones:
             op: eq
             value: true
       action: deny_refund_renewals_and_upgrades_nonrefundable
+      citation:
+        span:
+          start: 653
+          end: 798
+        quoted_text: "Cloud renewals and upgrades cannot be refunded. This exclusion applies regardless of the time elapsed since the renewal or upgrade was processed."
     - condition:
         all:
           - field: subscription_type
@@ -37,6 +42,11 @@ decision_zones:
             op: eq
             value: true
       action: approve_refund
+      citation:
+        span:
+          start: 172
+          end: 352
+        quoted_text: "Refunds for monthly cloud subscriptions are only available within the first paid month after the trial period. After the first paid month, monthly subscriptions are non-refundable."
     - condition:
         all:
           - field: subscription_type
@@ -49,6 +59,11 @@ decision_zones:
             op: lte
             value: 30
       action: approve_refund
+      citation:
+        span:
+          start: 382
+          end: 527
+        quoted_text: "New annual cloud subscriptions can only be refunded within 30 days of the first purchase. After 30 days, annual subscriptions are non-refundable."
     - condition:
         all:
           - field: subscription_type
@@ -58,11 +73,21 @@ decision_zones:
             op: gt
             value: 30
       action: deny_refund_outside_window
+      citation:
+        span:
+          start: 818
+          end: 999
+        quoted_text: "Marketplace apps follow the same 30-day refund window as annual subscriptions, though individual Marketplace vendors may consider exceptions outside this period at their discretion."
     - condition:
         all:
           - field: subscription_type
             op: eq
             value: enterprise
       action: deny_refund_enterprise_governed_by_separate_agreement
+      citation:
+        span:
+          start: 1027
+          end: 1166
+        quoted_text: "This refund policy does not apply to Enterprise subscriptions. Enterprise refund terms are governed by the applicable enterprise agreement."
   llm_assisted: []
   human_only: []

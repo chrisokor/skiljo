@@ -21,6 +21,11 @@ decision_zones:
             op: eq
             value: upgrade
       action: deny_refund_renewal_or_upgrade_carveout
+      citation:
+        span:
+          start: 59
+          end: 395
+        quoted_text: "New Cloud subscription purchases are eligible for a refund within the\nstandard window (first paid month for monthly billing, 30 days from purchase\nfor annual billing). However, Cloud subscription renewals and upgrades to an\nexisting subscription are not eligible for a refund, regardless of how\nrecently the renewal or upgrade occurred."
     - condition:
         all:
           - field: purchase_type
@@ -33,6 +38,11 @@ decision_zones:
             op: lte
             value: 30
       action: approve_refund
+      citation:
+        span:
+          start: 59
+          end: 395
+        quoted_text: "New Cloud subscription purchases are eligible for a refund within the\nstandard window (first paid month for monthly billing, 30 days from purchase\nfor annual billing). However, Cloud subscription renewals and upgrades to an\nexisting subscription are not eligible for a refund, regardless of how\nrecently the renewal or upgrade occurred."
     - condition:
         all:
           - field: purchase_type
@@ -45,5 +55,10 @@ decision_zones:
             op: lte
             value: 30
       action: approve_refund
+      citation:
+        span:
+          start: 59
+          end: 395
+        quoted_text: "New Cloud subscription purchases are eligible for a refund within the\nstandard window (first paid month for monthly billing, 30 days from purchase\nfor annual billing). However, Cloud subscription renewals and upgrades to an\nexisting subscription are not eligible for a refund, regardless of how\nrecently the renewal or upgrade occurred."
   llm_assisted: []
   human_only: []

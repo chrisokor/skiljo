@@ -16,11 +16,21 @@ decision_zones:
             op: eq
             value: true
       action: approve_statutory_refund
+      citation:
+        span:
+          start: 733
+          end: 1016
+        quoted_text: "User agrees to pay the fees in full, up front without deduction or setoff of any kind, in U.S. Dollars. User must pay the fees within thirty (30) days of the GitHub invoice date. Amounts payable under this Agreement are non-refundable, except as otherwise provided in this Agreement."
     - condition:
         all:
           - field: legal_refund_required
             op: eq
             value: false
       action: deny_refund_no_exceptions
+      citation:
+        span:
+          start: 484
+          end: 715
+        quoted_text: "The Service is non-refundable. There will be no refunds or credits for partial months of service, downgrade refunds, or refunds for months unused with an open Account. In order to treat everyone equally, no exceptions will be made."
   llm_assisted: []
   human_only: []

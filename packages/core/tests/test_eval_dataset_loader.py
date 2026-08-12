@@ -20,6 +20,8 @@ from skiljo_core.eval.dataset_loader import (
     ExtractionExample,
     load_extraction_dataset,
 )
+from skiljo_core.extraction.citation_validator import validate_citation
+from skiljo_core.schemas.rule_schema import Citation
 
 
 def test_load_extraction_dataset_from_disk() -> None:
@@ -48,6 +50,18 @@ def test_load_extraction_dataset_every_example_has_rules() -> None:
     dataset = load_extraction_dataset(split="train")
     for ex in dataset.examples:
         assert len(ex.expected_rules) > 0
+
+
+@pytest.mark.parametrize("split", ["train", "dev"])
+def test_load_extraction_dataset_rules_have_valid_citations(split: str) -> None:
+    """Every train/dev ground-truth rule cites its source policy verbatim."""
+    dataset = load_extraction_dataset(split=split)
+
+    for ex in dataset.examples:
+        for rule in ex.expected_rules:
+            citation = Citation.model_validate(rule["citation"])
+            assert citation.quoted_text
+            assert validate_citation(citation, ex.policy_text) is True
 
 
 def test_extraction_dataset_implements_inspect_protocol() -> None:

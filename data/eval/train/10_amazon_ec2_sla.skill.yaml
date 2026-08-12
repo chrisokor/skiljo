@@ -27,6 +27,11 @@ decision_zones:
             op: gt
             value: 6
       action: issue_automatic_instance_credit_no_claim_required
+      citation:
+        span:
+          start: 867
+          end: 1072
+        quoted_text: "AWS will not charge you for any Single EC2 Instance that is Unavailable for more than six consecutive minutes within a clock-hour. This credit is applied automatically without requiring a claim submission."
     - condition:
         all:
           - field: claim_subject_includes_compute_sla_credit_request
@@ -45,6 +50,11 @@ decision_zones:
             op: gte
             value: 99.0
       action: issue_credit_10_percent
+      citation:
+        span:
+          start: 1094
+          end: 1491
+        quoted_text: "To receive a Service Credit for SLA violations (other than the automatic instance credit), you must submit a claim by opening a case in the AWS Support Center. Your claim must:\n- Include \"Amazon Compute SLA Credit Request\" in the subject line\n- Specify the dates and times of the unavailability incident\n- Identify the affected AWS region and Availability Zone\n- List the affected EC2 resource IDs"
     - condition:
         all:
           - field: claim_subject_includes_compute_sla_credit_request
@@ -63,6 +73,11 @@ decision_zones:
             op: gte
             value: 95.0
       action: issue_credit_30_percent
+      citation:
+        span:
+          start: 1094
+          end: 1491
+        quoted_text: "To receive a Service Credit for SLA violations (other than the automatic instance credit), you must submit a claim by opening a case in the AWS Support Center. Your claim must:\n- Include \"Amazon Compute SLA Credit Request\" in the subject line\n- Specify the dates and times of the unavailability incident\n- Identify the affected AWS region and Availability Zone\n- List the affected EC2 resource IDs"
     - condition:
         all:
           - field: claim_subject_includes_compute_sla_credit_request
@@ -78,6 +93,11 @@ decision_zones:
             op: lt
             value: 95.0
       action: issue_credit_100_percent
+      citation:
+        span:
+          start: 1094
+          end: 1491
+        quoted_text: "To receive a Service Credit for SLA violations (other than the automatic instance credit), you must submit a claim by opening a case in the AWS Support Center. Your claim must:\n- Include \"Amazon Compute SLA Credit Request\" in the subject line\n- Specify the dates and times of the unavailability incident\n- Identify the affected AWS region and Availability Zone\n- List the affected EC2 resource IDs"
   llm_assisted: []
   human_only:
     - condition:
@@ -92,3 +112,9 @@ decision_zones:
             op: gt
             value: 2
       action: reject_claim_missing_requirements
+
+      citation:
+        span:
+          start: 1094
+          end: 1491
+        quoted_text: "To receive a Service Credit for SLA violations (other than the automatic instance credit), you must submit a claim by opening a case in the AWS Support Center. Your claim must:\n- Include \"Amazon Compute SLA Credit Request\" in the subject line\n- Specify the dates and times of the unavailability incident\n- Identify the affected AWS region and Availability Zone\n- List the affected EC2 resource IDs"

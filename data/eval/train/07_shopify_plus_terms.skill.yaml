@@ -16,6 +16,11 @@ decision_zones:
             op: eq
             value: false
       action: deny_refund_prepaid_fees_nonrefundable
+      citation:
+        span:
+          start: 489
+          end: 820
+        quoted_text: "Prepaid subscription fees for Shopify Plus are non-refundable. This applies to all plan tiers and contract lengths. If you terminate your Shopify Plus agreement before the end of your committed term, you remain responsible for the full contracted amount, and no refunds or credits will be issued for the unused portion of the term."
   llm_assisted: []
   human_only:
     - condition:
@@ -27,3 +32,9 @@ decision_zones:
             op: eq
             value: false
       action: escalate_billing_dispute_to_shopify_plus_support
+
+      citation:
+        span:
+          start: 1067
+          end: 1251
+        quoted_text: "Any billing disputes must be submitted in writing to Shopify within thirty (30) days of the relevant invoice date. Disputes submitted after this period will not be eligible for review."

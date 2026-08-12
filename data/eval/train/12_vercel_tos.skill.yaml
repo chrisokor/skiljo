@@ -16,12 +16,22 @@ decision_zones:
             op: eq
             value: subscription_renewal
       action: charge_payment_method_in_advance
+      citation:
+        span:
+          start: 91
+          end: 603
+        quoted_text: "Vercel will automatically charge your credit card or other payment method on record with Vercel (\"payment method\") in connection with the use of the Services:\n(i) in advance of each self-service subscription term, for the self-service subscription enabled and any additional Services added;\n(ii) in arrears, at any point during the self-service subscription term, for any Services used or added during the prior self-service subscription term;\n(iii) immediately for any Services that are not recurring in nature."
     - condition:
         all:
           - field: event_type
             op: eq
             value: on_demand_usage
       action: charge_payment_method_in_arrears
+      citation:
+        span:
+          start: 91
+          end: 603
+        quoted_text: "Vercel will automatically charge your credit card or other payment method on record with Vercel (\"payment method\") in connection with the use of the Services:\n(i) in advance of each self-service subscription term, for the self-service subscription enabled and any additional Services added;\n(ii) in arrears, at any point during the self-service subscription term, for any Services used or added during the prior self-service subscription term;\n(iii) immediately for any Services that are not recurring in nature."
     - condition:
         all:
           - field: event_type
@@ -31,12 +41,22 @@ decision_zones:
             op: eq
             value: false
       action: deny_refund_all_fees_nonrefundable
+      citation:
+        span:
+          start: 0
+          end: 54
+        quoted_text: "Vercel Terms of Service \u2014 Payment and Billing Sections"
     - condition:
         all:
           - field: non_vercel_service_discontinued
             op: eq
             value: true
       action: issue_prorated_refund_for_discontinued_service
+      citation:
+        span:
+          start: 91
+          end: 603
+        quoted_text: "Vercel will automatically charge your credit card or other payment method on record with Vercel (\"payment method\") in connection with the use of the Services:\n(i) in advance of each self-service subscription term, for the self-service subscription enabled and any additional Services added;\n(ii) in arrears, at any point during the self-service subscription term, for any Services used or added during the prior self-service subscription term;\n(iii) immediately for any Services that are not recurring in nature."
   llm_assisted:
     - condition:
         all:
@@ -44,5 +64,10 @@ decision_zones:
             op: eq
             value: anomalous_use_detected
       action: charge_accrued_fees_for_anomalous_use
+      citation:
+        span:
+          start: 919
+          end: 1161
+        quoted_text: "If Vercel detects elevated, irregular, high or anomalous use of the Services, as determined in Vercel's sole discretion, Vercel may automatically charge your payment method for the then accrued fees in connection with the use of the Services."
       requires_human_approval: true
   human_only: []

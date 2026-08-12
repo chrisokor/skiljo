@@ -31,6 +31,11 @@ decision_zones:
             op: lte
             value: 120
       action: process_refund
+      citation:
+        span:
+          start: 87
+          end: 678
+        quoted_text: "You must disclose your return and cancellation policy to customers at the point of purchase. You can process a refund through your Square Account up to one hundred and twenty (120) days from the day you accepted the payment. Refunds cannot exceed the amount shown as the total on the original sales data, except by the exact amount required to reimburse the customer for postage that you can verify was paid. Refunds must include applicable taxes. If your Square Account balance is insufficient to cover a refund, Square may recover the difference from your linked bank accounts or reserves."
     - condition:
         all:
           - field: event_type
@@ -40,6 +45,11 @@ decision_zones:
             op: gt
             value: 120
       action: deny_refund_outside_120_day_window
+      citation:
+        span:
+          start: 87
+          end: 678
+        quoted_text: "You must disclose your return and cancellation policy to customers at the point of purchase. You can process a refund through your Square Account up to one hundred and twenty (120) days from the day you accepted the payment. Refunds cannot exceed the amount shown as the total on the original sales data, except by the exact amount required to reimburse the customer for postage that you can verify was paid. Refunds must include applicable taxes. If your Square Account balance is insufficient to cover a refund, Square may recover the difference from your linked bank accounts or reserves."
     - condition:
         all:
           - field: event_type
@@ -49,18 +59,33 @@ decision_zones:
             op: eq
             value: false
       action: recover_refund_shortfall_from_linked_account_or_reserve
+      citation:
+        span:
+          start: 87
+          end: 678
+        quoted_text: "You must disclose your return and cancellation policy to customers at the point of purchase. You can process a refund through your Square Account up to one hundred and twenty (120) days from the day you accepted the payment. Refunds cannot exceed the amount shown as the total on the original sales data, except by the exact amount required to reimburse the customer for postage that you can verify was paid. Refunds must include applicable taxes. If your Square Account balance is insufficient to cover a refund, Square may recover the difference from your linked bank accounts or reserves."
     - condition:
         all:
           - field: event_type
             op: eq
             value: chargeback_lost
       action: debit_chargeback_amount_from_account_or_reserve
+      citation:
+        span:
+          start: 1101
+          end: 1487
+        quoted_text: "If a chargeback is filed against a transaction processed through your Square Account, Square may: (a) withhold the disputed amount from your payouts; (b) draw the amount from your Reserve; or (c) debit your linked bank account. If you lose a chargeback dispute, you must pay the full chargeback amount immediately upon demand, including any associated network fees and collection costs."
     - condition:
         all:
           - field: return_policy_disclosed_at_purchase
             op: eq
             value: false
       action: flag_policy_disclosure_violation
+      citation:
+        span:
+          start: 87
+          end: 678
+        quoted_text: "You must disclose your return and cancellation policy to customers at the point of purchase. You can process a refund through your Square Account up to one hundred and twenty (120) days from the day you accepted the payment. Refunds cannot exceed the amount shown as the total on the original sales data, except by the exact amount required to reimburse the customer for postage that you can verify was paid. Refunds must include applicable taxes. If your Square Account balance is insufficient to cover a refund, Square may recover the difference from your linked bank accounts or reserves."
   llm_assisted: []
   human_only:
     - condition:
@@ -69,3 +94,9 @@ decision_zones:
             op: eq
             value: chargeback_filed
       action: escalate_chargeback_dispute_for_review
+
+      citation:
+        span:
+          start: 1101
+          end: 1487
+        quoted_text: "If a chargeback is filed against a transaction processed through your Square Account, Square may: (a) withhold the disputed amount from your payouts; (b) draw the amount from your Reserve; or (c) debit your linked bank account. If you lose a chargeback dispute, you must pay the full chargeback amount immediately upon demand, including any associated network fees and collection costs."

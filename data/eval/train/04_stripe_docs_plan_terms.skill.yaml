@@ -21,6 +21,11 @@ decision_zones:
             op: eq
             value: false
       action: deny_refund_no_prorated_refunds
+      citation:
+        span:
+          start: 1270
+          end: 1538
+        quoted_text: "Stripe subscription plans require a monthly commitment. When you subscribe, you agree to pay for the full monthly term, including any incurred additional fees. Payments are non-refundable, and we do not offer prorated refunds if you cancel before the end of your term."
     - condition:
         all:
           - field: cancellation_notice_given_business_days
@@ -30,5 +35,10 @@ decision_zones:
             op: eq
             value: false
       action: schedule_cancellation_at_term_end
+      citation:
+        span:
+          start: 67
+          end: 489
+        quoted_text: "Bundled plans require a monthly commitment. Your subscription begins at 00:00 UTC on the day after you sign up, and runs for one month. After your plan starts, it can take up to 24 hours for all features to be available in your account. After you enroll, you are responsible for subscription fees and any applicable additional fees incurred for the full term, even if you schedule a cancellation before your contract ends."
   llm_assisted: []
   human_only: []

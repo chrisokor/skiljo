@@ -13,17 +13,32 @@ decision_zones:
             op: eq
             value: upgrade
       action: apply_plan_immediately_and_charge_prorated_difference
+      citation:
+        span:
+          start: 176
+          end: 424
+        quoted_text: "Upgrades: If you upgrade to a higher-priced Subscription Plan, the new plan\ntakes effect immediately. We will charge you a prorated amount for the\nremainder of the current billing period based on the difference between your\nold and new plan prices."
     - condition:
         all:
           - field: change_direction
             op: eq
             value: downgrade
       action: apply_plan_at_next_billing_period_no_proration
+      citation:
+        span:
+          start: 426
+          end: 727
+        quoted_text: "Downgrades: If you downgrade to a lower-priced Subscription Plan, the change\ntakes effect at the start of your next billing period. You will continue to\nhave access to your current plan's features and Entitlements until the\ncurrent billing period ends. We do not issue prorated refunds for downgrades."
     - condition:
         all:
           - field: change_direction
             op: eq
             value: same_price
       action: apply_plan_immediately_no_proration
+      citation:
+        span:
+          start: 34
+          end: 174
+        quoted_text: "When you change your Subscription Plan, the timing of the change and any\nassociated charge or credit depends on the direction of the change."
   llm_assisted: []
   human_only: []

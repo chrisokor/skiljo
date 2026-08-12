@@ -13,11 +13,21 @@ decision_zones:
             op: eq
             value: customer_material_breach
       action: forfeit_remaining_prepaid_fees_no_refund
+      citation:
+        span:
+          start: 0
+          end: 33
+        quoted_text: "Shopify Plus Terms \u2014 Prepaid Fees"
     - condition:
         all:
           - field: terminated_for
             op: eq
             value: shopify_uncured_breach
       action: issue_prorated_refund_of_unexpired_term
+      citation:
+        span:
+          start: 0
+          end: 33
+        quoted_text: "Shopify Plus Terms \u2014 Prepaid Fees"
   llm_assisted: []
   human_only: []

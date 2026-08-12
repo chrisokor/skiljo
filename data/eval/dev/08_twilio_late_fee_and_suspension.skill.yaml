@@ -15,11 +15,21 @@ decision_zones:
             op: lte
             value: 45
       action: assess_late_fee_lesser_of_1_5_percent_or_legal_max
+      citation:
+        span:
+          start: 51
+          end: 247
+        quoted_text: "Payment is due within 15 days of the invoice date. Invoices unpaid after this\n15-day grace period accrue a late fee of the lesser of 1.5% per month or the\nmaximum rate permitted by applicable law."
     - condition:
         all:
           - field: days_since_invoice_date
             op: gt
             value: 45
       action: suspend_account_until_paid_in_full
+      citation:
+        span:
+          start: 51
+          end: 247
+        quoted_text: "Payment is due within 15 days of the invoice date. Invoices unpaid after this\n15-day grace period accrue a late fee of the lesser of 1.5% per month or the\nmaximum rate permitted by applicable law."
   llm_assisted: []
   human_only: []
