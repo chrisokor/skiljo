@@ -57,28 +57,30 @@ class _CitedRule(Protocol):
 def _report_citation_for_decision(
     skill: Skill, skill_version_id: uuid.UUID, decision: str
 ) -> ReportCitation | None:
-    """Return the source citation for the first skill rule that produced a decision."""
-    def find_citation(zone_name: str, rules: Sequence[_CitedRule]) -> ReportCitation | None:
+    """Return a citation only when one rule unambiguously produced a decision."""
+    candidates: list[ReportCitation] = []
+
+    def collect_citations(zone_name: str, rules: Sequence[_CitedRule]) -> None:
         for index, rule in enumerate(rules):
             if rule.action == decision:
-                return ReportCitation(
-                    policy_id=str(skill_version_id),
-                    rule_id=f"{zone_name}[{index}]",
-                    span_start=rule.citation.span.start,
-                    span_end=rule.citation.span.end,
-                    quoted_text=rule.citation.quoted_text,
+                candidates.append(
+                    ReportCitation(
+                        policy_id=str(skill_version_id),
+                        rule_id=f"{zone_name}[{index}]",
+                        span_start=rule.citation.span.start,
+                        span_end=rule.citation.span.end,
+                        quoted_text=rule.citation.quoted_text,
+                    )
                 )
-        return None
 
     for zone_name, rules in (
         ("deterministic", skill.decision_zones.deterministic),
         ("llm_assisted", skill.decision_zones.llm_assisted),
         ("human_only", skill.decision_zones.human_only),
     ):
-        citation = find_citation(zone_name, rules)
-        if citation is not None:
-            return citation
-    return None
+        collect_citations(zone_name, rules)
+
+    return candidates[0] if len(candidates) == 1 else None
 
 
 def _report_contradictions(

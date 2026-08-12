@@ -8,11 +8,13 @@ from skiljo_api.main import app
 from skiljo_core.db.models import Job, SimulationResult, SimulationRun, Skill, SkillVersion
 from skiljo_core.db.session import SessionLocal
 from skiljo_core.schemas.rule_schema import (
+    Citation as RuleCitation,
     Condition,
     ConditionOrPredicate,
     DeterministicRule,
     Operator,
     Predicate,
+    Span,
 )
 from skiljo_core.schemas.skill_schema import DecisionZones, Input, Skill as SkillSchema, Type
 from skiljo_core.schemas.simulation_report_schema import (
@@ -73,6 +75,58 @@ def _seed_approved_skill() -> tuple[uuid.UUID, uuid.UUID]:
         skill_row.current_version_id = version_row.id
         session.commit()
         return skill_row.id, version_row.id
+
+
+def _seed_skill_with_ambiguous_action() -> uuid.UUID:
+    """Insert a skill with two rules that can both produce approve_refund."""
+    condition = Condition(
+        all=[
+            ConditionOrPredicate(
+                root=Predicate(field="refund_amount", op=Operator.lte, value=100.0)
+            )
+        ]
+    )
+    spec = SkillSchema(
+        skill_name="ambiguous_refund_policy",
+        version=1,
+        trigger="customer_requests_refund",
+        inputs=[Input(name="refund_amount", type=Type.number)],
+        decision_zones=DecisionZones(
+            deterministic=[
+                DeterministicRule(
+                    condition=condition,
+                    action="approve_refund",
+                    citation=RuleCitation(
+                        span=Span(start=0, end=10), quoted_text="first rule"
+                    ),
+                ),
+                DeterministicRule(
+                    condition=condition,
+                    action="approve_refund",
+                    citation=RuleCitation(
+                        span=Span(start=11, end=22), quoted_text="second rule"
+                    ),
+                ),
+            ],
+            llm_assisted=[],
+            human_only=[],
+        ),
+    )
+    with SessionLocal() as session:
+        skill_row = Skill(name="ambiguous_refund_policy")
+        session.add(skill_row)
+        session.flush()
+        version_row = SkillVersion(
+            skill_id=skill_row.id,
+            version_number=1,
+            spec=spec.model_dump(mode="json"),
+            status="approved",
+        )
+        session.add(version_row)
+        session.flush()
+        skill_row.current_version_id = version_row.id
+        session.commit()
+        return version_row.id
 
 
 def _tickets_payload(count: int = 5, ground_truth_decision: str = "approve_refund") -> list[dict]:
@@ -311,5 +365,36 @@ def test_completed_simulation_report_preserves_contradiction_citation() -> None:
 
         assert report["contradiction_count"] == 1
         assert report["contradictions"][0]["citation"]["quoted_text"] == "x"
+    finally:
+        app.dependency_overrides.clear()
+
+
+def test_ambiguous_action_contradiction_omits_citation() -> None:
+    """Does not attach provenance when multiple rules share the written action."""
+    _clean()
+    version_id = _seed_skill_with_ambiguous_action()
+    app.dependency_overrides[get_llm_client] = lambda: FakeLLMClient([])
+    client = TestClient(app)
+    try:
+        response = client.post(
+            "/simulations",
+            json={
+                "skill_version_id": str(version_id),
+                "tickets": _tickets_payload(5, ground_truth_decision="deny_refund"),
+            },
+        )
+        job_id = uuid.UUID(response.json()["job_id"])
+        with SessionLocal() as session:
+            job = session.get(Job, job_id)
+            assert job is not None
+            assert job.status == "completed", f"Job failed: {job.error}"
+            sim_id = job.result_ref
+
+        report = client.get(f"/simulations/{sim_id}/report").json()
+        html = client.get(f"/simulations/{sim_id}/report.html").text
+
+        assert report["contradictions"][0]["citation"] is None
+        assert "first rule" not in html
+        assert "second rule" not in html
     finally:
         app.dependency_overrides.clear()
