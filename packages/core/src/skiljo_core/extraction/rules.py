@@ -10,8 +10,15 @@ RULE_EXTRACTION_PROMPT_V1 = """You are extracting structured rules from a "{segm
 For each distinct rule you find, produce:
 - a condition using the predicate language: "all"/"any" composition of {{field, op, value}} predicates, where op is one of eq, neq, lt, lte, gt, gte, in, not_in, contains, empty, not_empty
 - an action describing what happens when the condition is met
+- a citation with:
+  - span: character offsets (start, end) pointing to the exact evidence in the source
+  - quoted_text: a verbatim excerpt from the source document
 
-Segment text:
+CRITICAL: The span offsets must be character positions within the SECTION TEXT
+provided below. `start` is where the evidence begins, `end` is exclusive, and
+`quoted_text` must equal the exact substring `source[start:end]`.
+
+SECTION TEXT:
 ---
 {segment_text}
 ---
