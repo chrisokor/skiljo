@@ -48,6 +48,14 @@ def test_get_simulation_report_html_fetches_report_endpoint(monkeypatch) -> None
     response.raise_for_status.assert_called_once_with()
 
 
+def test_main_page_offers_extract_policy_action() -> None:
+    page = AppTest.from_file("packages/demo/src/app.py").run(timeout=10)
+
+    assert not page.exception
+    assert page.title[0].value == "Skiljo"
+    assert any("Extract policy" in button.label for button in page.button)
+
+
 def test_cross_document_page_limits_second_selection_to_a_different_skill(monkeypatch) -> None:
     skills = [
         {"id": "skill-1", "name": "Terms of Service"},

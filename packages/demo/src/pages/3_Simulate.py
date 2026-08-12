@@ -131,6 +131,8 @@ if st.button("Run Simulation", type="primary"):
         st.error(f"Could not fetch simulation report: {exc}")
         st.stop()
 
+    st.session_state["completed_simulation_id"] = str(sim_id)
+
     summary: dict = sim_data.get("summary") or {}
 
     st.success("Simulation completed!")
@@ -175,16 +177,18 @@ if st.button("Run Simulation", type="primary"):
     else:
         st.info("No per-ticket results available.")
 
+completed_simulation_id = st.session_state.get("completed_simulation_id")
+if completed_simulation_id:
     st.subheader("Report")
     try:
-        report_html = get_simulation_report_html(str(sim_id))
+        report_html = get_simulation_report_html(str(completed_simulation_id))
     except Exception as exc:
         st.warning(f"Simulation completed, but the HTML report could not be loaded: {exc}")
     else:
         st.download_button(
             "Download HTML report",
             data=report_html,
-            file_name=f"skiljo_simulation_{sim_id}.html",
+            file_name=f"skiljo_simulation_{completed_simulation_id}.html",
             mime="text/html",
         )
 

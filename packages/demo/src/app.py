@@ -7,4 +7,8 @@ st.sidebar.caption("Policy consistency checker")
 st.sidebar.divider()
 
 st.title("Skiljo")
-st.caption("Policy consistency checker")
+st.subheader("Policy consistency checker")
+st.caption("Extract -> Review -> Simulate -> Compare")
+
+if st.button("Extract policy", type="primary"):
+    st.switch_page("pages/1_Extract.py")
