@@ -7,6 +7,7 @@ See `GLOSSARY.md` for a running list of concepts introduced across debriefs.
 ## Week 7 - Citations and v1.05 product
 
 4. [Task 4: Eval ground-truth citations](week7-task4-eval-citations.md)
+5. [Task 5: HTML report rendering](week7-task5-html-report-rendering.md)
 
 ## Week 6 — v1.0 completion
 

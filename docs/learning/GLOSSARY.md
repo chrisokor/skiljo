@@ -22,6 +22,13 @@ the source document satisfies `source_text[start:end] == quoted_text`, which
 makes provenance reproducible rather than dependent on subjective review. See
 [Week 7 Task 4](week7-task4-eval-citations.md).
 
+## Diagnostic report (standalone HTML)
+
+A self-contained HTML artifact that presents a persisted `SimulationReport` for
+business review. It inlines its CSS, uses no external assets, and includes
+print-specific rules so a saved response remains readable outside the product.
+See [Week 7 Task 5](week7-task5-html-report-rendering.md).
+
 ## `session.merge()` (SQLAlchemy upsert)
 
 `Session.merge(instance)` issues a SELECT on the primary key, then INSERT if absent or UPDATE if present. Unlike `session.add()`, it doesn't raise `IntegrityError` on a duplicate primary key, making it the right tool for idempotent writes where the primary key is a content-addressed hash. See [Week 3 Task 1](week3-task1-llm-cache.md).
