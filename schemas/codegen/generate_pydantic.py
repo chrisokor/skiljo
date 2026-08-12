@@ -11,6 +11,13 @@ SCHEMAS_DIR = REPO_ROOT / "schemas"
 OUTPUT_DIR = REPO_ROOT / "packages" / "core" / "src" / "skiljo_core" / "schemas"
 
 
+def write_schema_exports() -> None:
+    (OUTPUT_DIR / "__init__.py").write_text(
+        "from .rule_schema import Citation, Rule, Span\n\n"
+        '__all__ = ["Citation", "Rule", "Span"]\n'
+    )
+
+
 def main() -> None:
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
     # datamodel-codegen recursively parses every file under --input, so point it at a
@@ -29,6 +36,8 @@ def main() -> None:
             ],
             check=False,
         )
+    if result.returncode == 0:
+        write_schema_exports()
     sys.exit(result.returncode)
 
 

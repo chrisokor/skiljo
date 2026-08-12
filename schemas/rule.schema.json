@@ -2,7 +2,47 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://skiljo.ai/schemas/rule.schema.json",
   "title": "Rule",
+  "type": "object",
+  "required": ["id", "decision_zone", "action", "condition", "citation"],
+  "properties": {
+    "id": { "type": "string" },
+    "decision_zone": {
+      "type": "string",
+      "enum": ["deterministic", "llm_assisted", "human_only"]
+    },
+    "action": { "type": "string" },
+    "condition": { "type": "object" },
+    "severity": { "type": "string" },
+    "citation": { "$ref": "#/$defs/Citation" },
+    "metadata": { "type": "object" }
+  },
   "$defs": {
+    "Span": {
+      "type": "object",
+      "properties": {
+        "start": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Character offset from document start"
+        },
+        "end": {
+          "type": "integer",
+          "description": "Character offset (exclusive)"
+        }
+      },
+      "required": ["start", "end"]
+    },
+    "Citation": {
+      "type": "object",
+      "properties": {
+        "span": { "$ref": "#/$defs/Span" },
+        "quoted_text": {
+          "type": "string",
+          "description": "Verbatim text from source document within span"
+        }
+      },
+      "required": ["span", "quoted_text"]
+    },
     "Operator": {
       "type": "string",
       "enum": ["eq", "neq", "lt", "lte", "gt", "gte", "in", "not_in", "contains", "empty", "not_empty"]
