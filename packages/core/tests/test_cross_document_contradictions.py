@@ -13,7 +13,7 @@ from skiljo_core.simulation.cross_document import (
     PolicyDocument,
     detect_cross_document_contradictions,
 )
-from skiljo_core.testing import FakeLLMClient
+from skiljo_core.testing import FakeLLMClient, TEST_CITATION
 
 
 def _condition() -> Condition:
@@ -23,8 +23,8 @@ def _condition() -> Condition:
 
 
 def _skill(action: str, zone: str = "deterministic") -> Skill:
-    deterministic = [DeterministicRule(condition=_condition(), action=action)] if zone == "deterministic" else []
-    human_only = [HumanOnlyRule(condition=_condition(), action=action)] if zone == "human_only" else []
+    deterministic = [DeterministicRule(condition=_condition(), action=action, citation=TEST_CITATION)] if zone == "deterministic" else []
+    human_only = [HumanOnlyRule(condition=_condition(), action=action, citation=TEST_CITATION)] if zone == "human_only" else []
     return Skill(
         skill_name="process_refund_request",
         version=1,
@@ -79,8 +79,8 @@ def test_aligns_rules_on_same_surface() -> None:
             inputs=[Input(name="days_since_purchase", type=Type.integer)],
             decision_zones=DecisionZones(
                 deterministic=[
-                    DeterministicRule(condition=_condition(), action="deny_refund"),
-                    DeterministicRule(condition=_condition(), action="grant_sla_credit_10pct"),
+                    DeterministicRule(condition=_condition(), action="deny_refund", citation=TEST_CITATION),
+                    DeterministicRule(condition=_condition(), action="grant_sla_credit_10pct", citation=TEST_CITATION),
                 ],
                 llm_assisted=[],
                 human_only=[],
@@ -96,8 +96,8 @@ def test_aligns_rules_on_same_surface() -> None:
             inputs=[Input(name="days_since_purchase", type=Type.integer)],
             decision_zones=DecisionZones(
                 deterministic=[
-                    DeterministicRule(condition=_condition(), action="approve_refund"),
-                    DeterministicRule(condition=_condition(), action="grant_sla_credit_30pct"),
+                    DeterministicRule(condition=_condition(), action="approve_refund", citation=TEST_CITATION),
+                    DeterministicRule(condition=_condition(), action="grant_sla_credit_30pct", citation=TEST_CITATION),
                 ],
                 llm_assisted=[],
                 human_only=[],
@@ -157,8 +157,8 @@ def test_ignores_pairs_within_the_same_document() -> None:
             inputs=[Input(name="days_since_purchase", type=Type.integer)],
             decision_zones=DecisionZones(
                 deterministic=[
-                    DeterministicRule(condition=_condition(), action="deny_refund"),
-                    DeterministicRule(condition=_condition(), action="approve_refund"),
+                    DeterministicRule(condition=_condition(), action="deny_refund", citation=TEST_CITATION),
+                    DeterministicRule(condition=_condition(), action="approve_refund", citation=TEST_CITATION),
                 ],
                 llm_assisted=[],
                 human_only=[],

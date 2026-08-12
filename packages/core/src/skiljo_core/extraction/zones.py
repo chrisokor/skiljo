@@ -66,11 +66,16 @@ def classify_rules(
                     condition=rule.condition,
                     action=rule.action,
                     requires_human_approval=True,
+                    citation=rule.citation,
                 )
             )
         else:
             human_only.append(
-                HumanOnlyRule(condition=rule.condition, action=rule.action)
+                HumanOnlyRule(
+                    condition=rule.condition,
+                    action=rule.action,
+                    citation=rule.citation,
+                )
             )
     return DecisionZones(
         deterministic=deterministic,

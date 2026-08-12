@@ -27,6 +27,7 @@
         },
         "end": {
           "type": "integer",
+          "minimum": 0,
           "description": "Character offset (exclusive)"
         }
       },
@@ -73,27 +74,30 @@
     },
     "DeterministicRule": {
       "type": "object",
-      "required": ["condition", "action"],
+      "required": ["condition", "action", "citation"],
       "properties": {
         "condition": { "$ref": "#/$defs/Condition" },
-        "action": { "type": "string" }
+        "action": { "type": "string" },
+        "citation": { "$ref": "#/$defs/Citation" }
       }
     },
     "LLMAssistedRule": {
       "type": "object",
-      "required": ["condition", "action", "requires_human_approval"],
+      "required": ["condition", "action", "requires_human_approval", "citation"],
       "properties": {
         "condition": { "$ref": "#/$defs/Condition" },
         "action": { "type": "string" },
-        "requires_human_approval": { "type": "boolean", "const": true }
+        "requires_human_approval": { "type": "boolean", "const": true },
+        "citation": { "$ref": "#/$defs/Citation" }
       }
     },
     "HumanOnlyRule": {
       "type": "object",
-      "required": ["condition", "action"],
+      "required": ["condition", "action", "citation"],
       "properties": {
         "condition": { "$ref": "#/$defs/Condition" },
-        "action": { "type": "string" }
+        "action": { "type": "string" },
+        "citation": { "$ref": "#/$defs/Citation" }
       }
     }
   }

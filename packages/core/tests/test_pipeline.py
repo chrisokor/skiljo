@@ -1,4 +1,4 @@
-from skiljo_core.testing import FakeLLMClient
+from skiljo_core.testing import FakeLLMClient, TEST_CITATION
 
 from skiljo_core.extraction.pipeline import run_extraction_pipeline
 from skiljo_core.extraction.rules import CandidateRuleList
@@ -20,6 +20,7 @@ def test_pipeline_runs_all_four_passes_and_produces_schema_valid_skill() -> None
                     DeterministicRule(
                         condition=Condition(all=[ConditionOrPredicate(root=Predicate(field="refund_amount", op=Operator.lt, value=100))]),
                         action="approve_refund",
+                        citation=TEST_CITATION,
                     )
                 ]
             ),
@@ -53,6 +54,7 @@ def test_pipeline_accumulates_rules_across_multiple_segments() -> None:
                     DeterministicRule(
                         condition=Condition(all=[ConditionOrPredicate(root=Predicate(field="refund_amount", op=Operator.lt, value=100))]),
                         action="approve_refund",
+                        citation=TEST_CITATION,
                     )
                 ]
             ),
@@ -61,6 +63,7 @@ def test_pipeline_accumulates_rules_across_multiple_segments() -> None:
                     DeterministicRule(
                         condition=Condition(all=[ConditionOrPredicate(root=Predicate(field="goodwill_requested", op=Operator.eq, value=True))]),
                         action="goodwill_exception",
+                        citation=TEST_CITATION,
                     )
                 ]
             ),

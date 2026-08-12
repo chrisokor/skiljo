@@ -3,8 +3,11 @@ from typing import Any, TypeVar, cast
 from pydantic import BaseModel
 
 from skiljo_core.llm.base import StructuredResponse
+from skiljo_core.schemas.rule_schema import Citation, Span
 
 T = TypeVar("T", bound=BaseModel)
+
+TEST_CITATION = Citation(span=Span(start=0, end=1), quoted_text="x")
 
 
 class FakeLLMClient:

@@ -1,6 +1,6 @@
 from typing import cast
 
-from skiljo_core.testing import FakeLLMClient
+from skiljo_core.testing import FakeLLMClient, TEST_CITATION
 
 from skiljo_core.extraction.rules import CandidateRuleList, extract_rules
 from skiljo_core.extraction.segmentation import Segment
@@ -20,6 +20,7 @@ def test_extract_rules_returns_expected_condition_structure() -> None:
                             ]
                         ),
                         action="approve_refund",
+                        citation=TEST_CITATION,
                     )
                 ]
             )

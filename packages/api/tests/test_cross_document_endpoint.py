@@ -16,7 +16,7 @@ from skiljo_core.schemas.rule_schema import (
 )
 from skiljo_core.schemas.skill_schema import DecisionZones, Input, Skill as SkillSchema, Type
 from skiljo_core.simulation.cross_document import ConflictCheck, DecisionSurfaceClassification
-from skiljo_core.testing import FakeLLMClient
+from skiljo_core.testing import FakeLLMClient, TEST_CITATION
 
 
 def _clean() -> None:
@@ -37,8 +37,8 @@ def _condition() -> Condition:
 
 
 def _seed_skill_version(policy_id: uuid.UUID | None, action: str, zone: str) -> uuid.UUID:
-    deterministic = [DeterministicRule(condition=_condition(), action=action)] if zone == "deterministic" else []
-    human_only = [HumanOnlyRule(condition=_condition(), action=action)] if zone == "human_only" else []
+    deterministic = [DeterministicRule(condition=_condition(), action=action, citation=TEST_CITATION)] if zone == "deterministic" else []
+    human_only = [HumanOnlyRule(condition=_condition(), action=action, citation=TEST_CITATION)] if zone == "human_only" else []
     spec = SkillSchema(
         skill_name="process_refund_request",
         version=1,

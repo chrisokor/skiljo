@@ -2,7 +2,7 @@ import uuid
 
 from fastapi.testclient import TestClient
 
-from skiljo_core.testing import FakeLLMClient
+from skiljo_core.testing import FakeLLMClient, TEST_CITATION
 
 from skiljo_api.dependencies import get_llm_client
 from skiljo_api.main import app
@@ -39,6 +39,7 @@ def test_extract_endpoint_creates_draft_skill_version() -> None:
                     DeterministicRule(
                         condition=Condition(all=[ConditionOrPredicate(root=Predicate(field="refund_amount", op=Operator.lt, value=100))]),
                         action="approve_refund",
+                        citation=TEST_CITATION,
                     )
                 ]
             ),

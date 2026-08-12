@@ -14,6 +14,7 @@ from skiljo_core.schemas.skill_schema import DecisionZones, Input, Skill, Type
 from skiljo_core.schemas.ticket_schema import Ticket
 from skiljo_core.simulation.engine import compute_report, simulate_batch
 from skiljo_core.testing import FakeLLMClient
+from skiljo_core.testing import TEST_CITATION
 
 
 def _simple_skill() -> Skill:
@@ -29,6 +30,7 @@ def _simple_skill() -> Skill:
                         all=[ConditionOrPredicate(root=Predicate(field="refund_amount", op=Operator.lte, value=100.0))]
                     ),
                     action="approve_refund",
+                    citation=TEST_CITATION,
                 )
             ],
             llm_assisted=[],

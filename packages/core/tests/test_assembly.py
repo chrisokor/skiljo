@@ -1,4 +1,4 @@
-from skiljo_core.testing import FakeLLMClient
+from skiljo_core.testing import FakeLLMClient, TEST_CITATION
 
 from skiljo_core.extraction.assembly import assemble_skill
 from skiljo_core.schemas.rule_schema import Condition, ConditionOrPredicate, DeterministicRule, Operator, Predicate
@@ -14,6 +14,7 @@ def _decision_zones() -> DecisionZones:
             ]
         ),
         action="approve_refund",
+        citation=TEST_CITATION,
     )
     return DecisionZones(deterministic=[rule], llm_assisted=[], human_only=[])
 
@@ -65,6 +66,7 @@ def test_assemble_skill_handles_nested_conditions_and_array_fields() -> None:
             ]
         ),
         action="escalate_review",
+        citation=TEST_CITATION,
     )
     decision_zones = DecisionZones(deterministic=[rule], llm_assisted=[], human_only=[])
     fake_client = FakeLLMClient([])

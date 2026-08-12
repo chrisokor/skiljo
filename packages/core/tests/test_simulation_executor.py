@@ -13,6 +13,7 @@ from skiljo_core.schemas.skill_schema import DecisionZones, Input, Skill, Type
 from skiljo_core.schemas.ticket_schema import Ticket
 from skiljo_core.simulation.executor import LLMRecommendation, simulate_ticket
 from skiljo_core.testing import FakeLLMClient
+from skiljo_core.testing import TEST_CITATION
 
 
 def _ticket(
@@ -46,6 +47,7 @@ def _skill_with_deterministic_rule() -> Skill:
                         all=[ConditionOrPredicate(root=Predicate(field="refund_amount", op=Operator.lte, value=100.0))]
                     ),
                     action="approve_refund",
+                    citation=TEST_CITATION,
                 )
             ],
             llm_assisted=[],
@@ -69,6 +71,7 @@ def _skill_with_llm_assisted_rule() -> Skill:
                     ),
                     action="draft_recommendation",
                     requires_human_approval=True,
+                    citation=TEST_CITATION,
                 )
             ],
             human_only=[],

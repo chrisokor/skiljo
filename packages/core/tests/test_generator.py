@@ -4,6 +4,7 @@ from skiljo_core.schemas.rule_schema import Condition, ConditionOrPredicate, Ope
 from skiljo_core.schemas.skill_schema import DecisionZones, Input, Skill, Type
 from skiljo_core.schemas.rule_schema import DeterministicRule, LLMAssistedRule, HumanOnlyRule
 from skiljo_core.simulation.generator import DivergenceSpec, generate_ticket_batch
+from skiljo_core.testing import TEST_CITATION
 
 
 def _base_skill() -> Skill:
@@ -25,12 +26,14 @@ def _base_skill() -> Skill:
                         ]
                     ),
                     action="approve_refund",
+                    citation=TEST_CITATION,
                 ),
                 DeterministicRule(
                     condition=Condition(
                         all=[ConditionOrPredicate(root=Predicate(field="refund_amount", op=Operator.gt, value=500.0))]
                     ),
                     action="escalate_to_human",
+                    citation=TEST_CITATION,
                 ),
             ],
             llm_assisted=[
@@ -40,6 +43,7 @@ def _base_skill() -> Skill:
                     ),
                     action="draft_recommendation",
                     requires_human_approval=True,
+                    citation=TEST_CITATION,
                 )
             ],
             human_only=[
@@ -48,6 +52,7 @@ def _base_skill() -> Skill:
                         all=[ConditionOrPredicate(root=Predicate(field="refund_amount", op=Operator.gt, value=500.0))]
                     ),
                     action="escalate_to_finance",
+                    citation=TEST_CITATION,
                 )
             ],
         ),

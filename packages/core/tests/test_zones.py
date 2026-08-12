@@ -4,11 +4,13 @@ from skiljo_core.extraction.zones import (
     classify_zone,
 )
 from skiljo_core.schemas.rule_schema import (
+    Citation,
     Condition,
     ConditionOrPredicate,
     DeterministicRule,
     Operator,
     Predicate,
+    Span,
 )
 from skiljo_core.testing import FakeLLMClient
 
@@ -25,6 +27,7 @@ def _rule(action: str) -> DeterministicRule:
             ]
         ),
         action=action,
+        citation=Citation(span=Span(start=0, end=1), quoted_text="r"),
     )
 
 
@@ -58,5 +61,7 @@ def test_classify_rules_buckets_into_decision_zones() -> None:
     assert len(decision_zones.llm_assisted) == 1
     assert decision_zones.llm_assisted[0].action == "goodwill_exception"
     assert decision_zones.llm_assisted[0].requires_human_approval is True
+    assert decision_zones.llm_assisted[0].citation.quoted_text == "r"
     assert len(decision_zones.human_only) == 1
     assert decision_zones.human_only[0].action == "escalate_fraud_dispute"
+    assert decision_zones.human_only[0].citation.quoted_text == "r"

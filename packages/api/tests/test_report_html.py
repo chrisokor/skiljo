@@ -15,7 +15,7 @@ from skiljo_core.schemas.rule_schema import (
     Predicate,
 )
 from skiljo_core.schemas.skill_schema import DecisionZones, Input, Skill as SkillSchema, Type
-from skiljo_core.testing import FakeLLMClient
+from skiljo_core.testing import FakeLLMClient, TEST_CITATION
 
 
 def _clean() -> None:
@@ -42,6 +42,7 @@ def _seed_approved_skill() -> tuple[uuid.UUID, uuid.UUID]:
                         all=[ConditionOrPredicate(root=Predicate(field="refund_amount", op=Operator.lte, value=100.0))]
                     ),
                     action="approve_refund",
+                    citation=TEST_CITATION,
                 )
             ],
             llm_assisted=[],
