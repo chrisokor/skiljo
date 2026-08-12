@@ -67,3 +67,14 @@ new page.
 
 `make lint typecheck test` passed: Ruff clean, mypy clean, 232 Python tests
 passed with 2 skipped, and 27 SDK tests passed.
+
+## Review fix: ambiguous rule actions
+
+The first implementation selected the first rule whose `action` matched a
+contradiction's written decision. That was unsafe because actions such as
+`approve_refund` can occur in multiple rules. The resolver now gathers matches
+across every decision zone and emits a citation only when exactly one rule has
+that action. The regression test creates two matching rules with distinct source
+quotes and verifies that both the persisted report and rendered HTML omit the
+citation. This is intentionally conservative: the detector does not currently
+preserve matched rule identity, so a more specific citation cannot be justified.
