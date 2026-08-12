@@ -73,6 +73,7 @@ def test_assemble_skill_succeeds_without_llm_call_when_valid() -> None:
         skill_name="process_refund_request",
         trigger="customer_requests_refund",
         decision_zones=_decision_zones(),
+        source_text="x",
     )
 
     assert skill.skill_name == "process_refund_request"
@@ -96,6 +97,7 @@ def test_assemble_skill_repairs_invalid_skill_name_via_llm() -> None:
         skill_name="ProcessRefundRequest",  # invalid: uppercase violates skill_name's pattern
         trigger="customer_requests_refund",
         decision_zones=_decision_zones(),
+        source_text="x",
     )
 
     assert skill.skill_name == "process_refund_request"
@@ -122,8 +124,42 @@ def test_assemble_skill_handles_nested_conditions_and_array_fields() -> None:
         skill_name="process_refund_request",
         trigger="customer_requests_refund",
         decision_zones=decision_zones,
+        source_text="x",
     )
 
     by_name = {i.name: i.type.value for i in skill.inputs}
     assert by_name["fraud_flags"] == "array"
     assert by_name["refund_amount"] == "number"
+
+
+def test_assemble_skill_rejects_invalid_final_citation() -> None:
+    fake_client = FakeLLMClient([])
+
+    with pytest.raises(ValueError, match="quoted_text mismatch"):
+        assemble_skill(
+            fake_client,
+            skill_name="process_refund_request",
+            trigger="customer_requests_refund",
+            decision_zones=_decision_zones(),
+            source_text="policy text",
+        )
+
+
+def test_assemble_skill_rejects_invalid_citation_from_repair() -> None:
+    repaired = Skill(
+        skill_name="process_refund_request",
+        version=1,
+        trigger="customer_requests_refund",
+        inputs=[Input(name="refund_amount", type=Type.number)],
+        decision_zones=_decision_zones(),
+    )
+    fake_client = FakeLLMClient([repaired])
+
+    with pytest.raises(ValueError, match="quoted_text mismatch"):
+        assemble_skill(
+            fake_client,
+            skill_name="ProcessRefundRequest",
+            trigger="customer_requests_refund",
+            decision_zones=_decision_zones(),
+            source_text="policy text",
+        )

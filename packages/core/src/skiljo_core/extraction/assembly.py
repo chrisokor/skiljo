@@ -3,6 +3,7 @@ from typing import Any, Union
 from pydantic import ValidationError
 
 from skiljo_core import config
+from skiljo_core.extraction.citation_validator import validate_citation
 from skiljo_core.llm.base import LLMClient
 from skiljo_core.schemas.rule_schema import (
     Condition,
@@ -57,11 +58,22 @@ def _build_inputs(fields: list[str]) -> list[dict[str, str]]:
     return [{"name": field, "type": _guess_input_type(field)} for field in fields]
 
 
+def _validate_skill_citations(skill: Skill, source_text: str) -> None:
+    rules: list[_AnyRule] = [
+        *skill.decision_zones.deterministic,
+        *skill.decision_zones.llm_assisted,
+        *skill.decision_zones.human_only,
+    ]
+    for rule in rules:
+        validate_citation(rule.citation, source_text)
+
+
 def assemble_skill(
     llm_client: LLMClient,
     skill_name: str,
     trigger: str,
     decision_zones: DecisionZones,
+    source_text: str,
     model: str = config.DEFAULT_MODEL,
 ) -> Skill:
     fields = _collect_fields(decision_zones)
@@ -73,7 +85,7 @@ def assemble_skill(
         "decision_zones": decision_zones.model_dump(mode="json"),
     }
     try:
-        return Skill.model_validate(candidate)
+        skill = Skill.model_validate(candidate)
     except ValidationError as exc:
         repair_prompt = (
             "The following draft Skill spec failed JSON Schema validation.\n\n"
@@ -87,4 +99,7 @@ def assemble_skill(
             model=model,
             prompt_version="assembly_repair_v1",
         )
-        return response.data
+        skill = response.data
+
+    _validate_skill_citations(skill, source_text)
+    return skill
