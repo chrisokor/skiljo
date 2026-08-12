@@ -132,6 +132,12 @@ beside an entrypoint and uses numeric filename prefixes for their navigation
 order. This lets a demo add a screen without a separate route registry. See
 [Week 7 Task 6](week7-task6-cross-document-ui.md).
 
+## Streamlit `download_button`
+
+`st.download_button` exposes in-memory data as a browser download without
+creating a server-side temporary file. The demo uses it to deliver the
+already-rendered standalone HTML simulation report. See [Week 7 Task 7](week7-task7-consistency-checker-workflow.md).
+
 ## Golden fixture test
 
 A test pattern where data is pre-generated, version-controlled, and loaded from files (rather than generated fresh in each test run). Golden fixture tests trade test independence for stability and regression detection — they catch behavioral changes in integration scenarios. Useful for complex workflows (like end-to-end simulation) where unit tests alone can't verify the full pipeline. See [Week 3 Task 8](week3-task8-golden-tests.md).

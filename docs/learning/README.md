@@ -9,6 +9,7 @@ See `GLOSSARY.md` for a running list of concepts introduced across debriefs.
 4. [Task 4: Eval ground-truth citations](week7-task4-eval-citations.md)
 5. [Task 5: HTML report rendering](week7-task5-html-report-rendering.md)
 6. [Task 6: Cross-document contradiction UI](week7-task6-cross-document-ui.md)
+7. [Task 7: Consistency checker workflow](week7-task7-consistency-checker-workflow.md)
 
 ## Week 6 — v1.0 completion
 
