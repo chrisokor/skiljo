@@ -17,7 +17,8 @@ def _approved_versions() -> list[tuple[dict, dict]]:
     for skill in list_skills():
         try:
             versions = get_skill_versions(skill["id"])
-        except requests.RequestException:
+        except requests.RequestException as exc:
+            st.warning(f"Could not load versions for {skill['name']}: {exc}")
             continue
         pairs.extend((skill, version) for version in versions if version.get("status") == "approved")
     return pairs
@@ -54,16 +55,18 @@ except Exception as exc:
     st.error(f"Could not load approved skills: {exc}")
     st.stop()
 
-if len(approved_pairs) < 2:
-    st.info("Approve at least two skill versions in Review before comparing policies.")
+if len({str(skill["id"]) for skill, _ in approved_pairs}) < 2:
+    st.info("Approve skill versions from at least two policies before comparing.")
     st.stop()
 
 labels = [f"{skill['name']} (v{version['version_number']})" for skill, version in approved_pairs]
 first_index = st.selectbox("Policy 1", range(len(approved_pairs)), format_func=labels.__getitem__)
-second_choices = [index for index in range(len(approved_pairs)) if index != first_index]
+first_skill, first_version = approved_pairs[first_index]
+second_choices = [
+    index for index, (skill, _) in enumerate(approved_pairs) if skill["id"] != first_skill["id"]
+]
 second_index = st.selectbox("Policy 2", second_choices, format_func=labels.__getitem__)
 
-first_skill, first_version = approved_pairs[first_index]
 second_skill, second_version = approved_pairs[second_index]
 
 left, right = st.columns(2)

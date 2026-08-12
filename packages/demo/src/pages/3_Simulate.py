@@ -173,3 +173,6 @@ if st.button("Run Simulation", type="primary"):
         st.dataframe(table_rows, use_container_width=True)
     else:
         st.info("No per-ticket results available.")
+
+st.divider()
+st.markdown("[Cross-Document Detection](./Cross_Document)")
