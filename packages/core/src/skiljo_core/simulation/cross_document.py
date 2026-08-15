@@ -240,7 +240,7 @@ def _field_constraints_are_disjoint(
 def _conditions_may_overlap(condition_a: Condition, condition_b: Condition) -> bool:
     shared_fields = _predicate_fields(condition_a) & _predicate_fields(condition_b)
     if not shared_fields:
-        return False
+        return True
 
     predicates_a = _conjunctive_predicates(condition_a)
     predicates_b = _conjunctive_predicates(condition_b)

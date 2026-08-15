@@ -164,7 +164,8 @@ def test_mechanical_check_skips_identical_actions_without_llm_call() -> None:
     assert conflict_check_calls == []
 
 
-def test_mechanical_check_rejects_rules_without_overlapping_predicate_fields() -> None:
+def test_mechanical_check_allows_rules_with_different_predicate_fields() -> None:
+    """Different predicate fields are independent, not proof of disjointness."""
     days_condition = Condition(
         all=[
             ConditionOrPredicate(
@@ -189,14 +190,22 @@ def test_mechanical_check_rejects_rules_without_overlapping_predicate_fields() -
         [
             DecisionSurfaceClassification(decision_surface="refund_eligibility"),
             DecisionSurfaceClassification(decision_surface="refund_eligibility"),
+            ConflictCheck(
+                is_conflict=True,
+                rationale="A VIP purchase within 30 days can satisfy both rules.",
+            ),
         ]
     )
 
-    assert detect_cross_document_contradictions([doc_a, doc_b], fake_client) == []
-    assert all(
-        call["prompt_version"] != "cross_document_conflict_v1"
+    contradictions = detect_cross_document_contradictions([doc_a, doc_b], fake_client)
+
+    assert len(contradictions) == 1
+    conflict_check_calls = [
+        call
         for call in fake_client.calls
-    )
+        if call["prompt_version"] == "cross_document_conflict_v1"
+    ]
+    assert len(conflict_check_calls) == 1
 
 
 def test_mechanical_check_rejects_disjoint_equality_predicates() -> None:

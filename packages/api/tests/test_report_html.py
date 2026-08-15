@@ -381,6 +381,9 @@ def test_get_report_html_renders_diagnostic_evidence_and_roi() -> None:
     body = response.text
     assert "Contradictions Detected" in body
     assert "Refunds are unavailable after 30 days." in body
+    assert "75.0% of cluster" in body
+    assert "12 affected tickets" in body
+    assert "75.0% across 12 tickets" not in body
     assert "Affected segment" in body
     assert "vip" in body
     assert "$1,125.00" in body
