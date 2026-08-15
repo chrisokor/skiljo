@@ -4,6 +4,8 @@
 
 Bring Skiljo as close as practical to portfolio/interview/demo readiness by making the repository's status accurate, activating the highest-value eval measurements, adding concrete evidence artifacts, and packaging the project story without overstating what is proven.
 
+The project must be demonstrably at the point where the complete diagnostic process works end to end: policy upload -> extraction -> structured `Skill` -> persisted immutable version -> historical ticket simulation -> generated report.
+
 ## Scope
 
 This work is a credibility hardening pass after the citations and v1.05 product merge. It does not add new product surfaces beyond the existing extraction, simulation, report, and cross-document flows. It focuses on making those surfaces easier to trust, verify, and explain.
@@ -14,6 +16,7 @@ In scope:
 - Improve eval execution so train/dev runs produce the most meaningful local metrics currently possible without reading `data/eval/test/`.
 - Add or refresh a polished sample diagnostic artifact that can be referenced from docs and interviews.
 - Add a concise portfolio/interview readiness section covering architecture, technical highlights, honest limitations, and demo flow.
+- Verify and document the complete diagnostic workflow: policy upload, extraction, structured `Skill` creation, version persistence, historical ticket simulation, and report generation.
 - Run full local verification and document any remaining caveats.
 
 Out of scope:
@@ -64,7 +67,20 @@ The project needs one polished artifact a reviewer can open without running the 
 
 The artifact should be generated from code or committed fixture data, not hand-authored as a fake report. Documentation should link to it and explain what it represents.
 
-### 4. Portfolio Package Pass
+### 4. End-to-End Diagnostic Workflow Pass
+
+The readiness bar is not individual endpoints existing in isolation. The repository should include an automated or clearly documented flow proving the full diagnostic process:
+
+1. A policy document is uploaded through the API.
+2. Extraction produces a structured `Skill`.
+3. The extracted `Skill` is persisted as an immutable skill version.
+4. Historical tickets are imported or loaded.
+5. A simulation runs those tickets against the persisted skill version.
+6. A rendered diagnostic report is generated from the simulation output.
+
+If any stage already exists but is only indirectly tested, add focused integration coverage or documentation that makes the path unambiguous. If a stage is missing, implement the smallest repo-consistent version needed to close the workflow, staying within the existing FastAPI, SQLAlchemy, Streamlit, and background-job architecture.
+
+### 5. Portfolio Package Pass
 
 Add a concise portfolio/interview section that translates implementation details into reviewer-readable claims. The section should include:
 
@@ -77,7 +93,7 @@ Add a concise portfolio/interview section that translates implementation details
 
 This can live in the top-level README or a dedicated docs file linked from README, depending on current README structure.
 
-### 5. Verification Pass
+### 6. Verification Pass
 
 Before calling the work complete, run:
 
@@ -115,6 +131,7 @@ Control: generate sample reports from fixture data or API/report code paths and 
 ## Success Criteria
 
 - Repository status docs match merged functionality.
+- The complete diagnostic process is either covered by an automated integration test or documented with an exact runnable command path: policy upload -> extraction -> structured `Skill` -> persisted version -> historical ticket simulation -> generated report.
 - Extraction eval no longer reports recall from an empty actual spec.
 - Citation resolution remains required and verified.
 - A standalone diagnostic evidence artifact exists and is linked from docs.
