@@ -22,7 +22,7 @@ name: Eval Gate
 # apples-to-apples.
 on:
   pull_request:
-    types: [opened, synchronize, reopened, labeled]
+    types: [opened, synchronize, reopened, labeled, unlabeled]
   push:
     branches: [main]
 

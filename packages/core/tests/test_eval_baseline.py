@@ -17,6 +17,8 @@ from skiljo_core.eval.baseline import DEFAULT_BASELINE_PATH, main, update_baseli
 from skiljo_core.eval.collect_metrics import collect_all_metrics
 from skiljo_core.eval.regression import load_metrics
 
+_REPO_ROOT = Path(__file__).resolve().parents[3]
+
 
 def test_update_baseline_writes_flat_metrics(tmp_path: Path) -> None:
     output_path = tmp_path / "baseline_metrics.json"
@@ -40,6 +42,12 @@ def test_committed_baseline_matches_explicit_offline_metrics() -> None:
         current_metrics = collect_all_metrics()
 
     assert load_metrics(DEFAULT_BASELINE_PATH) == current_metrics
+
+
+def test_eval_workflow_reruns_when_baseline_approval_is_removed() -> None:
+    workflow = (_REPO_ROOT / ".github" / "workflows" / "eval.yml").read_text()
+
+    assert "types: [opened, synchronize, reopened, labeled, unlabeled]" in workflow
 
 
 def test_update_baseline_is_flat_no_metadata_wrapper(tmp_path: Path) -> None:
