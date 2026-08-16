@@ -8,6 +8,7 @@ See `GLOSSARY.md` for a running list of concepts introduced across debriefs.
 
 1. [Task 1: Complete diagnostic workflow](week8-task1-diagnostic-workflow.md)
 2. [Task 2: Extraction eval solver](week8-task2-extraction-eval-solver.md)
+3. [Task 3: Sample diagnostic report artifact](week8-task3-sample-report-artifact.md)
 
 ## Week 7 - Citations and v1.05 product
 

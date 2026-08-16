@@ -1,5 +1,6 @@
 """Tests for GET /simulations/{id}/report.html endpoint (plan #A2)."""
 import uuid
+from pathlib import Path
 
 from fastapi.testclient import TestClient
 
@@ -27,6 +28,19 @@ from skiljo_core.schemas.simulation_report_schema import (
     Zone,
 )
 from skiljo_core.testing import FakeLLMClient, TEST_CITATION
+
+
+def test_sample_report_artifact_script_generates_html(tmp_path: Path) -> None:
+    from scripts.generate_sample_report import generate_sample_report
+
+    output = tmp_path / "sample.html"
+    generate_sample_report(output)
+
+    html = output.read_text()
+    assert "<html" in html.lower()
+    assert "Executive Summary" in html
+    assert "Estimated Financial Impact" in html
+    assert "Evidence Appendix" in html
 
 
 def _clean() -> None:

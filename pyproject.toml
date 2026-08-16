@@ -26,6 +26,7 @@ extend-exclude = ["packages/core/src/skiljo_core/schemas"]
 
 [tool.pytest.ini_options]
 testpaths = ["packages"]
+pythonpath = ["."]
 
 [build-system]
 requires = ["hatchling"]

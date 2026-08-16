@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Policy Consistency Report - process_refund_request</title>
+  <style>
+    * { box-sizing: border-box; }
+    @page { size: auto; margin: 16mm; }
+    body { margin: 0; color: #172033; background: #eef2f6; font-family: Arial, sans-serif; font-size: 14px; line-height: 1.45; }
+    main { max-width: 960px; margin: 24px auto; padding: 44px; background: #fff; box-shadow: 0 2px 10px rgba(23, 32, 51, .12); }
+    header { border-bottom: 4px solid #146c94; padding-bottom: 20px; }
+    h1, h2, h3 { color: #172033; line-height: 1.2; }
+    h1 { margin: 0 0 8px; font-size: 30px; }
+    h2 { margin: 36px 0 16px; padding-bottom: 8px; border-bottom: 1px solid #d7dee7; font-size: 21px; }
+    h3 { margin: 0 0 8px; font-size: 16px; }
+    p { margin: 8px 0; }
+    .muted { color: #5d6778; }
+    .summary { margin-top: 20px; padding: 20px; border-left: 4px solid #146c94; background: #edf8fc; }
+    .metrics { display: flex; flex-wrap: wrap; gap: 20px 36px; margin-top: 16px; }
+    .metric { min-width: 130px; }
+    .metric-value { color: #146c94; font-size: 25px; font-weight: 700; }
+    .metric-label { color: #4d5869; font-size: 12px; text-transform: uppercase; }
+    .contradiction { margin: 16px 0; padding: 18px; border-left: 4px solid #b45309; background: #fff8e8; break-inside: avoid; page-break-inside: avoid; }
+    .citation { margin: 12px 0; padding: 12px; border: 1px solid #cbd5df; background: #fff; font-family: monospace; font-size: 12px; white-space: pre-wrap; }
+    .impact { color: #8c2d0f; font-weight: 700; }
+    .notice { padding: 14px; border-left: 4px solid #65758b; background: #f4f6f8; }
+    .appendix { break-before: page; page-break-before: always; }
+    table { width: 100%; border-collapse: collapse; margin-top: 12px; font-size: 13px; }
+    th, td { padding: 9px; border: 1px solid #cbd5df; vertical-align: top; text-align: left; overflow-wrap: anywhere; }
+    th { background: #eef2f6; color: #344054; }
+    .yes { color: #087443; font-weight: 700; }
+    .no { color: #ba2d24; font-weight: 700; }
+    @media print { body { background: #fff; } main { max-width: none; margin: 0; padding: 0; box-shadow: none; } }
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <h1>Policy Consistency Report</h1>
+      <p><strong>Policy skill:</strong> process_refund_request</p>
+      <p class="muted"><strong>Generated:</strong> 2026-08-15 00:00 UTC</p>
+    </header>
+
+    <section class="summary">
+      <h2>Executive Summary</h2>
+      <div class="metrics">
+        <div class="metric"><div class="metric-value">3</div><div class="metric-label">Rules Extracted</div></div>
+        <div class="metric"><div class="metric-value">1</div><div class="metric-label">Tickets Analyzed</div></div>
+        <div class="metric"><div class="metric-value">1</div><div class="metric-label">Contradictions Found</div></div>
+        <div class="metric"><div class="metric-value">75.0%</div><div class="metric-label">Policy Match Rate</div></div>
+        <div class="metric"><div class="metric-value">100.0%</div><div class="metric-label">Escalation Accuracy</div></div>
+        <div class="metric"><div class="metric-value">8</div><div class="metric-label">Automation Candidates</div></div>
+      </div>
+    </section>
+
+    <section>
+      <h2>Contradictions Detected</h2>
+      
+      <article class="contradiction">
+        <h3>human_review observed as approve_refund</h3>
+        <p><strong>Affected segment:</strong> vip. <strong>Cluster:</strong> amount_band=100-500, customer_segment=vip.</p>
+        <p><strong>Frequency:</strong> 75.0% of cluster; 12 affected tickets.</p>
+        <div class="citation"><strong>Source citation (rule-vip-review, offsets 0-42):</strong><br>Refunds over $100 require human review.</div>
+        <p class="impact"><strong>Estimated Financial Impact:</strong> $900.00 across 9 divergent tickets.</p>
+      </article>
+      
+    </section>
+
+    <section>
+      <h2>Financial Impact and ROI</h2>
+      
+      <table><tbody>
+        <tr><th>Automation-safe volume</th><td>8</td></tr>
+        <tr><th>Manual review hours saved per month</th><td>2.0</td></tr>
+        <tr><th>Estimated value</th><td>$900.00</td></tr>
+      </tbody></table>
+      
+    </section>
+
+    <section>
+      <h2>Automation Candidates</h2>
+      <p>8 ticket decisions were evaluated in the deterministic zone and are candidates for policy-bounded automation.</p>
+    </section>
+
+    <section>
+      <h2>Missed Escalations and Over-Approvals</h2>
+      <p class="notice">This report records policy matches and decision zones, but the current report contract does not classify mismatches as missed escalations or over-approvals. Review the per-ticket evidence below for mismatches.</p>
+    </section>
+
+    <section class="appendix">
+      <h2>Per-Ticket Results: Evidence Appendix</h2>
+      <table>
+        <thead><tr><th>Ticket ID</th><th>Written Decision</th><th>Decision Zone</th><th>Policy Match</th><th>Reasoning</th></tr></thead>
+        <tbody>
+          
+          <tr><td>00000000-0000-0000-0000-000000000001</td><td>approve_refund</td><td>deterministic</td><td><span class="yes">Match</span></td><td>Refund amount is within the auto-approval threshold.</td></tr>
+          
+        </tbody>
+      </table>
+    </section>
+  </main>
+</body>
+</html>
