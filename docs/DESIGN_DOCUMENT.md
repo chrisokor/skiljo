@@ -397,6 +397,10 @@ Authentication is a single API key passed in the `Authorization: Bearer <key>` h
 
 Errors use a consistent envelope: `{"error": {"code": "...", "message": "...", "details": {...}}}`. Pydantic validation errors are translated into 400s with field-level detail.
 
+`POST /policies` accepts `{"raw_text": str, "source_filename": str | null}` and returns the persisted `{id, source_filename, raw_text, uploaded_at}` policy. `GET /policies/{id}` returns that same policy payload.
+
+`POST /skills/extract` accepts the skill metadata plus either inline `policy_text` or a previously uploaded `policy_id`. Inline policy text remains supported for existing clients; supplying a policy ID reuses that persisted source document for the immutable extracted skill version.
+
 ### 5.7 Background jobs
 
 Long-running operations (extraction, simulation) are async. The pattern:
@@ -1143,9 +1147,9 @@ Prompt versioning as first-class artifacts. Currently prompts are versioned via 
 | Method | Path | Description | Auth |
 |---|---|---|---|
 | GET | `/health` | Health check | None |
-| POST | `/policies` | Upload a policy document | Bearer |
-| GET | `/policies/{id}` | Get a policy | Bearer |
-| POST | `/skills/extract` | Start extraction job | Bearer |
+| POST | `/policies` | Upload `{raw_text, source_filename?}` and return the persisted policy | Bearer |
+| GET | `/policies/{id}` | Get a persisted policy | Bearer |
+| POST | `/skills/extract` | Start extraction with either `policy_text` or `policy_id` | Bearer |
 | GET | `/skills` | List skills | Bearer |
 | GET | `/skills/{id}` | Get current version of a skill | Bearer |
 | GET | `/skills/{id}/versions` | List versions | Bearer |

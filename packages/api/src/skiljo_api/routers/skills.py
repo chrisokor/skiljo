@@ -14,7 +14,8 @@ router = APIRouter(dependencies=[Depends(verify_api_key)])
 
 
 class ExtractRequest(BaseModel):
-    policy_text: str
+    policy_text: str | None = None
+    policy_id: uuid.UUID | None = None
     skill_name: str
     trigger: str
 
@@ -74,9 +75,16 @@ def extract_skill(
     llm_client: LLMClient = Depends(get_llm_client),
 ) -> ExtractResponse:
     with SessionLocal() as session:
-        policy = Policy(raw_text=request.policy_text)
-        session.add(policy)
-        session.flush()
+        if request.policy_id is not None:
+            policy = session.get(Policy, request.policy_id)
+            if policy is None:
+                raise HTTPException(status_code=404, detail="policy not found")
+        elif request.policy_text:
+            policy = Policy(raw_text=request.policy_text)
+            session.add(policy)
+            session.flush()
+        else:
+            raise HTTPException(status_code=400, detail="policy_text or policy_id is required")
 
         job = Job(
             kind="extraction",

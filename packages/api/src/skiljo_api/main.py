@@ -7,9 +7,10 @@ from skiljo_api.error_handler import (
     unhandled_exception_to_envelope,
     validation_exception_to_envelope,
 )
-from skiljo_api.routers import evals, jobs, simulations, skills, tickets
+from skiljo_api.routers import evals, jobs, policies, simulations, skills, tickets
 
 app = FastAPI(title="Skiljo API")
+app.include_router(policies.router)
 app.include_router(skills.router)
 app.include_router(jobs.router)
 app.include_router(simulations.router)
