@@ -10,7 +10,7 @@ from jinja2 import Environment, FileSystemLoader
 from pydantic import BaseModel
 
 from skiljo_api.dependencies import get_llm_client, verify_api_key
-from skiljo_core.db.models import Job, SimulationResult, SimulationRun, SkillVersion
+from skiljo_core.db.models import Job, SimulationResult, SimulationRun, SkillVersion, TicketRecord
 from skiljo_core.db.session import SessionLocal
 from skiljo_core.llm.base import LLMClient
 from skiljo_core.schemas.simulation_report_schema import (
@@ -39,7 +39,8 @@ router = APIRouter(dependencies=[Depends(verify_api_key)])
 
 class SimulationRequest(BaseModel):
     skill_version_id: uuid.UUID
-    tickets: list[dict[str, Any]]
+    tickets: list[dict[str, Any]] | None = None
+    ticket_batch_id: uuid.UUID | None = None
 
 
 class SimulationResponse(BaseModel):
@@ -160,7 +161,21 @@ def create_simulation(
         if sv is None:
             raise HTTPException(status_code=404, detail="skill version not found")
 
-        ticket_batch_id = uuid.uuid4()
+        if request.ticket_batch_id is not None and request.tickets is not None:
+            raise HTTPException(status_code=400, detail="provide either tickets or ticket_batch_id, not both")
+        if request.ticket_batch_id is None and request.tickets is None:
+            raise HTTPException(status_code=400, detail="tickets or ticket_batch_id is required")
+
+        if request.ticket_batch_id is not None:
+            records = session.query(TicketRecord).filter(TicketRecord.batch_id == request.ticket_batch_id).all()
+            if not records:
+                raise HTTPException(status_code=404, detail="ticket batch not found")
+            tickets_raw = [record.ticket_data for record in records]
+            ticket_batch_id = request.ticket_batch_id
+        else:
+            tickets_raw = request.tickets or []
+            ticket_batch_id = uuid.uuid4()
+
         sim_run = SimulationRun(
             skill_version_id=request.skill_version_id,
             ticket_batch_id=ticket_batch_id,
@@ -184,7 +199,7 @@ def create_simulation(
         job_id,
         sim_run_id,
         request.skill_version_id,
-        request.tickets,
+        tickets_raw,
         llm_client,
     )
     return SimulationResponse(job_id=job_id, status="pending")

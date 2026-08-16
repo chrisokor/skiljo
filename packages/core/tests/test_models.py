@@ -4,6 +4,8 @@ from skiljo_core.db.models import Base
 def test_all_tables_registered() -> None:
     expected = {
         "policies",
+        "ticket_batches",
+        "ticket_records",
         "skills",
         "skill_versions",
         "simulation_runs",

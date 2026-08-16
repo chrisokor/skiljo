@@ -1,3 +1,4 @@
+import io
 import uuid
 
 from fastapi.testclient import TestClient
@@ -144,3 +145,32 @@ def test_get_simulation_report_after_completion() -> None:
             assert "results" in report
     finally:
         app.dependency_overrides.clear()
+
+
+def test_simulation_accepts_imported_ticket_batch_id() -> None:
+    _clean()
+    _, version_id = _seed_approved_skill()
+    client = TestClient(app)
+    csv_data = b"customer_id,refund_amount,purchase_days_ago,customer_segment,fraud_flags,refund_reason,ground_truth_decision\ncust_1,50,10,standard,[],defective,approve_refund\n"
+    imported = client.post(
+        "/tickets/import",
+        files={"file": ("tickets.csv", io.BytesIO(csv_data), "text/csv")},
+    )
+    assert imported.status_code == 200
+    batch_id = imported.json()["batch_id"]
+
+    response = client.post(
+        "/simulations",
+        json={"skill_version_id": str(version_id), "ticket_batch_id": batch_id},
+    )
+
+    assert response.status_code == 202
+    job_id = uuid.UUID(response.json()["job_id"])
+    with SessionLocal() as session:
+        job = session.get(Job, job_id)
+        assert job is not None
+        assert job.status == "completed"
+        run = session.get(SimulationRun, job.result_ref)
+        assert run is not None
+        assert str(run.ticket_batch_id) == batch_id
+        assert run.summary["total_tickets"] == 1

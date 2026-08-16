@@ -382,7 +382,8 @@ GET    /skills                          # List skills
 GET    /skills/{id}                     # Get current version of a skill
 GET    /skills/{id}/versions            # List versions of a skill
 POST   /skills/{id}/versions/{ver}/approve  # Promote version to 'approved'
-POST   /tickets/import                  # Import a ticket batch from CSV (A4)
+POST   /tickets/import                  # Persist a ticket batch from CSV for simulation (A4)
+GET    /tickets/batches/{id}            # Retrieve persisted ticket batch metadata and tickets
 POST   /simulations                     # Start a simulation run (async)
 GET    /simulations/{id}                # Get simulation status + summary
 GET    /simulations/{id}/report         # Get full SimulationReport
@@ -398,6 +399,8 @@ Authentication is a single API key passed in the `Authorization: Bearer <key>` h
 Errors use a consistent envelope: `{"error": {"code": "...", "message": "...", "details": {...}}}`. Pydantic validation errors are translated into 400s with field-level detail.
 
 `POST /policies` accepts `{"raw_text": str, "source_filename": str | null}` and returns the persisted `{id, source_filename, raw_text, uploaded_at}` policy. `GET /policies/{id}` returns that same policy payload.
+
+`POST /tickets/import` validates CSV rows, persists the valid tickets as a batch, and returns `{batch_id, count, errors}`. The returned `batch_id` can be supplied to `POST /simulations` as `ticket_batch_id`; inline `tickets` remains supported for existing callers. `GET /tickets/batches/{id}` returns the persisted batch metadata and ticket JSON.
 
 `POST /skills/extract` accepts the skill metadata plus either inline `policy_text` or a previously uploaded `policy_id`. Inline policy text remains supported for existing clients; supplying a policy ID reuses that persisted source document for the immutable extracted skill version.
 
@@ -1155,7 +1158,8 @@ Prompt versioning as first-class artifacts. Currently prompts are versioned via 
 | GET | `/skills/{id}/versions` | List versions | Bearer |
 | GET | `/skills/{id}/versions/{v}` | Get a specific version | Bearer |
 | POST | `/skills/{id}/versions/{v}/approve` | Approve version | Bearer |
-| POST | `/tickets/import` | Import ticket batch from CSV | Bearer |
+| POST | `/tickets/import` | Persist a CSV ticket batch for later simulation | Bearer |
+| GET | `/tickets/batches/{id}` | Get a persisted ticket batch and its tickets | Bearer |
 | POST | `/simulations` | Start simulation job | Bearer |
 | GET | `/simulations/{id}` | Get simulation status | Bearer |
 | GET | `/simulations/{id}/report` | Get full report | Bearer |

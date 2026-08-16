@@ -19,6 +19,24 @@ class Policy(Base):
     uploaded_at: Mapped[datetime] = mapped_column(server_default=func.now())
 
 
+class TicketBatch(Base):
+    __tablename__ = "ticket_batches"
+
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    source_filename: Mapped[str | None] = mapped_column(Text)
+    ticket_count: Mapped[int] = mapped_column(nullable=False)
+    created_at: Mapped[datetime] = mapped_column(server_default=func.now())
+
+
+class TicketRecord(Base):
+    __tablename__ = "ticket_records"
+
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    batch_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("ticket_batches.id"), nullable=False)
+    ticket_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), nullable=False)
+    ticket_data: Mapped[dict] = mapped_column(JSONB, nullable=False)
+
+
 class Skill(Base):
     __tablename__ = "skills"
 

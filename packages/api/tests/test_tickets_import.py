@@ -1,9 +1,12 @@
 import io
 import csv
+import uuid
 
 from fastapi.testclient import TestClient
 
 from skiljo_api.main import app
+from skiljo_core.db.models import TicketBatch, TicketRecord
+from skiljo_core.db.session import SessionLocal
 
 client = TestClient(app)
 
@@ -28,6 +31,52 @@ VALID_ROW = {
     "refund_reason": "defective",
     "ground_truth_decision": "approve_refund",
 }
+
+
+def _clean_ticket_tables() -> None:
+    with SessionLocal() as session:
+        session.query(TicketRecord).delete()
+        session.query(TicketBatch).delete()
+        session.commit()
+
+
+def test_import_persists_ticket_batch_and_records() -> None:
+    _clean_ticket_tables()
+    csv_data = _make_csv_bytes([VALID_ROW])
+
+    response = client.post(
+        "/tickets/import",
+        files={"file": ("tickets.csv", io.BytesIO(csv_data), "text/csv")},
+    )
+
+    assert response.status_code == 200
+    batch_id = uuid.UUID(response.json()["batch_id"])
+    with SessionLocal() as session:
+        batch = session.get(TicketBatch, batch_id)
+        assert batch is not None
+        assert batch.source_filename == "tickets.csv"
+        assert batch.ticket_count == 1
+        records = session.query(TicketRecord).filter(TicketRecord.batch_id == batch_id).all()
+        assert len(records) == 1
+        assert records[0].ticket_data["ground_truth_decision"] == "approve_refund"
+
+
+def test_get_ticket_batch_returns_imported_tickets() -> None:
+    _clean_ticket_tables()
+    csv_data = _make_csv_bytes([VALID_ROW])
+    imported = client.post(
+        "/tickets/import",
+        files={"file": ("tickets.csv", io.BytesIO(csv_data), "text/csv")},
+    )
+    batch_id = imported.json()["batch_id"]
+
+    response = client.get(f"/tickets/batches/{batch_id}")
+
+    assert response.status_code == 200
+    data = response.json()
+    assert data["id"] == batch_id
+    assert data["ticket_count"] == 1
+    assert data["tickets"][0]["ground_truth_decision"] == "approve_refund"
 
 
 def test_import_valid_single_row_returns_200_with_batch_id() -> None:

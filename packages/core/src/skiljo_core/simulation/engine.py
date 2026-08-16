@@ -37,6 +37,7 @@ def compute_report(
             skill_version_id=skill_version_id,
             match_rate=0.0,
             escalation_accuracy=1.0,
+            total_tickets=0,
             results=[],
         )
 
@@ -62,6 +63,7 @@ def compute_report(
         skill_version_id=skill_version_id,
         match_rate=match_rate,
         escalation_accuracy=escalation_accuracy,
+        total_tickets=len(results),
         automation_candidate_count=automation_candidates,
         results=results,
     )

@@ -8,6 +8,7 @@
     "skill_version_id": { "type": "string", "format": "uuid" },
     "match_rate": { "type": "number", "minimum": 0, "maximum": 1 },
     "escalation_accuracy": { "type": "number", "minimum": 0, "maximum": 1 },
+    "total_tickets": { "type": "integer", "minimum": 0 },
     "contradiction_count": { "type": "integer", "minimum": 0 },
     "automation_candidate_count": { "type": "integer", "minimum": 0 },
     "results": {

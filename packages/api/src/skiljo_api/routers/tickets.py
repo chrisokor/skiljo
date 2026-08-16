@@ -6,6 +6,8 @@ import uuid
 from fastapi import APIRouter, Depends, File, HTTPException, UploadFile, status
 
 from skiljo_api.dependencies import verify_api_key
+from skiljo_core.db.models import TicketBatch, TicketRecord
+from skiljo_core.db.session import SessionLocal
 from skiljo_core.schemas.ticket_schema import Ticket
 
 router = APIRouter(prefix="/tickets", tags=["tickets"], dependencies=[Depends(verify_api_key)])
@@ -107,7 +109,6 @@ def import_tickets(file: UploadFile = File(...)) -> dict:
     content = file.file.read().decode("utf-8")
     reader = csv.DictReader(io.StringIO(content))
 
-    batch_id = str(uuid.uuid4())
     tickets: list[Ticket] = []
     errors: list[dict] = []
 
@@ -124,4 +125,37 @@ def import_tickets(file: UploadFile = File(...)) -> dict:
             detail={"message": "No valid rows found", "errors": errors},
         )
 
-    return {"batch_id": batch_id, "count": len(tickets), "errors": errors}
+    batch_id = uuid.uuid4()
+    with SessionLocal() as session:
+        batch = TicketBatch(
+            id=batch_id,
+            source_filename=filename,
+            ticket_count=len(tickets),
+        )
+        session.add(batch)
+        for ticket in tickets:
+            session.add(
+                TicketRecord(
+                    batch_id=batch_id,
+                    ticket_id=ticket.ticket_id,
+                    ticket_data=ticket.model_dump(mode="json"),
+                )
+            )
+        session.commit()
+
+    return {"batch_id": str(batch_id), "count": len(tickets), "errors": errors}
+
+
+@router.get("/batches/{batch_id}")
+def get_ticket_batch(batch_id: uuid.UUID) -> dict:
+    with SessionLocal() as session:
+        batch = session.get(TicketBatch, batch_id)
+        if batch is None:
+            raise HTTPException(status_code=404, detail="ticket batch not found")
+        records = session.query(TicketRecord).filter(TicketRecord.batch_id == batch_id).all()
+        return {
+            "id": str(batch.id),
+            "source_filename": batch.source_filename,
+            "ticket_count": batch.ticket_count,
+            "tickets": [record.ticket_data for record in records],
+        }
