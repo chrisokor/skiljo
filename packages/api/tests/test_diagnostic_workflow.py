@@ -133,7 +133,7 @@ def test_complete_diagnostic_workflow_policy_to_html_report() -> None:
         csv_bytes = (
             "customer_id,refund_amount,purchase_days_ago,customer_segment,fraud_flags,refund_reason,ground_truth_decision\n"
             "cust_1,50,10,standard,[],defective,approve_refund\n"
-            "cust_2,150,10,standard,[],changed_mind,human_review\n"
+            "cust_2,150,10,standard,[],changed_mind,escalate_to_human\n"
         ).encode()
         imported_tickets = client.post(
             "/tickets/import",
@@ -163,8 +163,14 @@ def test_complete_diagnostic_workflow_policy_to_html_report() -> None:
         report_json = report.json()
         assert report_json["skill_version_id"] == str(version_id)
         assert report_json["total_tickets"] == 2
-        assert "match_rate" in report_json
-        assert "results" in report_json
+        assert report_json["match_rate"] == 1.0
+        assert [
+            (result["decision"], result["matched_human_decision"])
+            for result in report_json["results"]
+        ] == [
+            ("approve_refund", True),
+            ("escalate_to_human", True),
+        ]
 
         html = client.get(f"/simulations/{sim_run_id}/report.html")
         assert html.status_code == 200
