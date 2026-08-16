@@ -69,7 +69,7 @@ def test_sample_report_fixture_is_semantically_consistent() -> None:
             results_by_id[ticket_id].matched_human_decision is False
             for ticket_id in contradiction.affected_ticket_ids
         )
-        assert contradiction.frequency == len(contradiction.affected_ticket_ids) / contradiction.ticket_count
+        assert contradiction.ticket_count == len(contradiction.affected_ticket_ids)
         assert contradiction.estimated_financial_impact is not None
         impact = contradiction.estimated_financial_impact
         assert impact.divergent_ticket_count == len(contradiction.affected_ticket_ids)
@@ -393,7 +393,7 @@ def test_get_report_html_renders_diagnostic_evidence_and_roi() -> None:
                 written_decision="deny_refund",
                 observed_decision="approve_refund",
                 frequency=0.75,
-                ticket_count=12,
+                ticket_count=1,
                 affected_ticket_ids=[str(ticket_id)],
                 citation=Citation(
                     policy_id="refund-policy",
@@ -403,9 +403,9 @@ def test_get_report_html_renders_diagnostic_evidence_and_roi() -> None:
                     quoted_text="Refunds are unavailable after 30 days.",
                 ),
                 estimated_financial_impact=EstimatedFinancialImpact(
-                    divergent_ticket_count=9,
+                    divergent_ticket_count=1,
                     average_refund_amount=125.0,
-                    estimated_impact_usd=1125.0,
+                    estimated_impact_usd=125.0,
                 ),
             )
         ],
@@ -414,6 +414,11 @@ def test_get_report_html_renders_diagnostic_evidence_and_roi() -> None:
             manual_review_hours_per_month=3.5,
             estimated_value_usd=420.0,
         ),
+    )
+    assert summary.contradictions is not None
+    assert summary.contradictions[0].affected_ticket_ids is not None
+    assert summary.contradictions[0].ticket_count == len(
+        summary.contradictions[0].affected_ticket_ids
     )
     with SessionLocal() as session:
         sim_run = SimulationRun(
@@ -433,12 +438,12 @@ def test_get_report_html_renders_diagnostic_evidence_and_roi() -> None:
     assert "Contradictions Detected" in body
     assert "Refunds are unavailable after 30 days." in body
     assert "75.0% of cluster" in body
-    assert "12 affected tickets" in body
+    assert "1 affected tickets" in body
     assert "12 tickets in cluster" not in body
     assert "75.0% across 12 tickets" not in body
     assert "Affected segment" in body
     assert "vip" in body
-    assert "$1,125.00" in body
+    assert "$125.00" in body
     assert "Automation Candidates" in body
     assert "Manual review hours saved per month" in body
     assert "Missed Escalations and Over-Approvals" in body

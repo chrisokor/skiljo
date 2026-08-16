@@ -63,7 +63,7 @@ def build_sample_report() -> SimulationReport:
                 written_decision="human_review",
                 observed_decision="approve_refund",
                 frequency=0.75,
-                ticket_count=4,
+                ticket_count=len(affected_ticket_ids),
                 affected_ticket_ids=affected_ticket_ids,
                 citation=Citation(
                     policy_id="sample-refund-policy",
