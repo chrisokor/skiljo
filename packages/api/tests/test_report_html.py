@@ -31,7 +31,7 @@ from skiljo_core.testing import FakeLLMClient, TEST_CITATION
 
 
 def test_sample_report_artifact_script_generates_html(tmp_path: Path) -> None:
-    from scripts.generate_sample_report import generate_sample_report
+    from scripts.generate_sample_report import DEFAULT_OUTPUT, generate_sample_report
 
     output = tmp_path / "sample.html"
     generate_sample_report(output)
@@ -41,6 +41,7 @@ def test_sample_report_artifact_script_generates_html(tmp_path: Path) -> None:
     assert "Executive Summary" in html
     assert "Estimated Financial Impact" in html
     assert "Evidence Appendix" in html
+    assert html == DEFAULT_OUTPUT.read_text()
 
 
 def _clean() -> None:
