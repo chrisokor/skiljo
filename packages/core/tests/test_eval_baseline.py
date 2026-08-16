@@ -11,7 +11,11 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-from skiljo_core.eval.baseline import main, update_baseline
+import pytest
+
+from skiljo_core.eval.baseline import DEFAULT_BASELINE_PATH, main, update_baseline
+from skiljo_core.eval.collect_metrics import collect_all_metrics
+from skiljo_core.eval.regression import load_metrics
 
 
 def test_update_baseline_writes_flat_metrics(tmp_path: Path) -> None:
@@ -29,6 +33,13 @@ def test_update_baseline_writes_flat_metrics(tmp_path: Path) -> None:
         "contradiction_recall",
         "e2e_accuracy",
     }
+
+
+def test_committed_baseline_matches_explicit_offline_metrics() -> None:
+    with pytest.warns(RuntimeWarning, match="requires an injected LLMClient"):
+        current_metrics = collect_all_metrics()
+
+    assert load_metrics(DEFAULT_BASELINE_PATH) == current_metrics
 
 
 def test_update_baseline_is_flat_no_metadata_wrapper(tmp_path: Path) -> None:

@@ -22,6 +22,7 @@ name: Eval Gate
 # apples-to-apples.
 on:
   pull_request:
+    types: [opened, synchronize, reopened, labeled]
   push:
     branches: [main]
 
@@ -56,11 +57,24 @@ jobs:
         run: uv run python -m skiljo_core.eval.collect_metrics --output eval-results.json
 
       - name: Check for regressions against main
+        env:
+          BASELINE_REFRESH_APPROVED: ${{ contains(github.event.pull_request.labels.*.name, 'approved-eval-baseline-refresh') }}
         run: |
+          if git diff --quiet origin/main -- data/eval/baseline_metrics.json; then
+            baseline_args=(
+              --baseline-ref origin/main
+              --baseline-path data/eval/baseline_metrics.json
+            )
+          elif [[ "$BASELINE_REFRESH_APPROVED" == "true" ]]; then
+            echo "Using the explicitly approved working-tree eval baseline changed by this PR."
+            baseline_args=(--baseline-file data/eval/baseline_metrics.json)
+          else
+            echo "Baseline changes require the approved-eval-baseline-refresh PR label."
+            exit 1
+          fi
           uv run python scripts/check_regression.py \
             --current eval-results.json \
-            --baseline-ref origin/main \
-            --baseline-path data/eval/baseline_metrics.json \
+            "${baseline_args[@]}" \
             --check extraction_recall=-0.02 \
             --check citation_resolution=0:min=1.0 \
             --check contradiction_recall=-0.05 \
