@@ -11,6 +11,7 @@ See `GLOSSARY.md` for a running list of concepts introduced across debriefs.
 3. [Task 3: Sample diagnostic report artifact](week8-task3-sample-report-artifact.md)
 4. [Task 4: Readiness docs and interview package](week8-task4-readiness-docs.md)
 5. [Task 5: Final readiness review fix wave](week8-task5-final-readiness-review-fixes.md)
+6. [Task 6: Contradiction affected-ticket label fix](week8-task6-contradiction-affected-ticket-label.md)
 
 ## Week 7 - Citations and v1.05 product
 

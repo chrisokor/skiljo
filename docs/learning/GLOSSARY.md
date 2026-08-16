@@ -8,7 +8,7 @@ A grouping of tickets by (amount_band, customer_segment) dimensions, used by the
 
 ## Contradiction (planted divergence detection)
 
-A record of systematic divergence between the skill's decision and ground-truth outcomes, identified by the contradiction detector. Each contradiction captures the cluster it occurred in and one representative (written, observed) decision pair; its frequency, ticket count, affected IDs, and financial impact all describe that same pair. Contradictions are measurable against planted divergences in the shadow policy. See [Week 3 Task 5](week3-task5-contradiction-detection.md) and the [final fix wave](week7-task9-final-fix-wave.md).
+A record of systematic divergence between the skill's decision and ground-truth outcomes, identified by the contradiction detector. Each contradiction captures the cluster it occurred in and one representative (written, observed) decision pair. Its frequency uses the full cluster as the denominator, while `ticket_count`, affected IDs, and financial impact describe the divergent tickets for that pair. Contradictions are measurable against planted divergences in the shadow policy. See [Week 3 Task 5](week3-task5-contradiction-detection.md), the [final fix wave](week7-task9-final-fix-wave.md), and [Week 8 Task 6](week8-task6-contradiction-affected-ticket-label.md).
 
 ## Cache key (LLM response cache)
 

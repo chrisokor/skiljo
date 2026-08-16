@@ -60,7 +60,7 @@
       <article class="contradiction">
         <h3>{{ contradiction.written_decision }} observed as {{ contradiction.observed_decision }}</h3>
         <p><strong>Affected segment:</strong> {{ contradiction.cluster_key.get('customer_segment', 'Not specified') }}. <strong>Cluster:</strong> {% for key, value in contradiction.cluster_key.items() %}{{ key }}={{ value }}{% if not loop.last %}, {% endif %}{% endfor %}.</p>
-        <p><strong>Frequency:</strong> {{ '%.1f'|format(contradiction.frequency * 100) }}% of cluster; {{ contradiction.ticket_count }} tickets in cluster.</p>
+        <p><strong>Frequency:</strong> {{ '%.1f'|format(contradiction.frequency * 100) }}% of cluster; {{ contradiction.ticket_count }} affected tickets.</p>
         {% if contradiction.citation %}<div class="citation"><strong>Source citation ({{ contradiction.citation.rule_id }}, offsets {{ contradiction.citation.span_start }}-{{ contradiction.citation.span_end }}):</strong><br>{{ contradiction.citation.quoted_text }}</div>{% endif %}
         {% if contradiction.estimated_financial_impact and contradiction.estimated_financial_impact.estimated_impact_usd is not none %}<p class="impact"><strong>Estimated Financial Impact:</strong> ${{ '{:,.2f}'.format(contradiction.estimated_financial_impact.estimated_impact_usd) }} across {{ contradiction.estimated_financial_impact.divergent_ticket_count }} divergent tickets.</p>{% endif %}
       </article>
