@@ -15,11 +15,29 @@ shape that never occurs in real data, which made both scorers vacuously
 score 1.0 against every real extraction).
 """
 
+import asyncio
+
+from inspect_ai.solver import TaskState
+
+from skiljo_core.extraction.rules import CandidateRuleList
+from skiljo_core.extraction.segmentation import Segment, SegmentationResult
+from skiljo_core.extraction.zones import ZoneClassification
 from skiljo_core.eval.extraction import (
     ExtractionEval,
     citation_resolution,
+    extraction_solver,
     extraction_recall,
 )
+from skiljo_core.schemas.rule_schema import (
+    Citation,
+    Condition,
+    ConditionOrPredicate,
+    DeterministicRule,
+    Operator,
+    Predicate,
+    Span,
+)
+from skiljo_core.testing import FakeLLMClient
 
 
 def _skill(*, deterministic: list[dict] | None = None) -> dict:
@@ -46,6 +64,55 @@ def test_extraction_eval_task_exists() -> None:
     eval_task = ExtractionEval()
     assert eval_task.name == "extract"
     assert eval_task.scorer is not None
+
+
+def test_extraction_solver_populates_actual_spec_metadata() -> None:
+    policy_text = "Refunds under $100 are approved."
+    fake_client = FakeLLMClient(
+        [
+            SegmentationResult(
+                segments=[Segment(segment_type="thresholds", text=policy_text)]
+            ),
+            CandidateRuleList(
+                rules=[
+                    DeterministicRule(
+                        condition=Condition(
+                            all=[
+                                ConditionOrPredicate(
+                                    root=Predicate(
+                                        field="refund_amount", op=Operator.lt, value=100
+                                    )
+                                )
+                            ]
+                        ),
+                        action="approve_refund",
+                        citation=Citation(
+                            span=Span(start=0, end=7), quoted_text="Refunds"
+                        ),
+                    )
+                ]
+            ),
+            ZoneClassification(zone="deterministic"),
+        ]
+    )
+    solver = extraction_solver(llm_client=fake_client)
+    state = TaskState(
+        model="mockllm/model",
+        sample_id="sample-1",
+        epoch=1,
+        input=policy_text,
+        messages=[],
+        metadata={
+            "skill_name": "process_refund_request",
+            "trigger": "customer_requests_refund",
+        },
+    )
+
+    result = asyncio.run(solver(state, generate=None))  # type: ignore[arg-type]
+
+    actual = result.metadata["actual_spec"]
+    assert actual["skill_name"] == "process_refund_request"
+    assert actual["decision_zones"]["deterministic"][0]["citation"]["quoted_text"] == "Refunds"
 
 
 def test_extraction_scorer_calculates_recall() -> None:
@@ -109,6 +176,18 @@ def test_extraction_scorer_validates_citations() -> None:
     assert score.value == 0.0
 
 
+def test_citation_resolution_validates_pipeline_citation_shape() -> None:
+    pipeline_shaped_rule = _rule("approve_refund")
+    pipeline_shaped_rule["citation"] = {
+        "span": {"start": 0, "end": 10},
+        "quoted_text": "text",
+    }
+
+    score = citation_resolution({}, _skill(deterministic=[pipeline_shaped_rule]))
+
+    assert score.value == 1.0
+
+
 def test_citation_resolution_missing_field() -> None:
     # Citation present but missing span_end
     broken = _skill(
@@ -135,10 +214,9 @@ def test_citation_resolution_multiple_rules_all_valid() -> None:
     assert score.value == 1.0
 
 
-def test_citation_resolution_reflects_missing_schema_field_on_real_shaped_data() -> None:
-    """Rules with no ``citations`` key at all (the real current schema shape,
-    since ``rule.schema.json`` has no citations field yet) score 0.0 rather
-    than being silently skipped. This is the intended, honest behavior."""
+def test_citation_resolution_rejects_rule_missing_citation() -> None:
+    """Rules without the schema's singular ``citation`` score 0.0 rather than
+    being silently skipped."""
     spec = _skill(deterministic=[_rule("approve_refund")])  # no citations key
     score = citation_resolution({}, spec)
     assert score.value == 0.0

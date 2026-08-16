@@ -182,6 +182,10 @@ An exact two-sided statistical test answering "is this cluster's divergence rate
 
 A consistent `{"error": {"code", "message", "details"}}` JSON shape applied to every API error response, regardless of which of FastAPI/Starlette's three distinct failure paths produced it: explicit `HTTPException`s, Pydantic `RequestValidationError`s, and uncaught exceptions. Each path needs its own registered exception handler since they don't share a code path internally. See [Week 6 Task 7](week6-task7-v1.0-completion.md).
 
+## Eval solver
+
+An Inspect `Solver` that prepares a sample's actual output before scorers run. The extraction eval solver receives an injected `LLMClient`, runs `run_extraction_pipeline()` for the policy-text sample, and stores the serialized `Skill` in `state.metadata["actual_spec"]`. Injection preserves the normal provider logging boundary and keeps local/CI runs offline when no client is configured. See [Week 8 Task 2](week8-task2-extraction-eval-solver.md).
+
 ## Regression gate (CI)
 
 A CI check that fails a PR when a tracked metric drops more than an allowed threshold versus a baseline value (read from `origin/main` at merge time, or a committed baseline file). Distinguishes "no baseline to compare against" (first PR introducing a metric — passes) from "compared and it dropped too far" (fails). Skiljo's regression budget per metric is documented in `DESIGN_DOCUMENT.md` Section 9 and enforced by `scripts/check_regression.py` in `.github/workflows/eval.yml`. See [Week 5 Task 10](week5-task10-eval-harness-integration.md).

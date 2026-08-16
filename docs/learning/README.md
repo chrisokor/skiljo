@@ -7,6 +7,7 @@ See `GLOSSARY.md` for a running list of concepts introduced across debriefs.
 ## Week 8 - Project readiness hardening
 
 1. [Task 1: Complete diagnostic workflow](week8-task1-diagnostic-workflow.md)
+2. [Task 2: Extraction eval solver](week8-task2-extraction-eval-solver.md)
 
 ## Week 7 - Citations and v1.05 product
 

@@ -10,6 +10,8 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
+import pytest
+
 from skiljo_core.eval.collect_metrics import (
     collect_all_metrics,
     collect_e2e_metrics,
@@ -20,10 +22,13 @@ from skiljo_core.eval.collect_metrics import (
 
 
 def test_collect_extraction_metrics_returns_section9_names() -> None:
-    metrics = collect_extraction_metrics()
+    with pytest.warns(RuntimeWarning, match="requires an injected LLMClient"):
+        metrics = collect_extraction_metrics()
 
     assert "extraction_recall" in metrics
     assert "citation_resolution" in metrics
+    assert metrics["extraction_recall"] == 0.0
+    assert metrics["citation_resolution"] == 1.0
     assert all(isinstance(v, float) for v in metrics.values())
 
 

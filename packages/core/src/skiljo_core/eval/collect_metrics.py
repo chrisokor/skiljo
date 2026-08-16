@@ -6,29 +6,18 @@ means into the metric names used by DESIGN_DOCUMENT.md Section 9
 (``extraction_recall``, ``citation_resolution``, ``simulation_match_rate``,
 ``contradiction_recall``, ``e2e_accuracy``), writing them to a flat JSON file.
 
-Defaults to Inspect's ``mockllm/model`` provider so this runs in CI without an API key,
-network access, or cost, and to ``split="train"`` (30 examples; pass ``split="dev"``
-for 15, never ``split="test"`` -- see CLAUDE.md system invariant 5).
+Extraction dataset loading is active for the train and dev splits. The extraction
+solver runs only when a usable, injected ``LLMClient`` is configured; the default
+offline collector emits explicit placeholder extraction metrics instead of silently
+constructing a provider client. Citation resolution remains a hard invariant when
+real extraction runs. Simulation and end-to-end metrics remain limited until
+ticket-level ground truth lands. ``data/eval/test/`` remains forbidden locally.
 
-As of plan #57, all three Tasks load the real ``data/eval/{split}/`` dataset via
-``skiljo_core.eval.dataset_loader`` instead of the single vacuous dummy sample
-``dataset=None`` used to supply -- so ``extraction_recall`` is now a genuine
-measurement rather than a constant 1.0. It still won't be a *meaningful* one until a
-"solver" step exists that runs ``run_extraction_pipeline()`` per sample and populates
-``state.metadata["actual_spec"]``: without it, ``actual`` stays empty and
-``extraction_recall`` scores genuinely low (typically 0.0) against the real expected
-rules, which is an honest reflection of the remaining gap, not a regression to chase
-down. ``citation_resolution`` is unaffected (still vacuously 1.0, since it only reads
-``actual``). ``simulation_match_rate`` and the contradiction precision/recall scorers
-also stay vacuously 1.0 today: `data/eval/` has no ticket-level simulation ground
-truth yet, so ``SimulationEval``'s samples carry no ``results``/
-``planted_divergence_ids``. See ``dataset_loader.py``'s module docstring and
-``docs/evals.md`` ("Dataset" section) for the full picture, and
-``state.metadata["actual_result"]`` / ``"actual_e2e"`` for the remaining solver gap.
-This module -- and the CI wiring around it -- is deliberately built so that once a
-solver lands, the numbers this produces become real without any change to
-``.github/workflows/eval.yml`` or ``scripts/check_regression.py``: only ``--model``
-needs to point at a real provider.
+Defaults to Inspect's ``mockllm/model`` provider and ``split="train"`` so local/CI
+runs need no network access or API key. Pass an injected, application-configured
+``LLMClient`` to ``collect_extraction_metrics`` for real extraction metrics. This
+preserves the LLM logging boundary rather than creating an unlogged provider client
+inside the eval package.
 """
 
 from __future__ import annotations
@@ -36,6 +25,7 @@ from __future__ import annotations
 import argparse
 import json
 import tempfile
+import warnings
 from pathlib import Path
 
 from inspect_ai import Task, eval as inspect_eval
@@ -44,6 +34,7 @@ from inspect_ai.log import EvalLog
 from skiljo_core.eval.e2e import E2EEval
 from skiljo_core.eval.extraction import ExtractionEval
 from skiljo_core.eval.simulation import SimulationEval
+from skiljo_core.llm.base import LLMClient
 
 # Inspect scorer name -> Section 9 / DESIGN_DOCUMENT.md metric name, per suite.
 _EXTRACTION_METRIC_NAMES = {
@@ -79,9 +70,28 @@ def _run_task_metrics(task: Task, model: str, metric_names: dict[str, str]) -> d
     return _flatten_scores(logs[0], metric_names)
 
 
-def collect_extraction_metrics(model: str = "mockllm/model", split: str = "train") -> dict[str, float]:
-    """Run the extraction eval suite and return its Section-9-named metrics."""
-    return _run_task_metrics(ExtractionEval(split=split), model, _EXTRACTION_METRIC_NAMES)
+def collect_extraction_metrics(
+    model: str = "mockllm/model",
+    split: str = "train",
+    llm_client: LLMClient | None = None,
+) -> dict[str, float]:
+    """Run extraction metrics when a client is injected, otherwise report the limit.
+
+    The offline path preserves a successful no-network CI command while making the
+    absence of real pipeline output visible: recall is zero and citation resolution
+    is vacuously one because no extracted rules were evaluated.
+    """
+    if llm_client is None:
+        warnings.warn(
+            "Extraction eval requires an injected LLMClient for real extraction; "
+            "returning explicit offline placeholder metrics.",
+            RuntimeWarning,
+            stacklevel=2,
+        )
+        return {"extraction_recall": 0.0, "citation_resolution": 1.0}
+    return _run_task_metrics(
+        ExtractionEval(split=split, llm_client=llm_client), model, _EXTRACTION_METRIC_NAMES
+    )
 
 
 def collect_simulation_metrics(model: str = "mockllm/model", split: str = "train") -> dict[str, float]:
@@ -94,11 +104,21 @@ def collect_e2e_metrics(model: str = "mockllm/model", split: str = "train") -> d
     return _run_task_metrics(E2EEval(split=split), model, _E2E_METRIC_NAMES)
 
 
-def collect_all_metrics(model: str = "mockllm/model", split: str = "train") -> dict[str, float]:
+def collect_all_metrics(
+    model: str = "mockllm/model",
+    split: str = "train",
+    extraction_llm_client: LLMClient | None = None,
+) -> dict[str, float]:
     """Run every eval suite (against ``data/eval/{split}/``, plan #57's real
     dataset loader) and merge their metrics into one flat dict."""
     metrics: dict[str, float] = {}
-    metrics.update(collect_extraction_metrics(model=model, split=split))
+    metrics.update(
+        collect_extraction_metrics(
+            model=model,
+            split=split,
+            llm_client=extraction_llm_client,
+        )
+    )
     metrics.update(collect_simulation_metrics(model=model, split=split))
     metrics.update(collect_e2e_metrics(model=model, split=split))
     return metrics

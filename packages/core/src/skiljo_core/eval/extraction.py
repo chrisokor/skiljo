@@ -15,9 +15,11 @@ from typing import Any
 
 from inspect_ai import Task, task
 from inspect_ai.scorer import Score, Scorer, Target, mean, scorer
-from inspect_ai.solver import TaskState
+from inspect_ai.solver import Generate, Solver, TaskState, solver
 
 from .dataset_loader import load_extraction_dataset
+from skiljo_core.extraction.pipeline import run_extraction_pipeline
+from skiljo_core.llm.base import LLMClient
 
 
 # ---------------------------------------------------------------------------
@@ -89,14 +91,11 @@ def citation_resolution(expected: dict[str, Any], actual: dict[str, Any]) -> Sco
     """Verify 100% of extracted rules have valid citation spans.
 
     Each rule in ``actual`` (across all three decision zones — see
-    ``_iter_rules``) must have at least one citation entry containing
-    ``span_start``, ``span_end``, and ``quoted_text`` fields. Returns 0.0
-    on the first rule that fails this invariant.
-
-    Note: ``rule.schema.json`` does not currently define a ``citations``
-    field at all, so this will score 0.0 against any real extraction output
-    until that schema gap is closed — that is expected and intentional; it
-    surfaces the CLAUDE.md invariant #3 violation rather than masking it.
+    ``_iter_rules``) must carry a valid source citation. Pipeline output uses
+    the schema's singular ``citation`` shape (``span.start``, ``span.end``,
+    and ``quoted_text``); the legacy plural ``citations`` shape remains
+    accepted for existing scorer fixtures. Returns 0.0 on the first rule
+    that fails this invariant.
 
     Args:
         expected: Not used for this scorer (ground-truth is structural).
@@ -108,6 +107,16 @@ def citation_resolution(expected: dict[str, Any], actual: dict[str, Any]) -> Sco
     rules = _iter_rules(actual)
 
     for rule in rules:
+        citation = rule.get("citation")
+        if isinstance(citation, dict):
+            span = citation.get("span")
+            if isinstance(span, dict) and {"start", "end"}.issubset(span) and "quoted_text" in citation:
+                continue
+            return Score(
+                value=0.0,
+                explanation=f"Rule with action {rule.get('action', '?')!r} has an invalid citation",
+            )
+
         citations = rule.get("citations", [])
         if not citations:
             return Score(
@@ -128,6 +137,32 @@ def citation_resolution(expected: dict[str, Any], actual: dict[str, Any]) -> Sco
                 )
 
     return Score(value=1.0, explanation="All citations valid")
+
+
+@solver
+def extraction_solver(llm_client: LLMClient | None = None) -> Solver:
+    """Run the extraction pipeline and attach its serialized Skill to state.
+
+    A usable client is deliberately injected rather than constructed here so
+    provider calls retain the application's logging/configuration boundary and
+    deterministic tests can use ``FakeLLMClient`` without production code
+    depending on test helpers.
+    """
+
+    async def solve(state: TaskState, generate: Generate) -> TaskState:
+        if llm_client is None:
+            raise RuntimeError("extraction_solver requires an LLM client for real extraction")
+
+        skill = run_extraction_pipeline(
+            llm_client,
+            policy_text=str(state.input),
+            skill_name=str(state.metadata.get("skill_name", "process_refund_request")),
+            trigger=str(state.metadata.get("trigger", "customer_requests_refund")),
+        )
+        state.metadata["actual_spec"] = skill.model_dump(mode="json")
+        return state
+
+    return solve
 
 
 # ---------------------------------------------------------------------------
@@ -175,22 +210,17 @@ def citation_scorer() -> Scorer:
 
 
 @task(name="extract")
-def ExtractionEval(split: str = "train") -> Task:
+def ExtractionEval(split: str = "train", llm_client: LLMClient | None = None) -> Task:
     """Extraction pipeline eval: rule recall and citation resolution.
 
     Uses labeled examples from ``data/eval/{split}/`` (policy text + expected
-    skill spec YAML), loaded via ``load_extraction_dataset`` (plan #57) --
-    real Inspect ``Sample``s now, not the single vacuous dummy sample
-    ``dataset=None`` used to supply. In the full harness a solver still needs
-    to run the extraction pipeline per sample and populate
-    ``state.metadata["actual_spec"]`` so ``recall_scorer`` has something
-    non-empty to compare against real ``expected`` rules -- see
-    ``dataset_loader.py``'s module docstring for what that means for
-    ``extraction_recall`` today (genuinely low/zero, not vacuously 1.0,
-    until that solver lands).
+    skill spec YAML) and an explicit extraction-pipeline solver. ``llm_client``
+    is required when the task executes: keeping it injected prevents default
+    local/CI runs from making provider calls or constructing an unlogged client.
     """
     return Task(
         dataset=list(load_extraction_dataset(split=split)),
+        solver=extraction_solver(llm_client=llm_client),
         scorer=[recall_scorer(), citation_scorer()],
         name="extract",
     )
