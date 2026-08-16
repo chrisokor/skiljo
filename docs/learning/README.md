@@ -4,6 +4,10 @@ An index of written explanations for each implementation task — what was built
 
 See `GLOSSARY.md` for a running list of concepts introduced across debriefs.
 
+## Week 8 - Project readiness hardening
+
+1. [Task 1: Complete diagnostic workflow](week8-task1-diagnostic-workflow.md)
+
 ## Week 7 - Citations and v1.05 product
 
 4. [Task 4: Eval ground-truth citations](week7-task4-eval-citations.md)

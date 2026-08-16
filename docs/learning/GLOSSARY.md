@@ -29,6 +29,10 @@ business review. It inlines its CSS, uses no external assets, and includes
 print-specific rules so a saved response remains readable outside the product.
 See [Week 7 Task 5](week7-task5-html-report-rendering.md).
 
+## Diagnostic workflow
+
+The complete Skiljo product path: upload a policy, extract a structured `Skill`, persist an immutable `SkillVersion`, import historical tickets, simulate those tickets against the version, and generate a diagnostic report. See [Week 8 Task 1](week8-task1-diagnostic-workflow.md).
+
 ## `session.merge()` (SQLAlchemy upsert)
 
 `Session.merge(instance)` issues a SELECT on the primary key, then INSERT if absent or UPDATE if present. Unlike `session.add()`, it doesn't raise `IntegrityError` on a duplicate primary key, making it the right tool for idempotent writes where the primary key is a content-addressed hash. See [Week 3 Task 1](week3-task1-llm-cache.md).
