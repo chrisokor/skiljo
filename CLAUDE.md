@@ -21,13 +21,9 @@ All planning docs live in the repo root (or `docs/planning/` if reorganized):
 
 ## Current status
 
-**Phase: v1.0 complete (week 6 shipped).** Commits 1–56 plus scope additions A1–A6 are done: the full extraction pipeline (4 passes), the simulation engine (3-zone routing, shadow-policy synthetic tickets, batch execution), contradiction detection completed to spec (A6 — amount band × segment × reason × time-window clustering with a binomial significance test, replacing the week-3 bare frequency threshold), cross-document contradiction detection (A3), the Streamlit demo, a TypeScript SDK with full endpoint coverage (including `evalRuns` and `crossDocument` resources), the Inspect eval harness wired to a real 60-example train/dev/test dataset (extraction recall is now genuinely measured; simulation/e2e metrics remain honestly vacuous pending ticket-level ground truth — see `packages/core/src/skiljo_core/eval/dataset_loader.py`), CI baseline refresh on merge to main, a real 5-policy corpus (Shopify/Stripe/Cloudflare/DigitalOcean) for cross-document testing, and a final quality pass (public `TaskState` import, bearer-auth negative test, consistent `{"error": {...}}` envelope on every error path, DESIGN_DOCUMENT.md endpoint documentation). 203 Python + 2 skipped and 27 TypeScript tests passing, all clean under `make lint typecheck test`.
+**Phase: readiness hardening after citations/v1.05 merge.** Core diagnostic workflow is present: policy upload, extraction, immutable skill-version persistence, historical ticket import, simulation, and rendered report. Citations are schema-required for rules. v1.05 surfaces are present: HTML diagnostic reports, cross-document contradiction detection, and Streamlit workflow integration.
 
-**Known doc drift, flagged rather than silently resolved:** the week-6 work above landed under a revised plan (`docs/superpowers/plans/2026-08-10-week6-v1.0-completion.md`, plan #57–#61) that redirected week 6 toward finishing the eval harness, SDK, and A6 instead of DESIGN_DOCUMENT.md's original commit 57–63 breakdown (Render deployment blueprint, etc.). DESIGN_DOCUMENT.md Section 12's commit table has not been reconciled with what actually shipped — do that before numbering any v1.05 commits against it.
-
-**Next: v1.05** — self-serve policy consistency checker (white-glove diagnostic), built on A2 (rendered report) + A3 (cross-document detector). Then v1.1 (review UI replacing Streamlit), v1.2 (Zendesk/Stripe/Intercom integrations replacing CSV upload). See DESIGN_DOCUMENT.md Section 14.
-
-Track progress by which numbered commit was last completed. All scope additions (A1–A6) have landed. Update this section as v1.05 work begins.
+**Next:** harden eval measurement and demo evidence. Keep `data/eval/test/` off limits; use train/dev only.
 
 ## Architecture at a glance
 

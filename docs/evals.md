@@ -4,6 +4,10 @@ Operator and maintainer reference for the eval harness: what it measures today, 
 
 **Read this section first if you're picking up eval work:** extraction dataset loading is active for `train` and `dev`, and `ExtractionEval` has a solver seam that runs the extraction pipeline when a usable `LLMClient` is injected. Default local and CI collection remains offline: it reports explicit placeholder extraction metrics rather than constructing an unlogged provider client. Real-provider extraction evals are opt-in. Simulation and end-to-end metrics remain limited until ticket-level ground truth lands. `data/eval/test/` remains forbidden locally.
 
+Train/dev dataset loading is active. Local eval commands never read `data/eval/test/`.
+Extraction recall is only meaningful when actual pipeline output is populated by the extraction solver.
+Simulation and e2e metrics remain limited because the eval corpus does not yet contain ticket-level historical outcomes for every example.
+
 ## Framework: Inspect
 
 [Inspect](https://inspect.ai-safety-institute.org.uk/) (Anthropic's open-source eval framework) provides `Task`, `Scorer`, and `Score` primitives plus a CLI (`inspect eval`) for running eval suites against a dataset and model. It was chosen over Braintrust, Weights & Biases, or a hand-rolled harness because it's purpose-built for LLM evals and integrates cleanly with Anthropic's own tooling — see DESIGN_DOCUMENT.md Section 6 for the full comparison.
@@ -88,6 +92,8 @@ Real extraction metrics are available through the injected-client seam today. Si
 2. `uv run python -m skiljo_core.eval.collect_metrics --output eval-results.json` — runs all three Tasks against `mockllm/model` and writes their scorer means as `eval-results.json`.
 3. `scripts/check_regression.py` normally diffs `eval-results.json` against `data/eval/baseline_metrics.json` **as committed on `origin/main`**. A PR that deliberately changes the baseline must receive the `approved-eval-baseline-refresh` label; only then does the workflow use that reviewed working-tree baseline before the post-merge refresh job runs. It fails the job if any metric drops beyond its Section 9 budget, or if `citation_resolution` isn't exactly `1.0`.
 4. Uploads `eval-results.json` as a build artifact regardless of outcome.
+
+**Operational control:** repository label permissions must restrict application of `approved-eval-baseline-refresh` to authorized reviewers. The workflow verifies label presence, not who applied it.
 
 **The honest caveat, stated plainly:** default local/CI collection has no injected `LLMClient`, so extraction recall is explicitly reported as `0.0` and citation resolution as vacuous `1.0`; these are availability placeholders, not real provider metrics. The committed baseline intentionally matches this offline unavailable-client state so the regression gate compares like with like. Simulation/e2e remain limited by missing ticket-level ground truth. Do not read a passing plumbing gate as a quality result. A deliberate, reviewed baseline update is required when real provider metrics are collected.
 

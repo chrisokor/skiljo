@@ -32,10 +32,10 @@ demo: ## Run the Streamlit demo (functional from Week 4 onward)
 migrate: ## Apply database migrations
 	uv run alembic -c packages/core/alembic.ini upgrade head
 
-# Eval suites run against Inspect's mockllm/model by default (no API key, no cost).
-# None has a dataset loader/solver wired to data/eval/train/ yet, so scores are
-# vacuous (1.0) until that lands -- see docs/evals.md. Override with MODEL=... once
-# it does, e.g. `make eval-extraction MODEL=anthropic/claude-sonnet-4-6`.
+# Eval suites default to Inspect's mockllm/model so they run without API keys.
+# Train/dev dataset loading is active. Extraction quality becomes meaningful only
+# when the solver has a usable extraction client/provider; simulation/e2e metrics
+# remain limited until ticket-level ground truth is added.
 MODEL ?= mockllm/model
 
 eval-extraction: ## Run the extraction eval suite
