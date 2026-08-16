@@ -109,13 +109,13 @@ rejected when equality values or numeric intervals are provably disjoint. OR
 trees remain undecided rather than being treated as solved. See the [final fix
 wave](week7-task9-final-fix-wave.md).
 
-## Readiness documentation
-
-Status documentation that distinguishes implemented, locally verified workflows from planned work and unsupported production claims. It also records measurement limits, such as mock/default eval output not being product-quality metrics. See [Week 8 Task 4](week8-task4-readiness-docs.md).
-
 ## `Protocol` (structural typing)
 
 A `typing.Protocol` defines an interface by the methods/attributes a class must have, without that class needing to inherit from anything. Any class with a matching `generate_structured` method satisfies `LLMClient`, including a fake built purely for tests. See [Task 1](week2-task1-llm-client-protocol.md).
+
+## Readiness documentation
+
+Status documentation that distinguishes implemented, locally verified workflows from planned work and unsupported production claims. It also records measurement limits, such as mock/default eval output not being product-quality metrics. See [Week 8 Task 4](week8-task4-readiness-docs.md).
 
 ## SQLAlchemy `sessionmaker` / engine
 
