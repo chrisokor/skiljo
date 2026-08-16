@@ -133,10 +133,11 @@ def import_tickets(file: UploadFile = File(...)) -> dict:
             ticket_count=len(tickets),
         )
         session.add(batch)
-        for ticket in tickets:
+        for position, ticket in enumerate(tickets):
             session.add(
                 TicketRecord(
                     batch_id=batch_id,
+                    position=position,
                     ticket_id=ticket.ticket_id,
                     ticket_data=ticket.model_dump(mode="json"),
                 )
@@ -152,7 +153,12 @@ def get_ticket_batch(batch_id: uuid.UUID) -> dict:
         batch = session.get(TicketBatch, batch_id)
         if batch is None:
             raise HTTPException(status_code=404, detail="ticket batch not found")
-        records = session.query(TicketRecord).filter(TicketRecord.batch_id == batch_id).all()
+        records = (
+            session.query(TicketRecord)
+            .filter(TicketRecord.batch_id == batch_id)
+            .order_by(TicketRecord.position)
+            .all()
+        )
         return {
             "id": str(batch.id),
             "source_filename": batch.source_filename,

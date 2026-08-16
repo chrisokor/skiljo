@@ -75,11 +75,11 @@ def collect_extraction_metrics(
     split: str = "train",
     llm_client: LLMClient | None = None,
 ) -> dict[str, float]:
-    """Run extraction metrics when a client is injected, otherwise report the limit.
+    """Run the extraction Task with either its real or explicit offline solver.
 
-    The offline path preserves a successful no-network CI command while making the
-    absence of real pipeline output visible: recall is zero and citation resolution
-    is vacuously one because no extracted rules were evaluated.
+    The offline Task preserves a successful no-network CI command while making
+    absent pipeline output visible: recall is zero and citation resolution is
+    vacuously one because no extracted rules were evaluated.
     """
     if llm_client is None:
         warnings.warn(
@@ -88,7 +88,6 @@ def collect_extraction_metrics(
             RuntimeWarning,
             stacklevel=2,
         )
-        return {"extraction_recall": 0.0, "citation_resolution": 1.0}
     return _run_task_metrics(
         ExtractionEval(split=split, llm_client=llm_client), model, _EXTRACTION_METRIC_NAMES
     )

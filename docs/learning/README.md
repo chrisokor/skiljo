@@ -10,6 +10,7 @@ See `GLOSSARY.md` for a running list of concepts introduced across debriefs.
 2. [Task 2: Extraction eval solver](week8-task2-extraction-eval-solver.md)
 3. [Task 3: Sample diagnostic report artifact](week8-task3-sample-report-artifact.md)
 4. [Task 4: Readiness docs and interview package](week8-task4-readiness-docs.md)
+5. [Task 5: Final readiness review fix wave](week8-task5-final-readiness-review-fixes.md)
 
 ## Week 7 - Citations and v1.05 product
 

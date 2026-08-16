@@ -17,8 +17,8 @@ from inspect_ai import Task, task
 from inspect_ai.scorer import Score, Scorer, Target, mean, scorer
 from inspect_ai.solver import Generate, Solver, TaskState, solver
 
-from .dataset_loader import load_extraction_dataset
 from skiljo_core.extraction.pipeline import run_extraction_pipeline
+from skiljo_core.eval.dataset_loader import load_extraction_dataset
 from skiljo_core.llm.base import LLMClient
 
 
@@ -165,6 +165,23 @@ def extraction_solver(llm_client: LLMClient | None = None) -> Solver:
     return solve
 
 
+@solver
+def offline_extraction_solver() -> Solver:
+    """Mark extraction output unavailable without making an LLM call.
+
+    The default Inspect CLI task uses this solver so local and CI execution is
+    network-free and reports the documented placeholder scores rather than
+    failing because no application-configured ``LLMClient`` was injected.
+    """
+
+    async def solve(state: TaskState, generate: Generate) -> TaskState:
+        state.metadata["actual_spec"] = {}
+        state.metadata["extraction_mode"] = "offline"
+        return state
+
+    return solve
+
+
 # ---------------------------------------------------------------------------
 # Inspect AI scorer factories (wired into the Task)
 # ---------------------------------------------------------------------------
@@ -214,13 +231,18 @@ def ExtractionEval(split: str = "train", llm_client: LLMClient | None = None) ->
     """Extraction pipeline eval: rule recall and citation resolution.
 
     Uses labeled examples from ``data/eval/{split}/`` (policy text + expected
-    skill spec YAML) and an explicit extraction-pipeline solver. ``llm_client``
-    is required when the task executes: keeping it injected prevents default
-    local/CI runs from making provider calls or constructing an unlogged client.
+    skill spec YAML). With no client, the explicit offline solver records that
+    extraction output is unavailable and produces the documented placeholder
+    scores. An injected client opts into the real extraction-pipeline solver
+    while preserving the application's logging/configuration boundary.
     """
     return Task(
         dataset=list(load_extraction_dataset(split=split)),
-        solver=extraction_solver(llm_client=llm_client),
+        solver=(
+            extraction_solver(llm_client=llm_client)
+            if llm_client is not None
+            else offline_extraction_solver()
+        ),
         scorer=[recall_scorer(), citation_scorer()],
         name="extract",
     )

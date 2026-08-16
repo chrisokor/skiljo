@@ -46,7 +46,7 @@
       <h2>Executive Summary</h2>
       <div class="metrics">
         <div class="metric"><div class="metric-value">3</div><div class="metric-label">Rules Extracted</div></div>
-        <div class="metric"><div class="metric-value">1</div><div class="metric-label">Tickets Analyzed</div></div>
+        <div class="metric"><div class="metric-value">12</div><div class="metric-label">Tickets Analyzed</div></div>
         <div class="metric"><div class="metric-value">1</div><div class="metric-label">Contradictions Found</div></div>
         <div class="metric"><div class="metric-value">75.0%</div><div class="metric-label">Policy Match Rate</div></div>
         <div class="metric"><div class="metric-value">100.0%</div><div class="metric-label">Escalation Accuracy</div></div>
@@ -56,26 +56,26 @@
 
     <section>
       <h2>Contradictions Detected</h2>
-      
+
       <article class="contradiction">
         <h3>human_review observed as approve_refund</h3>
         <p><strong>Affected segment:</strong> vip. <strong>Cluster:</strong> amount_band=100-500, customer_segment=vip.</p>
-        <p><strong>Frequency:</strong> 75.0% of cluster; 12 affected tickets.</p>
-        <div class="citation"><strong>Source citation (rule-vip-review, offsets 0-42):</strong><br>Refunds over $100 require human review.</div>
-        <p class="impact"><strong>Estimated Financial Impact:</strong> $900.00 across 9 divergent tickets.</p>
+        <p><strong>Frequency:</strong> 75.0% of cluster; 4 tickets in cluster.</p>
+        <div class="citation"><strong>Source citation (rule-vip-review, offsets 0-39):</strong><br>Refunds over $100 require human review.</div>
+        <p class="impact"><strong>Estimated Financial Impact:</strong> $450.00 across 3 divergent tickets.</p>
       </article>
-      
+
     </section>
 
     <section>
       <h2>Financial Impact and ROI</h2>
-      
+
       <table><tbody>
         <tr><th>Automation-safe volume</th><td>8</td></tr>
         <tr><th>Manual review hours saved per month</th><td>2.0</td></tr>
-        <tr><th>Estimated value</th><td>$900.00</td></tr>
+        <tr><th>Estimated value</th><td>$800.00</td></tr>
       </tbody></table>
-      
+
     </section>
 
     <section>
@@ -93,9 +93,31 @@
       <table>
         <thead><tr><th>Ticket ID</th><th>Written Decision</th><th>Decision Zone</th><th>Policy Match</th><th>Reasoning</th></tr></thead>
         <tbody>
-          
-          <tr><td>00000000-0000-0000-0000-000000000001</td><td>approve_refund</td><td>deterministic</td><td><span class="yes">Match</span></td><td>Refund amount is within the auto-approval threshold.</td></tr>
-          
+
+          <tr><td>00000000-0000-0000-0000-000000000001</td><td>approve_refund</td><td>deterministic</td><td><span class="yes">Match</span></td><td>Written policy and historical handling agree.</td></tr>
+
+          <tr><td>00000000-0000-0000-0000-000000000002</td><td>approve_refund</td><td>deterministic</td><td><span class="yes">Match</span></td><td>Written policy and historical handling agree.</td></tr>
+
+          <tr><td>00000000-0000-0000-0000-000000000003</td><td>approve_refund</td><td>deterministic</td><td><span class="yes">Match</span></td><td>Written policy and historical handling agree.</td></tr>
+
+          <tr><td>00000000-0000-0000-0000-000000000004</td><td>approve_refund</td><td>deterministic</td><td><span class="yes">Match</span></td><td>Written policy and historical handling agree.</td></tr>
+
+          <tr><td>00000000-0000-0000-0000-000000000005</td><td>approve_refund</td><td>deterministic</td><td><span class="yes">Match</span></td><td>Written policy and historical handling agree.</td></tr>
+
+          <tr><td>00000000-0000-0000-0000-000000000006</td><td>approve_refund</td><td>deterministic</td><td><span class="yes">Match</span></td><td>Written policy and historical handling agree.</td></tr>
+
+          <tr><td>00000000-0000-0000-0000-000000000007</td><td>human_review</td><td>deterministic</td><td><span class="no">Mismatch</span></td><td>Written policy requires review, but historical handling approved the refund.</td></tr>
+
+          <tr><td>00000000-0000-0000-0000-000000000008</td><td>human_review</td><td>deterministic</td><td><span class="no">Mismatch</span></td><td>Written policy requires review, but historical handling approved the refund.</td></tr>
+
+          <tr><td>00000000-0000-0000-0000-000000000009</td><td>approve_refund</td><td>llm_assisted</td><td><span class="yes">Match</span></td><td>Written policy and historical handling agree.</td></tr>
+
+          <tr><td>00000000-0000-0000-0000-000000000010</td><td>human_review</td><td>llm_assisted</td><td><span class="no">Mismatch</span></td><td>Written policy requires review, but historical handling approved the refund.</td></tr>
+
+          <tr><td>00000000-0000-0000-0000-000000000011</td><td>approve_refund</td><td>human_only</td><td><span class="yes">Match</span></td><td>Written policy and historical handling agree.</td></tr>
+
+          <tr><td>00000000-0000-0000-0000-000000000012</td><td>approve_refund</td><td>human_only</td><td><span class="yes">Match</span></td><td>Written policy and historical handling agree.</td></tr>
+
         </tbody>
       </table>
     </section>

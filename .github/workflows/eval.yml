@@ -1,18 +1,15 @@
 name: Eval Gate
 
 # Runs the eval harness on every PR and blocks merge on regression, per
-# DESIGN_DOCUMENT.md Section 9. Only against data/eval/train (and, once a dataset
-# loader/solver land, dev/) -- data/eval/test/ is held out and never touched here.
+# DESIGN_DOCUMENT.md Section 9. Collection uses data/eval/train; data/eval/test/
+# is held out and never touched here.
 #
-# Current scope: all three suites (extraction plan #48, simulation plan #49, e2e
-# plan #50) run against Inspect's mockllm/model provider. None of them has a
-# dataset loader or solver wired to real pipeline/engine runs against
-# data/eval/train/ yet (see docs/evals.md, "Dataset" section), so every metric here
-# is vacuous (1.0) today -- this gate exercises the CI plumbing (collect metrics ->
-# diff against the committed baseline -> block on regression) honestly, without
-# fabricating quality numbers. Once the loader/solver land, pass a real --model to
-# skiljo_core.eval.collect_metrics and the numbers become real with no other change
-# needed here.
+# Current scope: all three suites run as Inspect Tasks against train data with
+# mockllm/model. Extraction uses an explicit offline solver unless an application-
+# configured LLMClient is injected, so CI reports extraction_recall=0.0 and
+# citation_resolution=1.0 as availability placeholders. Simulation and e2e scores
+# remain limited by missing ticket-level ground truth. This gate verifies plumbing
+# and regressions; it does not claim real-provider extraction quality.
 #
 # The `update-baseline` job (plan #58) runs after every merge to main and commits a
 # freshly recomputed data/eval/baseline_metrics.json back, so the file every PR's

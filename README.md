@@ -4,7 +4,7 @@ Skiljo extracts a company's refund, credit, and billing-adjustment policies — 
 
 The MVP's value isn't live automation. It's a historical simulation report plus a "policy vs. practice" contradiction report: where written policy and actual behavior diverge. See `docs/BRD.md` and `docs/PRFAQ.md` for the product framing, and `docs/DESIGN_DOCUMENT.md` for the full technical design and the 6-week, commit-by-commit build plan this repo follows.
 
-**Status:** The core diagnostic workflow is implemented and locally test-covered: policy upload -> extraction -> structured `Skill` -> persisted immutable `SkillVersion` -> historical ticket simulation -> JSON/HTML diagnostic report. The v1.05 consistency-checker surface is also present through cross-document contradiction detection and Streamlit workflow pages. Current caveat: extraction eval execution is still being hardened for real-provider measurement; do not treat mock/default eval output as product-quality metrics.
+**Status:** The core diagnostic workflow is implemented and locally test-covered: policy upload -> extraction -> structured `Skill` -> persisted immutable `SkillVersion` -> historical ticket simulation -> JSON/HTML diagnostic report. The v1.05 consistency-checker surface is also present through cross-document contradiction detection and Streamlit workflow pages. Default extraction evals run in an explicit offline mode; real-provider measurement remains opt-in, so mock/default output is not a product-quality metric.
 
 ## Demo Artifacts
 
@@ -30,7 +30,7 @@ A Python monorepo (`core`, `api`, `demo`) plus a TypeScript SDK (`sdk-ts`), with
      ▼                         ▼                  ▼
 ┌──────────┐            ┌─────────────┐    ┌────────────────┐
 │   LLM    │            │  Postgres   │    │  Eval Harness  │
-│  Client  │            │  (8 tables) │    │   (Inspect)    │
+│  Client  │            │ (11 tables) │    │   (Inspect)    │
 └──────────┘            └─────────────┘    └────────────────┘
          ▲                                          ▲
          └────── consumed by ──── TypeScript SDK ───┘

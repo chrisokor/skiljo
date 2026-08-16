@@ -138,3 +138,37 @@ def test_extract_endpoint_accepts_existing_policy_id() -> None:
             assert version.spec["decision_zones"]["deterministic"][0]["citation"]["quoted_text"] == "Refunds"
     finally:
         app.dependency_overrides.clear()
+
+
+def test_extract_endpoint_rejects_both_policy_sources() -> None:
+    client = TestClient(app)
+
+    response = client.post(
+        "/skills/extract",
+        json={
+            "policy_id": str(uuid.uuid4()),
+            "policy_text": "Refunds are approved.",
+            "skill_name": "process_refund_request",
+            "trigger": "customer_requests_refund",
+        },
+    )
+
+    assert response.status_code == 422
+    errors = response.json()["error"]["details"]["errors"]
+    assert any("exactly one" in error["msg"].lower() for error in errors)
+
+
+def test_extract_endpoint_rejects_missing_policy_source() -> None:
+    client = TestClient(app)
+
+    response = client.post(
+        "/skills/extract",
+        json={
+            "skill_name": "process_refund_request",
+            "trigger": "customer_requests_refund",
+        },
+    )
+
+    assert response.status_code == 422
+    errors = response.json()["error"]["details"]["errors"]
+    assert any("exactly one" in error["msg"].lower() for error in errors)

@@ -2,7 +2,7 @@
 
 Operator and maintainer reference for the eval harness: what it measures today, how it's structured, how to run it, and how the design is meant to grow. For the target design see [DESIGN_DOCUMENT.md Section 5.10](DESIGN_DOCUMENT.md) ("Eval harness") and Section 9 ("Testing and evaluation strategy"); for the "why Inspect" decision, see Section 6 ("Inspect for evals").
 
-**Read this section first if you're picking up eval work:** extraction dataset loading is active for `train` and `dev`, and `ExtractionEval` has a solver seam that runs the extraction pipeline when a usable `LLMClient` is injected. Default local and CI collection remains offline: it reports explicit placeholder extraction metrics rather than constructing an unlogged provider client. Real-provider extraction evals are opt-in. Simulation and end-to-end metrics remain limited until ticket-level ground truth lands. `data/eval/test/` remains forbidden locally.
+**Read this section first if you're picking up eval work:** extraction dataset loading is active for `train` and `dev`. `ExtractionEval` executes an explicit offline solver by default, producing availability placeholders without network access, and switches to the real extraction pipeline only when a usable `LLMClient` is injected. Real-provider extraction evals are opt-in. Simulation and end-to-end metrics remain limited until ticket-level ground truth lands. `data/eval/test/` remains forbidden locally.
 
 Train/dev dataset loading is active. Local eval commands never read `data/eval/test/`.
 Extraction recall is only meaningful when actual pipeline output is populated by the extraction solver.
@@ -18,7 +18,7 @@ Simulation and e2e metrics remain limited because the eval corpus does not yet c
 - `simulation.py` — the `SimulationEval` Inspect `Task` (name `"simulate"`), wrapping `simulation_match_rate`, `contradiction_detection_precision`, and `contradiction_detection_recall`.
 - `e2e.py` — the `E2EEval` Inspect `Task` (name `"e2e"`), wrapping `e2e_accuracy`, which composes extraction and simulation into a single accuracy figure for a policy → skill → simulated-decisions example.
 
-All three follow the same scorer structure: standalone pure-function scorers and thin `@scorer`-decorated adapters. Extraction also has an injected-client solver; simulation and end-to-end still await ticket-level ground truth and execution solvers.
+All three follow the same scorer structure: standalone pure-function scorers and thin `@scorer`-decorated adapters. Extraction selects between an explicit offline solver and its injected-client pipeline solver; simulation and end-to-end still await ticket-level ground truth and execution solvers.
 
 ## Why the scorer logic is standalone, pure Python
 
@@ -48,7 +48,7 @@ Two scorers, both operating on skill-spec dicts (the JSON/dict form of a `Skill`
 - **`simulation_match_rate(expected, actual)`** — zips `expected["results"]` against `actual["results"]` (both a list of per-ticket dicts with a `decision` key, in matching ticket order) and returns the fraction that agree. This mirrors `SimulationReport.match_rate` (see [`docs/simulation.md`](simulation.md#async-batch-processing-enginepy)) but is computed independently, against a labeled example's `results`, not by re-deriving it from a live `compute_report()` call.
 - **`contradiction_detection_precision(expected, actual)` / `contradiction_detection_recall(expected, actual)`** — compare `actual["contradictions"]` (a list of real `Contradiction`-shaped dicts — see `skiljo_core.simulation.contradictions.Contradiction`) against `expected["planted_divergence_ids"]`. Real `Contradiction`s have no top-level `rule_id`, and the detector never populates the optional `citation` field either, so both scorers key each detected contradiction via `_contradiction_key`: `citation.rule_id` if present, otherwise a structural key over `cluster_key` + written/observed decision. This is the mechanically-measurable check that makes [planted contradiction](learning/GLOSSARY.md#planted-contradiction) detection a real eval metric rather than a vibe: a labeled example specifies exactly which `DivergenceSpec.rule_id`s were planted into its shadow policy (see [`docs/simulation.md`](simulation.md#shadow-policy-design-generatorpy)), and recall/precision are computed directly against that set. Precision is vacuously `1.0` when nothing was detected (no false positives to penalize); recall is vacuously `1.0` when nothing was planted. The acceptance target from CLAUDE.md is ≥0.8 recall on planted divergences with ≤1 false positive per run — the recall number this scorer produces is the direct measurement of that target, though the "≤1 false positive per run" half of the target is a count, not a rate, so it isn't fully captured by the precision score alone; check `len(detected - planted)` directly if you need the raw false-positive count. Note that until the detector actually attaches citations, the structural fallback key means detected contradictions can't line up with `planted_divergence_ids` by rule identity at all — see the code's docstring for the honest limitation this leaves in place.
 
-`state.metadata["actual_spec"]` is populated by `extraction_solver()` after it calls `run_extraction_pipeline()` with an injected client. `state.metadata["actual_result"]` and `state.metadata["actual_e2e"]` still await simulation/e2e solver work and ticket-level ground truth.
+`state.metadata["actual_spec"]` is populated with an empty unavailable result by `offline_extraction_solver()` in default runs, or with the serialized pipeline output by `extraction_solver()` when a client is injected. `state.metadata["actual_result"]` and `state.metadata["actual_e2e"]` still await simulation/e2e solver work and ticket-level ground truth.
 
 ## Dataset: train / dev / test split
 
@@ -62,7 +62,7 @@ Two scorers, both operating on skill-spec dicts (the JSON/dict form of a `Skill`
 
 ## Running evals
 
-**Today:** every suite's scorer logic is exercised via ordinary `pytest`, with no real dataset or LLM calls involved:
+**Today:** every suite's scorer logic is exercised via ordinary `pytest`. Extraction tests also execute the default Inspect task against the train dataset in offline mode; no API key or network call is required:
 
 ```bash
 uv run pytest packages/core/tests/test_eval_extraction.py -v
@@ -72,9 +72,9 @@ uv run pytest packages/core/tests/test_eval_e2e.py -v
 
 This is folded into the normal `uv run pytest` / `make test` run.
 
-Separately, `make eval-extraction` / `make eval-simulation` / `make eval-e2e` run each Task through Inspect's CLI. The extraction task loads train/dev data, but a CLI model name alone does not supply the pipeline's `LLMClient`; use the programmatic injected-client seam for real extraction until an application-configured eval entrypoint is added. `mockllm/model` needs no API key and makes no network call, which is why it remains the default for local/CI metrics.
+Separately, `make eval-extraction` / `make eval-simulation` / `make eval-e2e` run each Task through Inspect's CLI. The extraction command loads train data and executes the explicit offline solver, yielding `extraction_recall=0.0` and `citation_resolution=1.0` placeholders. A CLI model name alone does not supply the pipeline's `LLMClient`; use the programmatic injected-client seam for real extraction. `mockllm/model` needs no API key and makes no network call, which is why it remains the default for local/CI metrics.
 
-`skiljo_core.eval.collect_metrics` (`uv run python -m skiljo_core.eval.collect_metrics --output eval-results.json`) runs all three suites this way and flattens their scorer means into the Section 9 metric names in one JSON file — this is what `.github/workflows/eval.yml` calls to produce the artifact `scripts/check_regression.py` gates on. See "CI status" below.
+`skiljo_core.eval.collect_metrics` (`uv run python -m skiljo_core.eval.collect_metrics --output eval-results.json`) runs all three Tasks, including extraction's default offline task, and flattens their scorer means into the Section 9 metric names in one JSON file. This is what `.github/workflows/eval.yml` calls to produce the artifact `scripts/check_regression.py` gates on. See "CI status" below.
 
 Real extraction metrics are available through the injected-client seam today. Simulation and end-to-end remain planned extensions: they need ticket-level ground truth plus solvers that populate their respective metadata keys before their metrics can become meaningful.
 

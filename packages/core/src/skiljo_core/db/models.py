@@ -1,7 +1,7 @@
 import uuid
 from datetime import datetime
 
-from sqlalchemy import ForeignKey, Numeric, Text, UniqueConstraint, func
+from sqlalchemy import ForeignKey, Index, Numeric, Text, UniqueConstraint, func
 from sqlalchemy.dialects.postgresql import JSONB, UUID
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 
@@ -30,9 +30,11 @@ class TicketBatch(Base):
 
 class TicketRecord(Base):
     __tablename__ = "ticket_records"
+    __table_args__ = (Index("ix_ticket_records_batch_id_position", "batch_id", "position"),)
 
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     batch_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("ticket_batches.id"), nullable=False)
+    position: Mapped[int] = mapped_column(nullable=False)
     ticket_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), nullable=False)
     ticket_data: Mapped[dict] = mapped_column(JSONB, nullable=False)
 

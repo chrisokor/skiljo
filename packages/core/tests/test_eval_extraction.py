@@ -16,7 +16,10 @@ score 1.0 against every real extraction).
 """
 
 import asyncio
+from pathlib import Path
 
+import pytest
+from inspect_ai import eval as inspect_eval
 from inspect_ai.solver import TaskState
 
 from skiljo_core.extraction.rules import CandidateRuleList
@@ -64,6 +67,22 @@ def test_extraction_eval_task_exists() -> None:
     eval_task = ExtractionEval()
     assert eval_task.name == "extract"
     assert eval_task.scorer is not None
+
+
+def test_default_extraction_eval_executes_offline(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    monkeypatch.setenv("HOME", str(tmp_path))
+    monkeypatch.setenv("INSPECT_TRACE_FILE", str(tmp_path / "inspect-trace.log"))
+
+    logs = inspect_eval(
+        "packages/core/src/skiljo_core/eval/extraction.py",
+        model="mockllm/model",
+        log_dir=str(tmp_path / "logs"),
+    )
+
+    assert len(logs) == 1
+    assert logs[0].status == "success"
 
 
 def test_extraction_solver_populates_actual_spec_metadata() -> None:

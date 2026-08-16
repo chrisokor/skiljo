@@ -44,6 +44,42 @@ def test_sample_report_artifact_script_generates_html(tmp_path: Path) -> None:
     assert html == DEFAULT_OUTPUT.read_text()
 
 
+def test_sample_report_fixture_is_semantically_consistent() -> None:
+    from scripts.generate_sample_report import build_sample_report
+
+    report = build_sample_report()
+    results_by_id = {str(result.ticket_id): result for result in report.results}
+    matching_results = [
+        result for result in report.results if result.matched_human_decision is True
+    ]
+
+    assert report.total_tickets == len(report.results)
+    assert report.match_rate == len(matching_results) / report.total_tickets
+    assert report.automation_candidate_count == sum(
+        result.zone == Zone.deterministic for result in report.results
+    )
+    assert report.roi_estimates is not None
+    assert report.roi_estimates.automation_safe_volume == report.automation_candidate_count
+    assert report.contradiction_count == len(report.contradictions or [])
+
+    for contradiction in report.contradictions or []:
+        assert contradiction.affected_ticket_ids is not None
+        assert set(contradiction.affected_ticket_ids) <= results_by_id.keys()
+        assert all(
+            results_by_id[ticket_id].matched_human_decision is False
+            for ticket_id in contradiction.affected_ticket_ids
+        )
+        assert contradiction.frequency == len(contradiction.affected_ticket_ids) / contradiction.ticket_count
+        assert contradiction.estimated_financial_impact is not None
+        impact = contradiction.estimated_financial_impact
+        assert impact.divergent_ticket_count == len(contradiction.affected_ticket_ids)
+        assert impact.estimated_impact_usd == impact.divergent_ticket_count * impact.average_refund_amount
+        assert contradiction.citation is not None
+        assert contradiction.citation.span_end - contradiction.citation.span_start == len(
+            contradiction.citation.quoted_text
+        )
+
+
 def _clean() -> None:
     with SessionLocal() as session:
         session.query(SimulationResult).delete()
@@ -397,7 +433,7 @@ def test_get_report_html_renders_diagnostic_evidence_and_roi() -> None:
     assert "Contradictions Detected" in body
     assert "Refunds are unavailable after 30 days." in body
     assert "75.0% of cluster" in body
-    assert "12 affected tickets" in body
+    assert "12 tickets in cluster" in body
     assert "75.0% across 12 tickets" not in body
     assert "Affected segment" in body
     assert "vip" in body

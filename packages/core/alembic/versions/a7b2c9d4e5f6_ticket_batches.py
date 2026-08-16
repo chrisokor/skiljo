@@ -27,11 +27,18 @@ def upgrade() -> None:
         "ticket_records",
         sa.Column("id", postgresql.UUID(as_uuid=True), primary_key=True),
         sa.Column("batch_id", postgresql.UUID(as_uuid=True), sa.ForeignKey("ticket_batches.id"), nullable=False),
+        sa.Column("position", sa.Integer(), nullable=False),
         sa.Column("ticket_id", postgresql.UUID(as_uuid=True), nullable=False),
         sa.Column("ticket_data", postgresql.JSONB(), nullable=False),
+    )
+    op.create_index(
+        "ix_ticket_records_batch_id_position",
+        "ticket_records",
+        ["batch_id", "position"],
     )
 
 
 def downgrade() -> None:
+    op.drop_index("ix_ticket_records_batch_id_position", table_name="ticket_records")
     op.drop_table("ticket_records")
     op.drop_table("ticket_batches")

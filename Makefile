@@ -33,9 +33,9 @@ migrate: ## Apply database migrations
 	uv run alembic -c packages/core/alembic.ini upgrade head
 
 # Eval suites default to Inspect's mockllm/model so they run without API keys.
-# Train/dev dataset loading is active. Extraction quality becomes meaningful only
-# when the solver has a usable extraction client/provider; simulation/e2e metrics
-# remain limited until ticket-level ground truth is added.
+# Extraction uses its explicit offline solver by default; real extraction metrics
+# require the programmatic entrypoint with an application-configured LLMClient.
+# Simulation/e2e metrics remain limited until ticket-level ground truth is added.
 MODEL ?= mockllm/model
 
 eval-extraction: ## Run the extraction eval suite

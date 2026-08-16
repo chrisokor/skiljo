@@ -79,6 +79,68 @@ def test_get_ticket_batch_returns_imported_tickets() -> None:
     assert data["tickets"][0]["ground_truth_decision"] == "approve_refund"
 
 
+def test_import_persists_and_retrieves_csv_order() -> None:
+    _clean_ticket_tables()
+    rows = [
+        {**VALID_ROW, "customer_id": "first", "refund_amount": "10.00"},
+        {**VALID_ROW, "customer_id": "second", "refund_amount": "20.00"},
+        {**VALID_ROW, "customer_id": "third", "refund_amount": "30.00"},
+    ]
+    imported = client.post(
+        "/tickets/import",
+        files={"file": ("tickets.csv", io.BytesIO(_make_csv_bytes(rows)), "text/csv")},
+    )
+    batch_id = uuid.UUID(imported.json()["batch_id"])
+
+    with SessionLocal() as session:
+        records = (
+            session.query(TicketRecord)
+            .filter(TicketRecord.batch_id == batch_id)
+            .order_by(TicketRecord.position)
+            .all()
+        )
+        assert [record.position for record in records] == [0, 1, 2]
+
+    response = client.get(f"/tickets/batches/{batch_id}")
+
+    assert response.status_code == 200
+    assert [ticket["refund_amount"] for ticket in response.json()["tickets"]] == [
+        10.0,
+        20.0,
+        30.0,
+    ]
+
+
+def test_get_ticket_batch_orders_records_by_position() -> None:
+    _clean_ticket_tables()
+    batch_id = uuid.uuid4()
+    with SessionLocal() as session:
+        session.add(TicketBatch(id=batch_id, source_filename="scrambled.csv", ticket_count=3))
+        for position in (2, 0, 1):
+            ticket_id = uuid.uuid4()
+            session.add(
+                TicketRecord(
+                    batch_id=batch_id,
+                    position=position,
+                    ticket_id=ticket_id,
+                    ticket_data={
+                        "ticket_id": str(ticket_id),
+                        "refund_amount": float((position + 1) * 10),
+                    },
+                )
+            )
+        session.commit()
+
+    response = client.get(f"/tickets/batches/{batch_id}")
+
+    assert response.status_code == 200
+    assert [ticket["refund_amount"] for ticket in response.json()["tickets"]] == [
+        10.0,
+        20.0,
+        30.0,
+    ]
+
+
 def test_import_valid_single_row_returns_200_with_batch_id() -> None:
     csv_data = _make_csv_bytes([VALID_ROW])
     response = client.post(

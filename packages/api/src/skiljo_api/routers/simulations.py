@@ -167,7 +167,12 @@ def create_simulation(
             raise HTTPException(status_code=400, detail="tickets or ticket_batch_id is required")
 
         if request.ticket_batch_id is not None:
-            records = session.query(TicketRecord).filter(TicketRecord.batch_id == request.ticket_batch_id).all()
+            records = (
+                session.query(TicketRecord)
+                .filter(TicketRecord.batch_id == request.ticket_batch_id)
+                .order_by(TicketRecord.position)
+                .all()
+            )
             if not records:
                 raise HTTPException(status_code=404, detail="ticket batch not found")
             tickets_raw = [record.ticket_data for record in records]

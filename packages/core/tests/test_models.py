@@ -1,4 +1,4 @@
-from skiljo_core.db.models import Base
+from skiljo_core.db.models import Base, TicketRecord
 
 
 def test_all_tables_registered() -> None:
@@ -16,3 +16,13 @@ def test_all_tables_registered() -> None:
         "eval_runs",
     }
     assert set(Base.metadata.tables.keys()) == expected
+
+
+def test_ticket_records_define_batch_position_index() -> None:
+    table = TicketRecord.__table__
+
+    assert "position" in table.columns
+    assert any(
+        tuple(column.name for column in index.columns) == ("batch_id", "position")
+        for index in table.indexes
+    )

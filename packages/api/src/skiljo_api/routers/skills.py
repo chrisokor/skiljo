@@ -2,7 +2,7 @@ import uuid
 from datetime import UTC, datetime
 
 from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException
-from pydantic import BaseModel
+from pydantic import BaseModel, model_validator
 
 from skiljo_api.dependencies import get_llm_client, verify_api_key
 from skiljo_core.db.models import Job, Policy, Skill, SkillVersion
@@ -18,6 +18,14 @@ class ExtractRequest(BaseModel):
     policy_id: uuid.UUID | None = None
     skill_name: str
     trigger: str
+
+    @model_validator(mode="after")
+    def validate_policy_source(self) -> "ExtractRequest":
+        if (self.policy_text is None) == (self.policy_id is None):
+            raise ValueError("exactly one of policy_text or policy_id is required")
+        if self.policy_text is not None and not self.policy_text.strip():
+            raise ValueError("policy_text must not be empty")
+        return self
 
 
 class ExtractResponse(BaseModel):

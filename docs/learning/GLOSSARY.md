@@ -117,6 +117,13 @@ A `typing.Protocol` defines an interface by the methods/attributes a class must 
 
 Status documentation that distinguishes implemented, locally verified workflows from planned work and unsupported production claims. It also records measurement limits, such as mock/default eval output not being product-quality metrics. See [Week 8 Task 4](week8-task4-readiness-docs.md).
 
+## Relational row ordering
+
+SQL tables have no implicit row order. A persisted sequence therefore needs an
+explicit ordinal column and every consumer query must use `ORDER BY` on it. A
+composite index beginning with the parent key supports both batch filtering and
+ordered retrieval. See [Week 8 Task 5](week8-task5-final-readiness-review-fixes.md).
+
 ## SQLAlchemy `sessionmaker` / engine
 
 An `engine` represents a connection pool to a specific database URL; a `sessionmaker` (commonly bound as `SessionLocal`) is a factory that produces new `Session` objects against that engine on demand. Code calls `SessionLocal()` to get a session scoped to one unit of work, rather than sharing one global session. See [Task 3](week2-task3-llm-call-logging.md).

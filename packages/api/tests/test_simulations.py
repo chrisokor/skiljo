@@ -5,7 +5,15 @@ from fastapi.testclient import TestClient
 
 from skiljo_api.dependencies import get_llm_client
 from skiljo_api.main import app
-from skiljo_core.db.models import Job, SimulationResult, SimulationRun, Skill, SkillVersion
+from skiljo_core.db.models import (
+    Job,
+    SimulationResult,
+    SimulationRun,
+    Skill,
+    SkillVersion,
+    TicketBatch,
+    TicketRecord,
+)
 from skiljo_core.db.session import SessionLocal
 from skiljo_core.schemas.rule_schema import (
     Condition,
@@ -23,6 +31,8 @@ def _clean() -> None:
         session.query(SimulationResult).delete()
         session.query(SimulationRun).delete()
         session.query(Job).delete()
+        session.query(TicketRecord).delete()
+        session.query(TicketBatch).delete()
         session.query(SkillVersion).delete()
         session.query(Skill).delete()
         session.commit()
@@ -174,3 +184,44 @@ def test_simulation_accepts_imported_ticket_batch_id() -> None:
         assert run is not None
         assert str(run.ticket_batch_id) == batch_id
         assert run.summary["total_tickets"] == 1
+
+
+def test_simulation_processes_persisted_tickets_in_position_order() -> None:
+    _clean()
+    _, version_id = _seed_approved_skill()
+    batch_id = uuid.uuid4()
+    tickets = _tickets_payload(3)
+    with SessionLocal() as session:
+        session.add(TicketBatch(id=batch_id, source_filename="ordered.csv", ticket_count=3))
+        for position in (2, 0, 1):
+            ticket = tickets[position]
+            session.add(
+                TicketRecord(
+                    batch_id=batch_id,
+                    position=position,
+                    ticket_id=uuid.UUID(ticket["ticket_id"]),
+                    ticket_data=ticket,
+                )
+            )
+        session.commit()
+
+    app.dependency_overrides[get_llm_client] = lambda: FakeLLMClient([])
+    client = TestClient(app)
+    try:
+        response = client.post(
+            "/simulations",
+            json={"skill_version_id": str(version_id), "ticket_batch_id": str(batch_id)},
+        )
+
+        assert response.status_code == 202
+        with SessionLocal() as session:
+            job = session.get(Job, uuid.UUID(response.json()["job_id"]))
+            assert job is not None
+            assert job.status == "completed"
+            run = session.get(SimulationRun, job.result_ref)
+            assert run is not None
+            assert [result["ticket_id"] for result in run.summary["results"]] == [
+                ticket["ticket_id"] for ticket in tickets
+            ]
+    finally:
+        app.dependency_overrides.clear()
