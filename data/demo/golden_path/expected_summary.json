@@ -1,0 +1,23 @@
+{
+  "skill_name": "process_refund_request",
+  "source_policy": "data/demo/golden_path/policy.txt",
+  "source_tickets": "data/demo/golden_path/tickets.csv",
+  "expected_report_artifact": "docs/demo-artifacts/sample-diagnostic-report.html",
+  "expected_total_tickets": 12,
+  "expected_match_rate": 0.75,
+  "expected_escalation_accuracy": 1.0,
+  "expected_contradiction_count": 1,
+  "expected_automation_candidate_count": 8,
+  "expected_contradiction": {
+    "cluster_key": {
+      "amount_band": "100-500",
+      "customer_segment": "vip"
+    },
+    "written_decision": "human_review",
+    "observed_decision": "approve_refund",
+    "frequency": 0.75,
+    "affected_ticket_count": 3,
+    "estimated_impact_usd": 450.0,
+    "citation_quote": "Refunds over $100 require human review."
+  }
+}

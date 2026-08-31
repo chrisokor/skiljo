@@ -1,0 +1,7 @@
+Refunds under $100 within 30 days are approved automatically when there are no fraud flags.
+
+Refunds over $100 require human review.
+
+VIP customers may receive goodwill refunds after review when the account is in good standing.
+
+Refund requests with fraud flags must be escalated to human review.

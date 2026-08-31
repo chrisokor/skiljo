@@ -1,0 +1,13 @@
+customer_id,refund_amount,purchase_days_ago,customer_segment,fraud_flags,refund_reason,ground_truth_decision
+cust_001,45,12,standard,[],defective,approve_refund
+cust_002,75,28,standard,[],changed_mind,approve_refund
+cust_003,125,10,vip,[],defective,approve_refund
+cust_004,150,18,vip,[],billing_error,approve_refund
+cust_005,175,22,vip,[],goodwill,approve_refund
+cust_006,220,14,standard,[],changed_mind,human_review
+cust_007,40,45,standard,[],late_request,human_review
+cust_008,90,8,standard,"[""velocity_check""]",fraud_review,human_review
+cust_009,260,20,vip,[],goodwill,human_review
+cust_010,95,5,vip,[],defective,approve_refund
+cust_011,110,6,standard,[],billing_error,human_review
+cust_012,65,60,vip,[],late_request,human_review
