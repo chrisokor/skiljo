@@ -4,6 +4,12 @@ Skiljo is a policy-fidelity system that turns refund, credit, and billing-adjust
 
 The core workflow compares written policy against historical support behavior to identify where documented rules and real-world decisions diverge. The project is built as a production-minded diagnostic prototype: the valuable output is a historical simulation report and a policy-vs-practice contradiction report, not live refund automation.
 
+## See It in Action
+
+![Diagnostic report showing policy contradictions](docs/demo-artifacts/screenshots/sample-report-desktop.png)
+
+The sample above is a real extraction run. Try the [interactive HTML report](https://htmlpreview.github.io/?https://github.com/chrisokor/skiljo/blob/main/docs/demo-artifacts/sample-diagnostic-report.html) to inspect the policy extraction, rule citations, and simulated decisions. For a guided walkthrough, see the [5-minute demo script](docs/DEMO_SCRIPT.md).
+
 ## Status
 
 The core diagnostic workflow is implemented and locally test-covered:
@@ -28,79 +34,23 @@ The v1.05 consistency-checker surface is also present through cross-document con
 
 ## Core Workflow
 
-```text
-Policy document
-      |
-      v
-FastAPI policy upload
-      |
-      v
-Four-pass LLM extraction
-      |
-      v
-Validated Skill with citations
-      |
-      v
-Immutable SkillVersion in Postgres
-      |
-      +------------------------+
-      |                        |
-      v                        v
-Historical ticket import    Cross-document checks
-      |                        |
-      v                        v
-Simulation engine          Consistency detection
-      |                        |
-      +-----------+------------+
-                  v
-       Diagnostic report
-```
+![Core Workflow Diagram](docs/diagrams/core-workflow.svg)
 
-A typical workflow is:
+A typical workflow:
 
-1. Upload a policy document.
-2. Extract a structured `Skill`.
-3. Validate the extracted output and source citations.
-4. Persist a new immutable `SkillVersion`.
-5. Import historical tickets.
-6. Replay the Skill against those tickets.
-7. Compare simulated decisions against historical outcomes.
-8. Generate a JSON or standalone HTML diagnostic report.
+1. Upload a policy document
+2. Extract a structured `Skill` via four-pass LLM pipeline
+3. Validate and resolve citations to source text
+4. Persist immutable `SkillVersion`
+5. Import historical tickets and run simulation
+6. Surface contradictions between written policy and actual decisions
+7. Generate HTML diagnostic report with evidence and ROI estimates
 
 ## Architecture
 
 Skiljo is organized as a Python monorepo with a TypeScript SDK.
 
-```text
-┌─────────────────────────────────────────────────────────────────┐
-│                     Streamlit Demo                              │
-│       upload policy -> extract -> review -> simulate            │
-└──────────────────────────────┬──────────────────────────────────┘
-                               │ HTTP
-                               ▼
-┌─────────────────────────────────────────────────────────────────┐
-│                       FastAPI Backend                           │
-│   extraction | simulation | versioning | reporting              │
-│   background jobs tracked in PostgreSQL                         │
-└──────────────┬─────────────────────┬────────────────────────────┘
-               │                     │
-               ▼                     ▼
-        ┌─────────────┐       ┌──────────────┐
-        │ LLM Client  │       │ PostgreSQL   │
-        │             │       │ 11 tables    │
-        └─────────────┘       └──────────────┘
-               │
-               ▼
-        ┌─────────────┐
-        │ Eval Harness│
-        │   Inspect   │
-        └─────────────┘
-
-Canonical JSON Schema
-       |
-       +--> Pydantic models for Python
-       +--> Zod schemas for the TypeScript SDK
-```
+![Architecture Diagram](docs/diagrams/architecture.svg)
 
 ## Design Invariants
 
@@ -126,12 +76,8 @@ The core entities are:
 - `LLMCache`: cache for deterministic model calls.
 - `EvalRun`: persisted evaluation run metadata and metrics.
 
-## Demo Artifacts
+## Documentation
 
-- [Sample diagnostic report](docs/demo-artifacts/sample-diagnostic-report.html)
-- [Desktop report screenshot](docs/demo-artifacts/screenshots/sample-report-desktop.png)
-- [Mobile-width report screenshot](docs/demo-artifacts/screenshots/sample-report-mobile.png)
-- [5-minute demo script](docs/DEMO_SCRIPT.md)
 - [Architecture one-pager](docs/ARCHITECTURE_ONE_PAGER.md)
 - [Interview readiness guide](docs/INTERVIEW_READINESS.md)
 - [Must Knows prep sheet](docs/MUST_KNOWS.md)

@@ -1,0 +1,92 @@
+<svg viewBox="0 0 900 1100" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <marker id="arrowhead" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+      <polygon points="0 0, 10 3, 0 6" fill="#333" />
+    </marker>
+    <style>
+      .box-input { fill: #e1f5ff; stroke: #01579b; stroke-width: 2; }
+      .box-process { fill: #fff3e0; stroke: #e65100; stroke-width: 2; }
+      .box-key { fill: #fff9c4; stroke: #f57f17; stroke-width: 2; }
+      .box-parallel { fill: #f3e5f5; stroke: #6a1b9a; stroke-width: 2; }
+      .box-output { fill: #c8e6c9; stroke: #1b5e20; stroke-width: 2; }
+      .text-label { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif; font-size: 14px; font-weight: 600; text-anchor: middle; fill: #333; }
+    </style>
+  </defs>
+
+  <!-- Policy Document -->
+  <rect x="225" y="30" width="450" height="70" rx="8" class="box-input" />
+  <text x="450" y="72" class="text-label">📄 Policy Document</text>
+
+  <!-- Arrow -->
+  <line x1="450" y1="100" x2="450" y2="130" stroke="#666" stroke-width="2" marker-end="url(#arrowhead)" />
+
+  <!-- Upload to FastAPI -->
+  <rect x="225" y="130" width="450" height="70" rx="8" class="box-process" />
+  <text x="450" y="172" class="text-label">Upload to FastAPI</text>
+
+  <!-- Arrow -->
+  <line x1="450" y1="200" x2="450" y2="230" stroke="#666" stroke-width="2" marker-end="url(#arrowhead)" />
+
+  <!-- Four-Pass Extraction -->
+  <rect x="225" y="230" width="450" height="70" rx="8" class="box-process" />
+  <text x="450" y="272" class="text-label">Four-Pass LLM Extraction</text>
+
+  <!-- Arrow -->
+  <line x1="450" y1="300" x2="450" y2="330" stroke="#666" stroke-width="2" marker-end="url(#arrowhead)" />
+
+  <!-- Validated Skill -->
+  <rect x="225" y="330" width="450" height="70" rx="8" class="box-process" />
+  <text x="450" y="362" class="text-label">✓ Validated Skill</text>
+  <text x="450" y="385" class="text-label" style="font-size: 13px;">with Citations</text>
+
+  <!-- Arrow -->
+  <line x1="450" y1="400" x2="450" y2="430" stroke="#666" stroke-width="2" marker-end="url(#arrowhead)" />
+
+  <!-- Immutable SkillVersion -->
+  <rect x="225" y="430" width="450" height="70" rx="8" class="box-key" />
+  <text x="450" y="462" class="text-label">Immutable SkillVersion</text>
+  <text x="450" y="485" class="text-label" style="font-size: 13px;">in Postgres</text>
+
+  <!-- Split point -->
+  <line x1="450" y1="500" x2="450" y2="530" stroke="#666" stroke-width="2" marker-end="url(#arrowhead)" />
+
+  <!-- Branching lines -->
+  <line x1="450" y1="530" x2="225" y2="530" stroke="#666" stroke-width="2" />
+  <line x1="450" y1="530" x2="675" y2="530" stroke="#666" stroke-width="2" />
+  <line x1="225" y1="530" x2="225" y2="560" stroke="#666" stroke-width="2" marker-end="url(#arrowhead)" />
+  <line x1="675" y1="530" x2="675" y2="560" stroke="#666" stroke-width="2" marker-end="url(#arrowhead)" />
+
+  <!-- LEFT PATH: Ticket Import -->
+  <rect x="50" y="560" width="350" height="70" rx="8" class="box-parallel" />
+  <text x="225" y="602" class="text-label">Historical Ticket Import</text>
+
+  <!-- Arrow -->
+  <line x1="225" y1="630" x2="225" y2="660" stroke="#666" stroke-width="2" marker-end="url(#arrowhead)" />
+
+  <!-- Simulation Engine -->
+  <rect x="50" y="660" width="350" height="70" rx="8" class="box-parallel" />
+  <text x="225" y="702" class="text-label">Simulation Engine</text>
+
+  <!-- RIGHT PATH: Cross-Document -->
+  <rect x="500" y="560" width="350" height="70" rx="8" class="box-parallel" />
+  <text x="675" y="602" class="text-label">Cross-Document Checks</text>
+
+  <!-- Arrow -->
+  <line x1="675" y1="630" x2="675" y2="660" stroke="#666" stroke-width="2" marker-end="url(#arrowhead)" />
+
+  <!-- Consistency Detection -->
+  <rect x="500" y="660" width="350" height="70" rx="8" class="box-parallel" />
+  <text x="675" y="702" class="text-label">Consistency Detection</text>
+
+  <!-- Merge lines -->
+  <line x1="225" y1="730" x2="225" y2="760" stroke="#666" stroke-width="2" />
+  <line x1="675" y1="730" x2="675" y2="760" stroke="#666" stroke-width="2" />
+  <line x1="225" y1="760" x2="450" y2="760" stroke="#666" stroke-width="2" />
+  <line x1="675" y1="760" x2="450" y2="760" stroke="#666" stroke-width="2" />
+  <line x1="450" y1="760" x2="450" y2="790" stroke="#666" stroke-width="2" marker-end="url(#arrowhead)" />
+
+  <!-- Diagnostic Report -->
+  <rect x="225" y="790" width="450" height="70" rx="8" class="box-output" />
+  <text x="450" y="832" class="text-label">📊 Diagnostic Report</text>
+
+</svg>

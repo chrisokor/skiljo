@@ -1,0 +1,106 @@
+<mxfile host="app.diagrams.net" modified="2026-09-13T00:00:00Z" agent="Claude" version="1.0.0" type="device">
+  <diagram id="architecture" name="Architecture">
+    <mxGraphModel dx="1000" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="900" pageHeight="1000" background="none" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <!-- User -->
+        <mxCell id="user" value="👤 User" style="ellipse;whiteSpace=wrap;html=1;fontSize=13;fontStyle=1;fillColor=#e3f2fd;strokeColor=#01579b;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="375" y="20" width="150" height="60" as="geometry" />
+        </mxCell>
+
+        <!-- Streamlit Demo -->
+        <mxCell id="streamlit" value="Streamlit Demo&#10;upload → extract → review → simulate" style="rounded=1;whiteSpace=wrap;html=1;fontSize=13;fontStyle=1;fillColor=#e3f2fd;strokeColor=#01579b;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="225" y="120" width="450" height="80" as="geometry" />
+        </mxCell>
+
+        <!-- Arrow: User to Streamlit -->
+        <mxCell id="arrow1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="user" target="streamlit">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- FastAPI Backend -->
+        <mxCell id="fastapi" value="FastAPI Backend&#10;extraction | simulation | versioning | reporting&#10;background jobs tracked in Postgres" style="rounded=1;whiteSpace=wrap;html=1;fontSize=13;fontStyle=1;fillColor=#f3e5f5;strokeColor=#6a1b9a;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="150" y="240" width="600" height="100" as="geometry" />
+        </mxCell>
+
+        <!-- Arrow: Streamlit to FastAPI -->
+        <mxCell id="arrow2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="streamlit" target="fastapi">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- LLM Client -->
+        <mxCell id="llm" value="LLM Client&#10;Anthropic API" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;fontStyle=1;fillColor=#fce4ec;strokeColor=#c2185b;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="80" y="390" width="200" height="80" as="geometry" />
+        </mxCell>
+
+        <!-- PostgreSQL -->
+        <mxCell id="db" value="PostgreSQL&#10;11 tables | Job tracking" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;fontStyle=1;fillColor=#fff3e0;strokeColor=#e65100;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="350" y="390" width="200" height="80" as="geometry" />
+        </mxCell>
+
+        <!-- Eval Harness -->
+        <mxCell id="eval" value="Eval Harness&#10;Inspect" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;fontStyle=1;fillColor=#e8f5e9;strokeColor=#1b5e20;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="620" y="390" width="200" height="80" as="geometry" />
+        </mxCell>
+
+        <!-- Arrows from FastAPI -->
+        <mxCell id="arrow3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="fastapi" target="llm">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="arrow4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="fastapi" target="db">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="arrow5" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="llm" target="eval">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- JSON Schema -->
+        <mxCell id="schema" value="JSON Schema&#10;Source of Truth" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;fontStyle=1;fillColor=#e8f5e9;strokeColor=#1b5e20;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="350" y="530" width="200" height="80" as="geometry" />
+        </mxCell>
+
+        <!-- Arrow: Eval to Schema -->
+        <mxCell id="arrow6" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="eval" target="schema">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Pydantic Models -->
+        <mxCell id="pydantic" value="Pydantic&#10;Python models" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;fontStyle=1;fillColor=#f3e5f5;strokeColor=#6a1b9a;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="80" y="660" width="200" height="80" as="geometry" />
+        </mxCell>
+
+        <!-- TypeScript SDK -->
+        <mxCell id="typescript" value="Zod&#10;TypeScript SDK" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;fontStyle=1;fillColor=#f3e5f5;strokeColor=#6a1b9a;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="350" y="660" width="200" height="80" as="geometry" />
+        </mxCell>
+
+        <!-- Dashed arrows: Schema codegen -->
+        <mxCell id="arrow7" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;dashed=1;dashPattern=5 5;" edge="1" parent="1" source="schema" target="pydantic">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="arrow8" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;dashed=1;dashPattern=5 5;" edge="1" parent="1" source="schema" target="typescript">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Feedback loops back -->
+        <mxCell id="arrow9" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;dashed=1;strokeWidth=1;" edge="1" parent="1" source="pydantic" target="fastapi">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="arrow10" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;dashed=1;strokeWidth=1;" edge="1" parent="1" source="typescript" target="user">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Legend -->
+        <mxCell id="legend" value="━━  Direct flow    ┄┄  Generated code" style="text;html=1;fontSize=11;fontColor=#666;" vertex="1" parent="1">
+          <mxGeometry x="80" y="800" width="300" height="30" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

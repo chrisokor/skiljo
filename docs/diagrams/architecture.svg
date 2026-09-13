@@ -1,0 +1,100 @@
+<svg viewBox="0 0 1000 900" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <marker id="arrowhead" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+      <polygon points="0 0, 10 3, 0 6" fill="#333" />
+    </marker>
+    <style>
+      .box-ui { fill: #e3f2fd; stroke: #01579b; stroke-width: 2; }
+      .box-backend { fill: #f3e5f5; stroke: #6a1b9a; stroke-width: 2; }
+      .box-service { fill: #fff3e0; stroke: #e65100; stroke-width: 2; }
+      .box-llm { fill: #fce4ec; stroke: #c2185b; stroke-width: 2; }
+      .box-eval { fill: #e8f5e9; stroke: #1b5e20; stroke-width: 2; }
+      .text-label { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif; font-size: 14px; font-weight: 600; text-anchor: middle; fill: #333; }
+      .text-small { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif; font-size: 12px; text-anchor: middle; fill: #555; }
+      .dashed { stroke-dasharray: 5,5; stroke-width: 2; stroke: #999; }
+    </style>
+  </defs>
+
+  <!-- User Circle -->
+  <circle cx="500" cy="50" r="35" class="box-ui" />
+  <text x="500" y="58" class="text-label" style="font-size: 16px;">User</text>
+
+  <!-- Arrow down -->
+  <line x1="500" y1="85" x2="500" y2="115" stroke="#666" stroke-width="2" marker-end="url(#arrowhead)" />
+
+  <!-- Streamlit Demo -->
+  <rect x="250" y="115" width="500" height="90" rx="8" class="box-ui" />
+  <text x="500" y="148" class="text-label">Streamlit Demo</text>
+  <text x="500" y="172" class="text-small">upload → extract → review → simulate</text>
+
+  <!-- Arrow down -->
+  <line x1="500" y1="205" x2="500" y2="235" stroke="#666" stroke-width="2" marker-end="url(#arrowhead)" />
+
+  <!-- FastAPI Backend -->
+  <rect x="150" y="235" width="700" height="110" rx="8" class="box-backend" />
+  <text x="500" y="268" class="text-label">FastAPI Backend</text>
+  <text x="500" y="292" class="text-small">extraction | simulation | versioning | reporting</text>
+  <text x="500" y="312" class="text-small">background jobs tracked in Postgres</text>
+
+  <!-- Arrows from FastAPI to services -->
+  <line x1="210" y1="345" x2="210" y2="375" stroke="#666" stroke-width="2" marker-end="url(#arrowhead)" />
+  <line x1="510" y1="345" x2="510" y2="375" stroke="#666" stroke-width="2" marker-end="url(#arrowhead)" />
+  <line x1="810" y1="345" x2="810" y2="375" stroke="#666" stroke-width="2" marker-end="url(#arrowhead)" />
+
+  <!-- LLM Client -->
+  <rect x="80" y="375" width="260" height="100" rx="8" class="box-llm" />
+  <text x="210" y="418" class="text-label" style="font-size: 13px;">LLM Client</text>
+  <text x="210" y="443" class="text-small">Anthropic API</text>
+
+  <!-- PostgreSQL -->
+  <rect x="380" y="375" width="260" height="100" rx="8" class="box-service" />
+  <text x="510" y="418" class="text-label" style="font-size: 13px;">PostgreSQL</text>
+  <text x="510" y="443" class="text-small">11 tables | Job tracking</text>
+
+  <!-- Eval Harness -->
+  <rect x="680" y="375" width="260" height="100" rx="8" class="box-eval" />
+  <text x="810" y="418" class="text-label" style="font-size: 13px;">Eval Harness</text>
+  <text x="810" y="443" class="text-small">Inspect</text>
+
+  <!-- Arrow from LLM to Eval (routed under PostgreSQL) -->
+  <line x1="340" y1="425" x2="340" y2="490" stroke="#666" stroke-width="2" />
+  <line x1="340" y1="490" x2="680" y2="490" stroke="#666" stroke-width="2" />
+  <line x1="680" y1="490" x2="680" y2="425" stroke="#666" stroke-width="2" marker-end="url(#arrowhead)" />
+
+  <!-- Arrow from services to Schema -->
+  <line x1="500" y1="475" x2="500" y2="505" stroke="#666" stroke-width="2" marker-end="url(#arrowhead)" />
+
+  <!-- JSON Schema -->
+  <rect x="310" y="505" width="380" height="100" rx="8" class="box-eval" />
+  <text x="500" y="548" class="text-label" style="font-size: 13px;">JSON Schema</text>
+  <text x="500" y="573" class="text-small">Source of Truth</text>
+
+  <!-- Dashed arrows: codegen -->
+  <line x1="370" y1="605" x2="210" y2="640" class="dashed" marker-end="url(#arrowhead)" />
+  <line x1="500" y1="605" x2="510" y2="640" class="dashed" marker-end="url(#arrowhead)" />
+  <line x1="630" y1="605" x2="810" y2="640" class="dashed" marker-end="url(#arrowhead)" />
+
+  <!-- Pydantic Models -->
+  <rect x="80" y="640" width="260" height="100" rx="8" class="box-backend" />
+  <text x="210" y="680" class="text-label" style="font-size: 13px;">Pydantic</text>
+  <text x="210" y="703" class="text-small">Python models</text>
+
+  <!-- TypeScript SDK -->
+  <rect x="380" y="640" width="260" height="100" rx="8" class="box-backend" />
+  <text x="510" y="680" class="text-label" style="font-size: 13px;">Zod</text>
+  <text x="510" y="703" class="text-small">TypeScript SDK</text>
+
+  <!-- SDKs / Enterprise -->
+  <rect x="680" y="640" width="260" height="100" rx="8" class="box-backend" />
+  <text x="810" y="680" class="text-label" style="font-size: 13px;">SDKs</text>
+  <text x="810" y="703" class="text-small">Other languages</text>
+
+  <!-- Feedback lines (dashed back up) -->
+  <line x1="210" y1="640" x2="210" y2="610" class="dashed" />
+  <line x1="510" y1="640" x2="510" y2="610" class="dashed" />
+  <line x1="810" y1="640" x2="810" y2="610" class="dashed" />
+
+  <!-- Legend -->
+  <text x="80" y="800" class="text-small" style="font-size: 11px; text-anchor: start;">━━ Direct flow     ┄┄ Generated code / feedback</text>
+
+</svg>
